@@ -1,0 +1,16 @@
+{
+  "source_framework": "lqg_ftl",
+  "target_framework": "enhanced_sim",
+  "message_type": "digital_twin_initialization",
+  "payload": {
+    "correlation_matrix_size": [
+      20,
+      20
+    ],
+    "update_frequency": 1000,
+    "state_variables": 27,
+    "synchronization_enabled": true
+  },
+  "timestamp": "2025-07-05T16:22:04.834697",
+  "message_id": "3ab4ff1b"
+}

@@ -1,0 +1,17 @@
+{
+  "source_framework": "lqg_ftl",
+  "target_framework": "enhanced_sim",
+  "message_type": "digital_twin_configuration",
+  "payload": {
+    "ftl_metrics": [
+      "alcubierre",
+      "van_den_broeck",
+      "natario"
+    ],
+    "precision_requirements": 6e-14,
+    "alpha_enhancement": 10.0,
+    "zero_exotic_requirement": true
+  },
+  "timestamp": "2025-07-05T16:22:04.833653",
+  "message_id": "e124195c"
+}
