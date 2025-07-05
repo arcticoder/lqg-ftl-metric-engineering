@@ -1,2 +1,36 @@
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+.venv
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# Data and plots
+*.png
+*.jpg
+*.pdf
+!docs/*.png
+!docs/*.pdf
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.temp
