@@ -103,7 +103,7 @@ This repository implements validated UQ frameworks with rigorous technical imple
 
 ## License
 
-MIT License - See LICENSE file for details
+The Unlicense - See LICENSE file for details
 
 ## Citations
 
