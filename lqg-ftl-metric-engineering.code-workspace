@@ -5,6 +5,10 @@
 			"path": "."
 		},
 		{
+			"name": "energy",
+			"path": "../energy"
+		},
+		{
 			"name": "lqg-first-principles-gravitational-constant",
 			"path": "../lqg-first-principles-gravitational-constant"
 		},
