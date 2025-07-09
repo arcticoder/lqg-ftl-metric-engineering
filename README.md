@@ -1,5 +1,15 @@
 # LQG FTL Metric Engineering
 
+## Related Repositories
+
+- [energy](https://github.com/arcticoder/energy): Central meta-repo for all energy and FTL research. This FTL framework is a flagship technology of the energy ecosystem.
+- [unified-lqg](https://github.com/arcticoder/unified-lqg): Core LQG framework providing quantum geometry foundation and polymer corrections for zero-exotic-energy FTL.
+- [warp-field-coils](https://github.com/arcticoder/warp-field-coils): Primary integration for production-ready FTL warp field generation and control systems.
+- [polymerized-lqg-matter-transporter](https://github.com/arcticoder/polymerized-lqg-matter-transporter): Provides matter transport capabilities for FTL spacecraft with 24.2 billion× enhancement.
+- [artificial-gravity-field-generator](https://github.com/arcticoder/artificial-gravity-field-generator): Critical safety system for FTL operations providing artificial gravity and inertial compensation.
+
+All repositories are part of the [arcticoder](https://github.com/arcticoder) ecosystem and link back to the energy framework for unified documentation and integration.
+
 **Revolutionary Zero Exotic Energy Framework for Faster-Than-Light Travel**
 
 🚀 **BREAKTHROUGH ACHIEVED**: Zero exotic energy FTL with 24.2 billion times sub-classical enhancement
