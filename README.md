@@ -3,6 +3,7 @@
 ## Related Repositories
 
 - [energy](https://github.com/arcticoder/energy): Central meta-repo for all energy and FTL research. This FTL framework is a flagship technology of the energy ecosystem.
+- [enhanced-simulation-hardware-abstraction-framework](https://github.com/arcticoder/enhanced-simulation-hardware-abstraction-framework): Revolutionary FTL-capable hull design framework with naval architecture integration achieving 48c superluminal operations, providing structural engineering for FTL spacecraft.
 - [unified-lqg](https://github.com/arcticoder/unified-lqg): Core LQG framework providing quantum geometry foundation and polymer corrections for zero-exotic-energy FTL.
 - [warp-field-coils](https://github.com/arcticoder/warp-field-coils): Primary integration for production-ready FTL warp field generation and control systems.
 - [polymerized-lqg-matter-transporter](https://github.com/arcticoder/polymerized-lqg-matter-transporter): Provides matter transport capabilities for FTL spacecraft with 24.2 billion× enhancement.
