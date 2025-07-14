@@ -1,5 +1,5 @@
 {
-  "analysis_timestamp": "2025-07-14T15:54:44.136308",
+  "analysis_timestamp": "2025-07-14T16:11:48.124284",
   "vessel_specifications": {
     "diameter_m": 200.0,
     "height_m": 24.0,
@@ -16,10 +16,10 @@
   },
   "smear_time_summary": {
     "scenarios_analyzed": 10,
-    "comfortable_scenarios": 0,
+    "comfortable_scenarios": 10,
     "min_smear_time_hours": 0.25,
     "max_smear_time_hours": 48.0,
-    "avg_tidal_force_g": 6.427843224073614,
+    "avg_tidal_force_g": 0.0043355594411624105,
     "optimal_acceleration_rate": 0.021
   },
   "performance_tables": {
@@ -165,8 +165,9 @@
         "velocity_end_c": 10.0,
         "coordinate_velocity_range_c": 9.0,
         "positive_energy_required_J": 2.11275e+57,
-        "average_tidal_force_g": 6.148745810639323,
-        "comfort_rating": "UNCOMFORTABLE",
+        "energy_vs_passenger_jet_flights": 2.0314903846153846e+45,
+        "average_tidal_force_g": 0.008653613335402812,
+        "comfort_rating": "EXCELLENT",
         "acceleration_duration_min": 2.25,
         "smear_efficiency": 170.39403620873267
       },
@@ -177,8 +178,9 @@
         "velocity_end_c": 20.0,
         "coordinate_velocity_range_c": 19.0,
         "positive_energy_required_J": 1.8832166666666668e+58,
-        "average_tidal_force_g": 8.400250907889534,
-        "comfort_rating": "UNCOMFORTABLE",
+        "energy_vs_passenger_jet_flights": 1.8107852564102566e+46,
+        "average_tidal_force_g": 0.009881222216763975,
+        "comfort_rating": "EXCELLENT",
         "acceleration_duration_min": 9.5,
         "smear_efficiency": 20.1782411299815
       },
@@ -189,8 +191,9 @@
         "velocity_end_c": 30.0,
         "coordinate_velocity_range_c": 29.0,
         "positive_energy_required_J": 8.774433333333333e+58,
-        "average_tidal_force_g": 7.246338260216856,
-        "comfort_rating": "UNCOMFORTABLE",
+        "energy_vs_passenger_jet_flights": 8.436955128205128e+46,
+        "average_tidal_force_g": 0.007537362372481497,
+        "comfort_rating": "EXCELLENT",
         "acceleration_duration_min": 29.0,
         "smear_efficiency": 3.3050567368073147
       },
@@ -201,8 +204,9 @@
         "velocity_end_c": 50.0,
         "coordinate_velocity_range_c": 49.0,
         "positive_energy_required_J": 5.010086666666666e+59,
-        "average_tidal_force_g": 6.54580768739456,
-        "comfort_rating": "UNCOMFORTABLE",
+        "energy_vs_passenger_jet_flights": 4.817391025641025e+47,
+        "average_tidal_force_g": 0.005271141298540994,
+        "comfort_rating": "EXCELLENT",
         "acceleration_duration_min": 98.0,
         "smear_efficiency": 0.4890134967725109
       },
@@ -213,8 +217,9 @@
         "velocity_end_c": 100.0,
         "coordinate_velocity_range_c": 99.0,
         "positive_energy_required_J": 9.439116923076923e+59,
-        "average_tidal_force_g": 6.8286959997034815,
-        "comfort_rating": "UNCOMFORTABLE",
+        "energy_vs_passenger_jet_flights": 9.07607396449704e+47,
+        "average_tidal_force_g": 0.0036829146249704654,
+        "comfort_rating": "EXCELLENT",
         "acceleration_duration_min": 396.0,
         "smear_efficiency": 0.26220673185529414
       },
@@ -225,8 +230,9 @@
         "velocity_end_c": 150.0,
         "coordinate_velocity_range_c": 149.0,
         "positive_energy_required_J": 2.22365216e+60,
-        "average_tidal_force_g": 6.796873730621008,
-        "comfort_rating": "UNCOMFORTABLE",
+        "energy_vs_passenger_jet_flights": 2.138127076923077e+48,
+        "average_tidal_force_g": 0.0028466729589345196,
+        "comfort_rating": "EXCELLENT",
         "acceleration_duration_min": 892.2155688622754,
         "smear_efficiency": 0.11167813824502719
       },
@@ -237,8 +243,9 @@
         "velocity_end_c": 200.0,
         "coordinate_velocity_range_c": 199.0,
         "positive_energy_required_J": 4.020036648648648e+60,
-        "average_tidal_force_g": 6.686782550088831,
-        "comfort_rating": "UNCOMFORTABLE",
+        "energy_vs_passenger_jet_flights": 3.865419854469854e+48,
+        "average_tidal_force_g": 0.0023337477310409935,
+        "comfort_rating": "EXCELLENT",
         "acceleration_duration_min": 1592.0,
         "smear_efficiency": 0.061877545341189444
       },
@@ -249,8 +256,9 @@
         "velocity_end_c": 300.0,
         "coordinate_velocity_range_c": 299.0,
         "positive_energy_required_J": 9.17459442622951e+60,
-        "average_tidal_force_g": 6.448010271669504,
-        "comfort_rating": "UNCOMFORTABLE",
+        "energy_vs_passenger_jet_flights": 8.821725409836067e+48,
+        "average_tidal_force_g": 0.0017378175586478732,
+        "comfort_rating": "EXCELLENT",
         "acceleration_duration_min": 3602.4096385542166,
         "smear_efficiency": 0.02715833039489102
       },
@@ -261,8 +269,9 @@
         "velocity_end_c": 500.0,
         "coordinate_velocity_range_c": 499.0,
         "positive_energy_required_J": 2.578377272180451e+61,
-        "average_tidal_force_g": 4.7960316732204165,
-        "comfort_rating": "UNCOMFORTABLE",
+        "energy_vs_passenger_jet_flights": 2.479208915558126e+49,
+        "average_tidal_force_g": 0.0008920274513051153,
+        "comfort_rating": "EXCELLENT",
         "acceleration_duration_min": 11880.95238095238,
         "smear_efficiency": 0.008063857407912932
       },
@@ -273,8 +282,9 @@
         "velocity_end_c": 1000.0,
         "coordinate_velocity_range_c": 999.0,
         "positive_energy_required_J": 1.03748869299639e+62,
-        "average_tidal_force_g": 4.380895349292622,
-        "comfort_rating": "UNCOMFORTABLE",
+        "energy_vs_passenger_jet_flights": 9.97585281727298e+49,
+        "average_tidal_force_g": 0.0005190748635358599,
+        "comfort_rating": "EXCELLENT",
         "acceleration_duration_min": 47571.428571428565,
         "smear_efficiency": 0.0020060459589097824
       }
@@ -338,5 +348,5 @@
       }
     ]
   },
-  "analysis_duration_seconds": 0.043419
+  "analysis_duration_seconds": 1.566932
 }
