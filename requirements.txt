@@ -6,6 +6,7 @@ matplotlib>=3.7.0
 # Data analysis and statistics
 pandas>=2.0.0
 statsmodels>=0.14.0
+seaborn>=0.12.0
 
 # Uncertainty quantification
 pymc>=5.0.0
@@ -18,6 +19,11 @@ slycot>=0.5.0
 # Optimization
 scikit-optimize>=0.9.0
 optuna>=3.0.0
+
+# Additional dependencies for velocity analysis
+pathlib2>=2.3.0
+dataclasses>=0.8.0
+enum34>=1.1.10
 
 # Machine learning (for advanced UQ)
 scikit-learn>=1.3.0
