@@ -546,17 +546,325 @@
             document.getElementById('room-info').style.display = 'none';
         }
 
-        // Load deck plans data
-        async function loadDeckPlans() {
-            try {
-                const response = await fetch('optimized_deck_plans.json');
-                deckPlansData = await response.json();
-                console.log('Loaded optimized deck plans:', deckPlansData);
-                setupDeckButtons();
-                render();
-            } catch (error) {
-                console.error('Failed to load deck plans:', error);
-            }
+        // Embedded deck plans data (avoids CORS issues)
+        function loadDeckPlans() {
+            deckPlansData = {
+  "metadata": {
+    "framework": "Ship Hull Geometry Framework",
+    "version": "2.0.0 - Optimization-Based",
+    "generation_date": "2025-07-13",
+    "crew_optimization": {
+      "total_crew": 99,
+      "operational_crew": 36,
+      "diplomatic_passengers": 63,
+      "breakdown": {
+        "command": 1,
+        "engineering": 14,
+        "medical": 8,
+        "science": 7,
+        "maintenance": 4,
+        "security": 1,
+        "support": 1,
+        "ambassadors": 4,
+        "senior_diplomats": 8,
+        "diplomatic_staff": 26,
+        "security_detail": 8,
+        "technical_advisors": 10,
+        "cultural_attaches": 4
+      }
+    },
+    "economic_performance": {
+      "roi": "249.05%",
+      "net_profit": "$512.59M",
+      "mission_type": "diplomatic"
+    }
+  },
+  "ship_specifications": {
+    "length": 300.0,
+    "beam": 50.0,
+    "height": 40.0,
+    "total_decks": 13,
+    "deck_spacing": 3.3333333333333335
+  },
+  "deck_plans": [
+    {
+      "name": "Deck_13",
+      "level": 20.0,
+      "function": "Command & VIP Lounge",
+      "total_occupancy": 1,
+      "boundary": [[105.0, 0.0], [102.98, 4.88], [97.01, 9.57], [87.30, 13.89], [74.25, 17.68], [58.33, 20.79], [40.18, 23.10], [20.48, 24.52], [0.0, 25.0], [-20.48, 24.52], [-40.18, 23.10], [-58.33, 20.79], [-74.25, 17.68], [-87.30, 13.89], [-97.01, 9.57], [-102.98, 4.88], [-105.0, 0.0], [-102.98, -4.88], [-97.01, -9.57], [-87.30, -13.89], [-74.25, -17.68], [-58.33, -20.79], [-40.18, -23.10], [-20.48, -24.52], [0.0, -25.0], [20.48, -24.52], [40.18, -23.10], [58.33, -20.79], [74.25, -17.68], [87.30, -13.89], [97.01, -9.57], [102.98, -4.88]],
+      "rooms": [
+        {
+          "id": "bridge",
+          "type": "bridge",
+          "name": "Main Bridge",
+          "center": [0, 0],
+          "area": 150.0,
+          "boundary": [[-9.49, -7.75], [9.49, -7.75], [9.49, 7.75], [-9.49, 7.75]],
+          "occupancy": 12,
+          "privacy_level": "high",
+          "amenities": ["command_stations", "navigation", "communications", "tactical"]
+        },
+        {
+          "id": "captain_ready",
+          "type": "office",
+          "name": "Captain's Ready Room",
+          "center": [-30, 0],
+          "area": 30.0,
+          "boundary": [[-4.24, -3.54], [4.24, -3.54], [4.24, 3.54], [-4.24, 3.54]],
+          "occupancy": 1,
+          "privacy_level": "vip",
+          "amenities": ["private_office", "secure_comm", "meeting_space"]
+        },
+        {
+          "id": "vip_lounge",
+          "type": "lounge",
+          "name": "VIP Diplomatic Lounge",
+          "center": [50, 0],
+          "area": 100.0,
+          "boundary": [[-7.75, -6.45], [7.75, -6.45], [7.75, 6.45], [-7.75, 6.45]],
+          "occupancy": 20,
+          "privacy_level": "vip",
+          "amenities": ["luxury_seating", "observation_windows", "refreshments"]
+        }
+      ],
+      "corridors": []
+    },
+    {
+      "name": "Deck_12",
+      "level": 16.7,
+      "function": "VIP Diplomatic Quarters",
+      "total_occupancy": 12,
+      "boundary": [[105.0, 0.0], [102.98, 4.88], [97.01, 9.57], [87.30, 13.89], [74.25, 17.68], [58.33, 20.79], [40.18, 23.10], [20.48, 24.52], [0.0, 25.0], [-20.48, 24.52], [-40.18, 23.10], [-58.33, 20.79], [-74.25, 17.68], [-87.30, 13.89], [-97.01, 9.57], [-102.98, 4.88], [-105.0, 0.0], [-102.98, -4.88], [-97.01, -9.57], [-87.30, -13.89], [-74.25, -17.68], [-58.33, -20.79], [-40.18, -23.10], [-20.48, -24.52], [0.0, -25.0], [20.48, -24.52], [40.18, -23.10], [58.33, -20.79], [74.25, -17.68], [87.30, -13.89], [97.01, -9.57], [102.98, -4.88]],
+      "rooms": [
+        {
+          "id": "amb_suite_01",
+          "type": "vip_quarters",
+          "name": "Ambassador Suite 1",
+          "center": [-60, 15],
+          "area": 50.0,
+          "boundary": [[-5.48, -4.56], [5.48, -4.56], [5.48, 4.56], [-5.48, 4.56]],
+          "occupancy": 1,
+          "privacy_level": "vip",
+          "amenities": ["private_bathroom", "office_space", "secure_comm", "luxury_furnishing"]
+        },
+        {
+          "id": "amb_suite_02",
+          "type": "vip_quarters",
+          "name": "Ambassador Suite 2",
+          "center": [-20, -15],
+          "area": 50.0,
+          "boundary": [[-5.48, -4.56], [5.48, -4.56], [5.48, 4.56], [-5.48, 4.56]],
+          "occupancy": 1,
+          "privacy_level": "vip",
+          "amenities": ["private_bathroom", "office_space", "secure_comm", "luxury_furnishing"]
+        },
+        {
+          "id": "amb_suite_03",
+          "type": "vip_quarters",
+          "name": "Ambassador Suite 3",
+          "center": [20, 15],
+          "area": 50.0,
+          "boundary": [[-5.48, -4.56], [5.48, -4.56], [5.48, 4.56], [-5.48, 4.56]],
+          "occupancy": 1,
+          "privacy_level": "vip",
+          "amenities": ["private_bathroom", "office_space", "secure_comm", "luxury_furnishing"]
+        },
+        {
+          "id": "amb_suite_04",
+          "type": "vip_quarters",
+          "name": "Ambassador Suite 4",
+          "center": [60, -15],
+          "area": 50.0,
+          "boundary": [[-5.48, -4.56], [5.48, -4.56], [5.48, 4.56], [-5.48, 4.56]],
+          "occupancy": 1,
+          "privacy_level": "vip",
+          "amenities": ["private_bathroom", "office_space", "secure_comm", "luxury_furnishing"]
+        },
+        {
+          "id": "vip_dining",
+          "type": "dining",
+          "name": "VIP Diplomatic Dining",
+          "center": [0, 0],
+          "area": 100.0,
+          "boundary": [[-7.75, -6.45], [7.75, -6.45], [7.75, 6.45], [-7.75, 6.45]],
+          "occupancy": 20,
+          "privacy_level": "standard",
+          "amenities": ["formal_dining", "cultural_kitchen", "wine_storage"]
+        }
+      ],
+      "corridors": []
+    },
+    {
+      "name": "Deck_11",
+      "level": 13.3,
+      "function": "Diplomatic Staff Quarters",
+      "total_occupancy": 13,
+      "boundary": [[105.0, 0.0], [102.98, 4.88], [97.01, 9.57], [87.30, 13.89], [74.25, 17.68], [58.33, 20.79], [40.18, 23.10], [20.48, 24.52], [0.0, 25.0], [-20.48, 24.52], [-40.18, 23.10], [-58.33, 20.79], [-74.25, 17.68], [-87.30, 13.89], [-97.01, 9.57], [-102.98, 4.88], [-105.0, 0.0], [-102.98, -4.88], [-97.01, -9.57], [-87.30, -13.89], [-74.25, -17.68], [-58.33, -20.79], [-40.18, -23.10], [-20.48, -24.52], [0.0, -25.0], [20.48, -24.52], [40.18, -23.10], [58.33, -20.79], [74.25, -17.68], [87.30, -13.89], [97.01, -9.57], [102.98, -4.88]],
+      "rooms": [
+        {
+          "id": "dipl_staff_01",
+          "type": "diplomatic_quarters",
+          "name": "Diplomatic Staff 1",
+          "center": [-75, -10],
+          "area": 20.0,
+          "boundary": [[-3.46, -2.89], [3.46, -2.89], [3.46, 2.89], [-3.46, 2.89]],
+          "occupancy": 1,
+          "privacy_level": "high",
+          "amenities": ["private_bathroom", "workspace", "secure_comm"]
+        },
+        {
+          "id": "conference_center",
+          "type": "conference",
+          "name": "Diplomatic Conference Center",
+          "center": [80, 15],
+          "area": 120.0,
+          "boundary": [[-8.49, -7.07], [8.49, -7.07], [8.49, 7.07], [-8.49, 7.07]],
+          "occupancy": 50,
+          "privacy_level": "high",
+          "amenities": ["presentation_equipment", "translation_services", "recording"]
+        }
+      ],
+      "corridors": []
+    },
+    {
+      "name": "Deck_10",
+      "level": 10.0,
+      "function": "Diplomatic Staff Quarters",
+      "total_occupancy": 13,
+      "boundary": [[105.0, 0.0], [102.98, 4.88], [97.01, 9.57], [87.30, 13.89], [74.25, 17.68], [58.33, 20.79], [40.18, 23.10], [20.48, 24.52], [0.0, 25.0], [-20.48, 24.52], [-40.18, 23.10], [-58.33, 20.79], [-74.25, 17.68], [-87.30, 13.89], [-97.01, 9.57], [-102.98, 4.88], [-105.0, 0.0], [-102.98, -4.88], [-97.01, -9.57], [-87.30, -13.89], [-74.25, -17.68], [-58.33, -20.79], [-40.18, -23.10], [-20.48, -24.52], [0.0, -25.0], [20.48, -24.52], [40.18, -23.10], [58.33, -20.79], [74.25, -17.68], [87.30, -13.89], [97.01, -9.57], [102.98, -4.88]],
+      "rooms": [
+        {
+          "id": "staff_lounge",
+          "type": "lounge",
+          "name": "Diplomatic Staff Lounge",
+          "center": [50, 0],
+          "area": 80.0,
+          "boundary": [[-6.93, -5.77], [6.93, -5.77], [6.93, 5.77], [-6.93, 5.77]],
+          "occupancy": 25,
+          "privacy_level": "standard",
+          "amenities": ["meeting_space", "recreation", "refreshments"]
+        }
+      ],
+      "corridors": []
+    },
+    {
+      "name": "Deck_9",
+      "level": 6.7,
+      "function": "Crew Quarters",
+      "total_occupancy": 18,
+      "boundary": [[105.0, 0.0], [102.98, 4.88], [97.01, 9.57], [87.30, 13.89], [74.25, 17.68], [58.33, 20.79], [40.18, 23.10], [20.48, 24.52], [0.0, 25.0], [-20.48, 24.52], [-40.18, 23.10], [-58.33, 20.79], [-74.25, 17.68], [-87.30, 13.89], [-97.01, 9.57], [-102.98, 4.88], [-105.0, 0.0], [-102.98, -4.88], [-97.01, -9.57], [-87.30, -13.89], [-74.25, -17.68], [-58.33, -20.79], [-40.18, -23.10], [-20.48, -24.52], [0.0, -25.0], [20.48, -24.52], [40.18, -23.10], [58.33, -20.79], [74.25, -17.68], [87.30, -13.89], [97.01, -9.57], [102.98, -4.88]],
+      "rooms": [
+        {
+          "id": "security_01",
+          "type": "crew_quarters",
+          "name": "Security 1",
+          "center": [-87.5, -15],
+          "area": 15.0,
+          "boundary": [[-3.0, -2.5], [3.0, -2.5], [3.0, 2.5], [-3.0, 2.5]],
+          "occupancy": 1,
+          "privacy_level": "standard",
+          "amenities": ["private_bathroom", "storage", "personal_workspace"]
+        },
+        {
+          "id": "crew_common",
+          "type": "common",
+          "name": "Crew Common Room",
+          "center": [70, 0],
+          "area": 60.0,
+          "boundary": [[-6.0, -5.0], [6.0, -5.0], [6.0, 5.0], [-6.0, 5.0]],
+          "occupancy": 20,
+          "privacy_level": "standard",
+          "amenities": ["recreation", "dining", "meeting_space"]
+        }
+      ],
+      "corridors": []
+    },
+    {
+      "name": "Deck_8",
+      "level": 3.3,
+      "function": "Support Staff & Recreation",
+      "total_occupancy": 4,
+      "boundary": [[105.0, 0.0], [102.98, 4.88], [97.01, 9.57], [87.30, 13.89], [74.25, 17.68], [58.33, 20.79], [40.18, 23.10], [20.48, 24.52], [0.0, 25.0], [-20.48, 24.52], [-40.18, 23.10], [-58.33, 20.79], [-74.25, 17.68], [-87.30, 13.89], [-97.01, 9.57], [-102.98, 4.88], [-105.0, 0.0], [-102.98, -4.88], [-97.01, -9.57], [-87.30, -13.89], [-74.25, -17.68], [-58.33, -20.79], [-40.18, -23.10], [-20.48, -24.52], [0.0, -25.0], [20.48, -24.52], [40.18, -23.10], [58.33, -20.79], [74.25, -17.68], [87.30, -13.89], [97.01, -9.57], [102.98, -4.88]],
+      "rooms": [
+        {
+          "id": "cultural_01",
+          "type": "diplomatic_quarters",
+          "name": "Cultural Attaché 1",
+          "center": [-80, 15],
+          "area": 15.0,
+          "boundary": [[-3.0, -2.5], [3.0, -2.5], [3.0, 2.5], [-3.0, 2.5]],
+          "occupancy": 1,
+          "privacy_level": "standard",
+          "amenities": ["private_bathroom", "cultural_workspace"]
+        },
+        {
+          "id": "recreation_center",
+          "type": "recreation",
+          "name": "Main Recreation Center",
+          "center": [0, 0],
+          "area": 200.0,
+          "boundary": [[-10.95, -9.13], [10.95, -9.13], [10.95, 9.13], [-10.95, 9.13]],
+          "occupancy": 50,
+          "privacy_level": "standard",
+          "amenities": ["entertainment", "games", "social_space", "cultural_programs"]
+        }
+      ],
+      "corridors": []
+    },
+    {
+      "name": "Deck_7",
+      "level": 0.0,
+      "function": "Main Operations & Senior Crew",
+      "total_occupancy": 3,
+      "boundary": [[105.0, 0.0], [102.98, 4.88], [97.01, 9.57], [87.30, 13.89], [74.25, 17.68], [58.33, 20.79], [40.18, 23.10], [20.48, 24.52], [0.0, 25.0], [-20.48, 24.52], [-40.18, 23.10], [-58.33, 20.79], [-74.25, 17.68], [-87.30, 13.89], [-97.01, 9.57], [-102.98, 4.88], [-105.0, 0.0], [-102.98, -4.88], [-97.01, -9.57], [-87.30, -13.89], [-74.25, -17.68], [-58.33, -20.79], [-40.18, -23.10], [-20.48, -24.52], [0.0, -25.0], [20.48, -24.52], [40.18, -23.10], [58.33, -20.79], [74.25, -17.68], [87.30, -13.89], [97.01, -9.57], [102.98, -4.88]],
+      "rooms": [
+        {
+          "id": "captain_quarters",
+          "type": "senior_quarters",
+          "name": "Captain Quarters",
+          "center": [-60, 15],
+          "area": 25.0,
+          "boundary": [[-3.87, -3.23], [3.87, -3.23], [3.87, 3.23], [-3.87, 3.23]],
+          "occupancy": 1,
+          "privacy_level": "high",
+          "amenities": ["private_bathroom", "office_space", "luxury_amenities"]
+        },
+        {
+          "id": "operations_center",
+          "type": "operations",
+          "name": "Mission Operations Center",
+          "center": [0, 0],
+          "area": 120.0,
+          "boundary": [[-8.49, -7.07], [8.49, -7.07], [8.49, 7.07], [-8.49, 7.07]],
+          "occupancy": 15,
+          "privacy_level": "standard",
+          "amenities": ["mission_control", "communications", "monitoring", "coordination"]
+        },
+        {
+          "id": "medical_bay",
+          "type": "medical",
+          "name": "Comprehensive Medical Bay",
+          "center": [70, 0],
+          "area": 180.0,
+          "boundary": [[-10.39, -8.66], [10.39, -8.66], [10.39, 8.66], [-10.39, 8.66]],
+          "occupancy": 20,
+          "privacy_level": "high",
+          "amenities": ["surgery_suite", "diagnostic_equipment", "patient_care", "pharmacy"]
+        }
+      ],
+      "corridors": []
+    }
+  ],
+  "validation": {
+    "total_planned_occupancy": 99,
+    "target_crew": 99,
+    "occupancy_match": true
+  }
+};
+            console.log('Loaded embedded deck plans:', deckPlansData);
+            setupDeckButtons();
+            render();
         }
 
         function setupDeckButtons() {
