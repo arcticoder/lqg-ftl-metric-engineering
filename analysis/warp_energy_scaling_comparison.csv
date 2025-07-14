@@ -1,0 +1,6 @@
+Scenario,Volume (m³),Distance (km),Velocity (c),Energy (J),vs Jet Flight
+Minimal Test,1,1,0.01,0.00e+00,0.0e+00×
+Small Probe,10,10,0.01,1.00e+07,9.6e-06×
+Large Probe,100,100,0.01,2.00e+08,1.9e-04×
+Small Vehicle,1000,1000,0.01,3.00e+09,2.9e-03×
+Higher Speed,1,1,0.1,0.00e+00,0.0e+00×
