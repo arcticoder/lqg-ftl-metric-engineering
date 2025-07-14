@@ -210,6 +210,47 @@ UQ_Resolution = Resolved_Concerns / Total_Concerns = 5/5 = 100%
 - `SUB_CLASSICAL_BREAKTHROUGH_COMPLETE.md` - Achievement summary
 - `UQ_RESOLUTION_COMPLETE.md` - Quality assurance report
 
+## File Organization and Structure
+
+### Source Code Organization
+
+#### Core Framework (`src/`)
+- `src/hull_geometry_generator.py` - Physics-informed hull geometry generation with Alcubierre constraints
+- `src/obj_mesh_generator.py` - WebGL-optimized OBJ mesh generation and export
+- `src/deck_plan_extractor.py` - Automated deck plan extraction and room detection
+- `src/browser_visualization.py` - Interactive WebGL browser visualization
+- `src/ship_hull_geometry_framework.py` - Complete 4-phase framework integration
+- `src/ship_hull_geometry_framework_complete.py` - Production-ready complete implementation
+- `src/traversable_geometries.py` - Bobrick-Martire and Morris-Thorne geometry implementations
+- `src/zero_exotic_energy_framework.py` - Zero exotic energy LQG framework
+- `src/constants.py` - Physical constants and LQG parameters
+- `src/demo_ship_hull_geometry.py` - Ship hull geometry demonstration script
+- `src/demo_traversable_geometries.py` - Traversable geometry demonstration
+- `src/demo_enhanced_zero_exotic_energy.py` - Zero exotic energy demonstration
+- `src/optimized_deck_plan_generator.py` - Optimized deck plan generation
+- `src/__init__.py` - Source package initialization
+
+#### Analysis Framework (`analysis/`)
+- `analysis/breakthrough_analysis.py` - Technical breakthrough analysis and validation
+- `analysis/energy_comparison_analysis.py` - Energy comparison between classical and LQG approaches
+- `analysis/excitement_assessment.py` - Technical excitement and impact assessment
+- `analysis/final_excitement_level.py` - Final implementation excitement evaluation
+- `analysis/water_lifting_energy_comparison.py` - Water lifting energy comparison demonstration
+- `analysis/sub_classical_energy_framework.py` - Sub-classical energy achievement framework
+
+#### Validation Framework (`validation/`)
+- `validation/validate_sub_classical_energy.py` - Sub-classical energy validation
+- `validation/validate_uq_resolution.py` - Uncertainty quantification resolution validation
+- `validation/critical_uq_resolution_validation.py` - Critical UQ resolution validation
+
+#### Output Files Generated
+- **Hull Geometry**: `hull_demo_output_*/` - Generated hull geometry and analysis
+- **Deck Plans**: `optimized_deck_plans.json` - Optimized deck plan specifications
+- **Reports**: Various `.txt` and `.json` files with analysis results
+- **UQ Data**: `UQ-TODO-RESOLVED*.ndjson` - Uncertainty quantification resolution tracking
+
+### Integration Points
+
 ## Performance Metrics
 
 | Metric | Value | Improvement |
