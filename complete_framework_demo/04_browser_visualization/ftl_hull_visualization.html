@@ -62,7 +62,7 @@
         #info-panel {
             position: absolute;
             bottom: 20px;
-            left: 20px;
+            right: 20px;
             background: rgba(0, 0, 0, 0.8);
             border: 1px solid #333;
             border-radius: 8px;
@@ -7966,14 +7966,14 @@
   ],
   "rendering_config": {
     "ambient_color": [
-      0.1,
-      0.1,
-      0.12
+      0.4,
+      0.4,
+      0.5
     ],
     "diffuse_color": [
-      0.3,
-      0.35,
-      0.4
+      0.6,
+      0.7,
+      0.8
     ],
     "specular_color": [
       0.8,
@@ -8029,6 +8029,8 @@
         
         function createShaderProgram() {
             const vertexShader = createShader(gl.VERTEX_SHADER, `
+        precision mediump float;
+        
         attribute vec3 aVertexPosition;
         attribute vec3 aVertexNormal;
         attribute vec2 aTextureCoord;
@@ -8051,9 +8053,9 @@
             vec3 position = aVertexPosition;
             float warpFactor = uWarpVelocity / 48.0;
             
-            // Alcubierre-inspired spatial distortion
+            // Alcubierre-inspired spatial distortion (reduced intensity)
             float r = length(position);
-            float warpDistortion = sin(uTime * 2.0 + r * 0.01) * warpFactor * 0.1;
+            float warpDistortion = sin(uTime * 0.5 + r * 0.005) * warpFactor * 0.02;
             position.z += warpDistortion;
             
             gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(position, 1.0);
@@ -8082,16 +8084,16 @@
         uniform float uTime;
         
         void main(void) {
-            // Base material color based on thickness
+            // Base material color based on thickness (brighter colors)
             vec3 baseColor = mix(
-                vec3(0.3, 0.35, 0.4),  // Thin areas (blue-gray)
-                vec3(0.4, 0.3, 0.2),   // Thick areas (brown)
+                vec3(0.6, 0.7, 0.8),  // Thin areas (light blue-gray)
+                vec3(0.7, 0.6, 0.4),   // Thick areas (light brown)
                 clamp(vThickness / 3.0, 0.0, 1.0)
             );
             
-            // Warp field energy glow
-            float warpGlow = vWarpEffect * sin(uTime * 3.0 + length(vWorldPosition) * 0.02) * 0.5 + 0.5;
-            vec3 warpColor = vec3(0.2, 0.6, 1.0) * warpGlow * vWarpEffect;
+            // Warp field energy glow (more visible)
+            float warpGlow = vWarpEffect * sin(uTime * 1.0 + length(vWorldPosition) * 0.005) * 0.3 + 0.7;
+            vec3 warpColor = vec3(0.2, 0.5, 0.9) * warpGlow * vWarpEffect * 0.8;
             
             // Lighting calculation
             vec3 normal = normalize(vNormal);
@@ -8195,18 +8197,21 @@
                 deckControls.appendChild(button);
             });
         }
-        
-        function showDeck(deckIndex) {
+          function showDeck(deckIndex) {
             currentDeck = deckIndex;
-            
+
             // Update button states
             const buttons = document.querySelectorAll('.deck-button');
             buttons.forEach((btn, index) => {
                 btn.classList.remove('active');
-                if (index === deckIndex + 1) {
+                // Hull Only button is first (index 0), deck buttons start at index 1
+                if ((deckIndex === -1 && index === 0) || (deckIndex >= 0 && index === deckIndex + 1)) {
                     btn.classList.add('active');
                 }
             });
+            
+            // Visual feedback
+            console.log(`Switched to ${deckIndex === -1 ? 'Hull Only' : hullData.deck_plans[deckIndex].name} view`);
         }
         
         function updateHullParameter(parameter, value) {
@@ -8238,8 +8243,15 @@ document.getElementById('safety_factor').value = 5.0;document.getElementById('sa
             const projectionMatrix = perspective(45, 
                 1200 / 800, 
                 0.1, 10000.0);
-                
-            const modelViewMatrix = lookAt(camera.x, camera.y, camera.z, 0, 0, 0, 0, 1, 0);
+                  // Create model view matrix with proper camera rotation
+            let modelViewMatrix;
+            if (currentDeck === -1) {
+                // Normal 3D view
+                modelViewMatrix = lookAt(camera.x, camera.y, camera.z, 0, 0, 0, 0, 1, 0);
+            } else {
+                // Top-down deck view
+                modelViewMatrix = lookAt(0, 800, 0, 0, 0, 0, 0, 0, -1);
+            }
             
             // Use shader program
             gl.useProgram(shaderProgram);
@@ -8250,16 +8262,22 @@ document.getElementById('safety_factor').value = 5.0;document.getElementById('sa
             gl.uniform1f(shaderProgram.timeUniform, animationTime);
             gl.uniform1f(shaderProgram.warpVelocityUniform, 
                 parseFloat(document.getElementById('warp_velocity').value));
-            
+
             // Lighting uniforms
             gl.uniform3fv(shaderProgram.lightDirectionUniform, [1.0, 1.0, 1.0]);
             gl.uniform3fv(shaderProgram.ambientColorUniform, hullData.rendering_config.ambient_color);
             gl.uniform3fv(shaderProgram.diffuseColorUniform, hullData.rendering_config.diffuse_color);
             gl.uniform3fv(shaderProgram.specularColorUniform, hullData.rendering_config.specular_color);
             gl.uniform1f(shaderProgram.shininessUniform, hullData.rendering_config.shininess);
-            
-            // Bind and draw hull
-            drawHull();
+
+            // Draw based on current view mode
+            if (currentDeck === -1) {
+                // Draw full hull
+                drawHull();
+            } else {
+                // Draw deck plan
+                drawDeckPlan(currentDeck);
+            }
             
             requestAnimationFrame(animate);
         }
@@ -8288,6 +8306,144 @@ document.getElementById('safety_factor').value = 5.0;document.getElementById('sa
             // Bind indices and draw
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, hullBuffers.indices);
             gl.drawElements(gl.TRIANGLES, hullData.geometry.faces.length * 3, gl.UNSIGNED_SHORT, 0);
+        }
+        
+        function drawDeckPlan(deckIndex) {
+            if (!hullData.deck_plans[deckIndex]) return;
+            
+            const deck = hullData.deck_plans[deckIndex];
+            const level = deck.level;
+            
+            // Create deck plan geometry from boundary, rooms, and corridors
+            const deckVertices = [];
+            const deckIndices = [];
+            let vertexIndex = 0;
+            
+            // Draw deck boundary
+            if (deck.boundary && deck.boundary.length > 0) {
+                // Create boundary polygon
+                for (let i = 0; i < deck.boundary.length; i++) {
+                    const [x, z] = deck.boundary[i];
+                    deckVertices.push(x, level, z); // Use deck level as Y coordinate
+                }
+                
+                // Create triangulated boundary (simple fan triangulation)
+                for (let i = 1; i < deck.boundary.length - 1; i++) {
+                    deckIndices.push(0, i, i + 1);
+                }
+                vertexIndex = deck.boundary.length;
+            }
+            
+            // Draw rooms
+            if (deck.rooms) {
+                deck.rooms.forEach(room => {
+                    if (room.boundary && room.boundary.length > 0) {
+                        const roomStartIndex = vertexIndex;
+                        
+                        // Add room vertices
+                        for (let i = 0; i < room.boundary.length; i++) {
+                            const [x, z] = room.boundary[i];
+                            deckVertices.push(x, level + 0.1, z); // Slightly above deck level
+                        }
+                        
+                        // Triangulate room
+                        for (let i = 1; i < room.boundary.length - 1; i++) {
+                            deckIndices.push(roomStartIndex, roomStartIndex + i, roomStartIndex + i + 1);
+                        }
+                        vertexIndex += room.boundary.length;
+                    }
+                });
+            }
+            
+            // Draw corridors
+            if (deck.corridors) {
+                deck.corridors.forEach(corridor => {
+                    if (corridor.boundary && corridor.boundary.length > 0) {
+                        const corridorStartIndex = vertexIndex;
+                        
+                        // Add corridor vertices
+                        for (let i = 0; i < corridor.boundary.length; i++) {
+                            const [x, z] = corridor.boundary[i];
+                            deckVertices.push(x, level + 0.05, z); // Between deck and rooms
+                        }
+                        
+                        // Triangulate corridor
+                        for (let i = 1; i < corridor.boundary.length - 1; i++) {
+                            deckIndices.push(corridorStartIndex, corridorStartIndex + i, corridorStartIndex + i + 1);
+                        }
+                        vertexIndex += corridor.boundary.length;
+                    }
+                });
+            }
+            
+            if (deckVertices.length === 0) {
+                // No deck data, draw a simple placeholder
+                deckVertices.push(-50, level, -50, 50, level, -50, 50, level, 50, -50, level, 50);
+                deckIndices.push(0, 1, 2, 0, 2, 3);
+            }
+            
+            // Create temporary buffers for deck plan
+            const deckPositionBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, deckPositionBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(deckVertices), gl.STATIC_DRAW);
+            
+            const deckIndexBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, deckIndexBuffer);
+            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(deckIndices), gl.STATIC_DRAW);
+            
+            // Create simple normals (all pointing up)
+            const deckNormals = [];
+            for (let i = 0; i < deckVertices.length / 3; i++) {
+                deckNormals.push(0, 1, 0);
+            }
+            const deckNormalBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, deckNormalBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(deckNormals), gl.STATIC_DRAW);
+            
+            // Create texture coordinates
+            const deckTexCoords = [];
+            for (let i = 0; i < deckVertices.length / 3; i++) {
+                deckTexCoords.push(0, 0);
+            }
+            const deckTexCoordBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, deckTexCoordBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(deckTexCoords), gl.STATIC_DRAW);
+            
+            // Create thickness values
+            const deckThickness = [];
+            for (let i = 0; i < deckVertices.length / 3; i++) {
+                deckThickness.push(1.0);
+            }
+            const deckThicknessBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, deckThicknessBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(deckThickness), gl.STATIC_DRAW);
+            
+            // Bind and draw deck plan
+            gl.bindBuffer(gl.ARRAY_BUFFER, deckPositionBuffer);
+            gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+            gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+            
+            gl.bindBuffer(gl.ARRAY_BUFFER, deckNormalBuffer);
+            gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
+            gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, 3, gl.FLOAT, false, 0, 0);
+            
+            gl.bindBuffer(gl.ARRAY_BUFFER, deckTexCoordBuffer);
+            gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
+            gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, 2, gl.FLOAT, false, 0, 0);
+            
+            gl.bindBuffer(gl.ARRAY_BUFFER, deckThicknessBuffer);
+            gl.enableVertexAttribArray(shaderProgram.thicknessAttribute);
+            gl.vertexAttribPointer(shaderProgram.thicknessAttribute, 1, gl.FLOAT, false, 0, 0);
+            
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, deckIndexBuffer);
+            gl.drawElements(gl.TRIANGLES, deckIndices.length, gl.UNSIGNED_SHORT, 0);
+            
+            // Clean up temporary buffers
+            gl.deleteBuffer(deckPositionBuffer);
+            gl.deleteBuffer(deckIndexBuffer);
+            gl.deleteBuffer(deckNormalBuffer);
+            gl.deleteBuffer(deckTexCoordBuffer);
+            gl.deleteBuffer(deckThicknessBuffer);
         }
         
         // Matrix helper functions
