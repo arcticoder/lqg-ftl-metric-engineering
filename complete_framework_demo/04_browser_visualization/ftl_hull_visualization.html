@@ -996,46 +996,226 @@
             gl.enable(gl.BLEND);
             gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
             
-            // Draw hull outline if enabled
+            // Draw starship hull if enabled
             if (showHull) {
-                drawHullOutline();
+                drawStarshipHull();
             }
             
             // Draw deck plan if selected
             if (currentDeck !== -1 && showRooms) {
-                drawDeckPlan();
+                drawDetailedDeckPlan();
             }
         }
 
-        function drawHullOutline() {
-            if (!deckPlansData || !deckPlansData.deck_plans[0]) return;
-            
-            const boundary = deckPlansData.deck_plans[0].boundary;
-            if (!boundary) return;
-            
+        function drawStarshipHull() {
             const vertices = [];
             const colors = [];
             
-            // Create hull outline
-            for (let i = 0; i < boundary.length; i++) {
-                const current = boundary[i];
-                const next = boundary[(i + 1) % boundary.length];
-                
-                const scale = viewMode === 'top' ? 3 : 2;
-                
-                // Line from current to next
-                vertices.push(current[0] * scale, viewMode === 'top' ? current[1] * scale : 0);
-                vertices.push(next[0] * scale, viewMode === 'top' ? next[1] * scale : 0);
-                
-                // Hull color (cyan)
-                colors.push(0.3, 0.9, 0.9, 0.6);
-                colors.push(0.3, 0.9, 0.9, 0.6);
+            if (viewMode === 'top') {
+                // Top-down view: Show full starship outline
+                drawStarshipTopView(vertices, colors);
+            } else if (viewMode === 'side') {
+                // Side view: Show starship profile
+                drawStarshipSideView(vertices, colors);
+            } else {
+                // 3D view: Show isometric starship
+                drawStarship3DView(vertices, colors);
             }
             
-            drawLines(vertices, colors);
+            if (vertices.length > 0) {
+                drawLines(vertices, colors);
+            }
         }
 
-        function drawDeckPlan() {
+        function drawStarshipTopView(vertices, colors) {
+            // Create realistic FTL starship outline from top
+            const shipLength = 300;
+            const shipBeam = 50;
+            const scale = 1.2;
+            
+            // Main hull outline (elongated diamond shape)
+            const hullPoints = [
+                [-shipLength/2 * scale, 0],                    // Nose
+                [-shipLength/3 * scale, shipBeam/4 * scale],   // Forward port
+                [-shipLength/4 * scale, shipBeam/2 * scale],   // Mid-forward port
+                [0, shipBeam/2 * scale],                       // Amidships port
+                [shipLength/4 * scale, shipBeam/3 * scale],    // Aft port
+                [shipLength/2 * scale, 0],                     // Stern
+                [shipLength/4 * scale, -shipBeam/3 * scale],   // Aft starboard
+                [0, -shipBeam/2 * scale],                      // Amidships starboard
+                [-shipLength/4 * scale, -shipBeam/2 * scale],  // Mid-forward starboard
+                [-shipLength/3 * scale, -shipBeam/4 * scale],  // Forward starboard
+            ];
+            
+            // Draw main hull outline
+            for (let i = 0; i < hullPoints.length; i++) {
+                const current = hullPoints[i];
+                const next = hullPoints[(i + 1) % hullPoints.length];
+                
+                vertices.push(current[0], current[1], next[0], next[1]);
+                colors.push(0.3, 0.9, 0.9, 0.8);  // Cyan hull outline
+                colors.push(0.3, 0.9, 0.9, 0.8);
+            }
+            
+            // Add warp nacelles
+            const nacelleLength = shipLength * 0.4;
+            const nacelleOffset = shipBeam * 0.7;
+            
+            // Port nacelle
+            vertices.push(-nacelleLength/2, nacelleOffset, nacelleLength/2, nacelleOffset);
+            colors.push(1.0, 0.3, 0.3, 0.9);  // Red nacelles
+            colors.push(1.0, 0.3, 0.3, 0.9);
+            
+            // Starboard nacelle  
+            vertices.push(-nacelleLength/2, -nacelleOffset, nacelleLength/2, -nacelleOffset);
+            colors.push(1.0, 0.3, 0.3, 0.9);
+            colors.push(1.0, 0.3, 0.3, 0.9);
+            
+            // Nacelle struts
+            vertices.push(-shipLength/6, shipBeam/3 * scale, -nacelleLength/3, nacelleOffset);
+            colors.push(0.6, 0.6, 0.6, 0.7);  // Gray struts
+            colors.push(0.6, 0.6, 0.6, 0.7);
+            
+            vertices.push(-shipLength/6, -shipBeam/3 * scale, -nacelleLength/3, -nacelleOffset);
+            colors.push(0.6, 0.6, 0.6, 0.7);
+            colors.push(0.6, 0.6, 0.6, 0.7);
+            
+            // Bridge superstructure
+            const bridgeSize = 15;
+            vertices.push(-shipLength/3, -bridgeSize/2, -shipLength/3, bridgeSize/2);
+            vertices.push(-shipLength/3, bridgeSize/2, -shipLength/3 + bridgeSize, bridgeSize/2);
+            vertices.push(-shipLength/3 + bridgeSize, bridgeSize/2, -shipLength/3 + bridgeSize, -bridgeSize/2);
+            vertices.push(-shipLength/3 + bridgeSize, -bridgeSize/2, -shipLength/3, -bridgeSize/2);
+            
+            for (let i = 0; i < 8; i++) {
+                colors.push(1.0, 1.0, 0.3, 0.9);  // Yellow bridge
+            }
+        }
+
+        function drawStarshipSideView(vertices, colors) {
+            // Create realistic FTL starship profile from side
+            const shipLength = 300;
+            const shipHeight = 40;
+            const scale = 1.2;
+            
+            // Main hull profile (streamlined shape)
+            const hullPoints = [
+                [-shipLength/2 * scale, 0],                      // Nose bottom
+                [-shipLength/2 * scale + 20, shipHeight/3 * scale], // Nose top
+                [-shipLength/3 * scale, shipHeight/2 * scale],    // Forward deck
+                [0, shipHeight/2 * scale],                        // Amidships top
+                [shipLength/3 * scale, shipHeight/3 * scale],     // Aft deck
+                [shipLength/2 * scale, 0],                        // Stern
+                [shipLength/3 * scale, -shipHeight/4 * scale],    // Aft bottom
+                [0, -shipHeight/3 * scale],                       // Amidships bottom
+                [-shipLength/4 * scale, -shipHeight/3 * scale],   // Forward bottom
+            ];
+            
+            // Draw main hull profile
+            for (let i = 0; i < hullPoints.length; i++) {
+                const current = hullPoints[i];
+                const next = hullPoints[(i + 1) % hullPoints.length];
+                
+                vertices.push(current[0], current[1], next[0], next[1]);
+                colors.push(0.3, 0.9, 0.9, 0.8);  // Cyan hull outline
+                colors.push(0.3, 0.9, 0.9, 0.8);
+            }
+            
+            // Add deck lines
+            for (let deck = 1; deck <= 13; deck++) {
+                const deckY = -shipHeight/2 + (deck - 1) * shipHeight/12;
+                const deckLength = shipLength * (0.8 - Math.abs(deck - 7) * 0.05);
+                
+                vertices.push(-deckLength/2, deckY * scale, deckLength/2, deckY * scale);
+                colors.push(0.5, 0.5, 0.9, 0.4);  // Blue deck lines
+                colors.push(0.5, 0.5, 0.9, 0.4);
+            }
+            
+            // Bridge superstructure
+            vertices.push(-shipLength/3, shipHeight/2 * scale, -shipLength/3 + 30, shipHeight/2 * scale + 15);
+            vertices.push(-shipLength/3 + 30, shipHeight/2 * scale + 15, -shipLength/3 + 30, shipHeight/2 * scale);
+            vertices.push(-shipLength/3 + 30, shipHeight/2 * scale, -shipLength/3, shipHeight/2 * scale);
+            
+            for (let i = 0; i < 6; i++) {
+                colors.push(1.0, 1.0, 0.3, 0.9);  // Yellow bridge
+            }
+            
+            // Warp nacelles (side view)
+            const nacelleY = -shipHeight/2 * scale;
+            vertices.push(-shipLength/3, nacelleY, shipLength/3, nacelleY);
+            colors.push(1.0, 0.3, 0.3, 0.9);  // Red nacelles
+            colors.push(1.0, 0.3, 0.3, 0.9);
+        }
+
+        function drawStarship3DView(vertices, colors) {
+            // Create isometric 3D view of starship
+            const shipLength = 300;
+            const shipBeam = 50;
+            const shipHeight = 40;
+            const scale = 1.0;
+            
+            // Isometric projection factors
+            const isoX = 0.866;  // cos(30°)
+            const isoY = 0.5;    // sin(30°)
+            
+            function project3D(x, y, z) {
+                return [
+                    (x - z) * isoX * scale,
+                    (y + z * isoY) * scale
+                ];
+            }
+            
+            // Draw main hull in 3D
+            const hullCorners = [
+                // Bottom face
+                [-shipLength/2, -shipHeight/2, -shipBeam/2],
+                [shipLength/2, -shipHeight/2, -shipBeam/2],
+                [shipLength/2, -shipHeight/2, shipBeam/2],
+                [-shipLength/2, -shipHeight/2, shipBeam/2],
+                // Top face
+                [-shipLength/2, shipHeight/2, -shipBeam/2],
+                [shipLength/2, shipHeight/2, -shipBeam/2],
+                [shipLength/2, shipHeight/2, shipBeam/2],
+                [-shipLength/2, shipHeight/2, shipBeam/2],
+            ];
+            
+            const projectedCorners = hullCorners.map(corner => project3D(corner[0], corner[1], corner[2]));
+            
+            // Draw hull edges
+            const edges = [
+                [0,1], [1,2], [2,3], [3,0],  // Bottom face
+                [4,5], [5,6], [6,7], [7,4],  // Top face
+                [0,4], [1,5], [2,6], [3,7]   // Vertical edges
+            ];
+            
+            edges.forEach(edge => {
+                const start = projectedCorners[edge[0]];
+                const end = projectedCorners[edge[1]];
+                
+                vertices.push(start[0], start[1], end[0], end[1]);
+                colors.push(0.3, 0.9, 0.9, 0.8);  // Cyan hull
+                colors.push(0.3, 0.9, 0.9, 0.8);
+            });
+            
+            // Add 3D nacelles
+            const nacelles = [
+                // Port nacelle
+                [[-shipLength/3, -shipHeight/2, shipBeam], [shipLength/3, -shipHeight/2, shipBeam]],
+                // Starboard nacelle
+                [[-shipLength/3, -shipHeight/2, -shipBeam], [shipLength/3, -shipHeight/2, -shipBeam]]
+            ];
+            
+            nacelles.forEach(nacelle => {
+                const start = project3D(nacelle[0][0], nacelle[0][1], nacelle[0][2]);
+                const end = project3D(nacelle[1][0], nacelle[1][1], nacelle[1][2]);
+                
+                vertices.push(start[0], start[1], end[0], end[1]);
+                colors.push(1.0, 0.3, 0.3, 0.9);  // Red nacelles
+                colors.push(1.0, 0.3, 0.3, 0.9);
+            });
+        }
+
+        function drawDetailedDeckPlan() {
             if (!deckPlansData || currentDeck === -1 || !deckPlansData.deck_plans[currentDeck]) return;
             
             const deck = deckPlansData.deck_plans[currentDeck];
@@ -1044,54 +1224,179 @@
             const vertices = [];
             const colors = [];
             
+            // Draw deck boundary first
+            drawDeckBoundary(deck, vertices, colors);
+            
+            // Draw detailed rooms
             deck.rooms.forEach(room => {
                 const category = getRoomTypeCategory(room.type);
                 if (!roomFilters[category]) return;
                 
-                const boundary = room.boundary;
-                if (!boundary || boundary.length < 3) return;
-                
-                const scale = viewMode === 'top' ? 3 : 2;
-                const centerX = room.center[0] * scale;
-                const centerY = viewMode === 'top' ? room.center[1] * scale : 0;
-                
-                // Get room color
-                const roomColor = roomColors[room.type] || [0.5, 0.5, 0.5, 0.8];
-                
-                // Create triangles for room fill
-                for (let i = 1; i < boundary.length - 1; i++) {
-                    // Triangle fan from first vertex
-                    vertices.push(
-                        boundary[0][0] * scale + centerX, boundary[0][1] * (viewMode === 'top' ? scale : 0) + centerY,
-                        boundary[i][0] * scale + centerX, boundary[i][1] * (viewMode === 'top' ? scale : 0) + centerY,
-                        boundary[i + 1][0] * scale + centerX, boundary[i + 1][1] * (viewMode === 'top' ? scale : 0) + centerY
-                    );
-                    
-                    // Colors for triangle
-                    for (let j = 0; j < 3; j++) {
-                        colors.push(...roomColor);
-                    }
-                }
-                
-                // Draw room outline
-                for (let i = 0; i < boundary.length; i++) {
-                    const current = boundary[i];
-                    const next = boundary[(i + 1) % boundary.length];
-                    
-                    vertices.push(
-                        current[0] * scale + centerX, current[1] * (viewMode === 'top' ? scale : 0) + centerY,
-                        next[0] * scale + centerX, next[1] * (viewMode === 'top' ? scale : 0) + centerY
-                    );
-                    
-                    // White outline
-                    colors.push(1.0, 1.0, 1.0, 0.8);
-                    colors.push(1.0, 1.0, 1.0, 0.8);
-                }
+                drawDetailedRoom(room, vertices, colors);
             });
             
             if (vertices.length > 0) {
                 drawGeometry(vertices, colors);
             }
+        }
+
+        function drawDeckBoundary(deck, vertices, colors) {
+            if (!deck.boundary) return;
+            
+            const scale = viewMode === 'top' ? 2 : 1.5;
+            const boundary = deck.boundary;
+            
+            // Create deck outline with proper starship shape
+            for (let i = 0; i < boundary.length; i++) {
+                const current = boundary[i];
+                const next = boundary[(i + 1) % boundary.length];
+                
+                vertices.push(
+                    current[0] * scale, viewMode === 'top' ? current[1] * scale : 0,
+                    next[0] * scale, viewMode === 'top' ? next[1] * scale : 0
+                );
+                
+                // Deck outline color
+                colors.push(0.4, 0.8, 1.0, 0.6);
+                colors.push(0.4, 0.8, 1.0, 0.6);
+            }
+        }
+
+        function drawDetailedRoom(room, vertices, colors) {
+            const scale = viewMode === 'top' ? 2 : 1.5;
+            const centerX = room.center[0] * scale;
+            const centerY = viewMode === 'top' ? room.center[1] * scale : 0;
+            
+            // Get room color
+            const roomColor = roomColors[room.type] || [0.5, 0.5, 0.5, 0.8];
+            
+            // Create detailed room shape based on type
+            let roomVertices = [];
+            
+            if (room.type === 'bridge') {
+                // Bridge - hexagonal shape
+                roomVertices = createHexagonRoom(centerX, centerY, Math.sqrt(room.area), scale);
+            } else if (room.type.includes('quarters')) {
+                // Quarters - rectangular with rounded corners
+                roomVertices = createQuartersRoom(centerX, centerY, room.area, scale);
+            } else if (room.type === 'dining' || room.type === 'lounge') {
+                // Dining/Lounge - oval shape
+                roomVertices = createOvalRoom(centerX, centerY, room.area, scale);
+            } else if (room.type === 'medical') {
+                // Medical - cross shape
+                roomVertices = createCrossRoom(centerX, centerY, room.area, scale);
+            } else {
+                // Default - rectangle
+                roomVertices = createRectangleRoom(centerX, centerY, room.area, scale);
+            }
+            
+            // Create triangles for room fill
+            for (let i = 1; i < roomVertices.length - 1; i++) {
+                vertices.push(
+                    roomVertices[0][0], roomVertices[0][1],
+                    roomVertices[i][0], roomVertices[i][1],
+                    roomVertices[i + 1][0], roomVertices[i + 1][1]
+                );
+                
+                // Add colors for triangle
+                for (let j = 0; j < 3; j++) {
+                    colors.push(...roomColor);
+                }
+            }
+            
+            // Draw room outline
+            for (let i = 0; i < roomVertices.length; i++) {
+                const current = roomVertices[i];
+                const next = roomVertices[(i + 1) % roomVertices.length];
+                
+                vertices.push(current[0], current[1], next[0], next[1]);
+                colors.push(1.0, 1.0, 1.0, 0.9);  // White outline
+                colors.push(1.0, 1.0, 1.0, 0.9);
+            }
+            
+            // Add room label if enabled
+            if (showLabels) {
+                // Add center point for label
+                vertices.push(centerX-1, centerY, centerX+1, centerY);
+                colors.push(1.0, 1.0, 1.0, 1.0);
+                colors.push(1.0, 1.0, 1.0, 1.0);
+            }
+        }
+
+        function createHexagonRoom(x, y, size, scale) {
+            const vertices = [];
+            for (let i = 0; i < 6; i++) {
+                const angle = (i * Math.PI) / 3;
+                vertices.push([
+                    x + Math.cos(angle) * size,
+                    y + Math.sin(angle) * size
+                ]);
+            }
+            return vertices;
+        }
+
+        function createQuartersRoom(x, y, area, scale) {
+            const width = Math.sqrt(area * 1.4);
+            const height = area / width;
+            const cornerRadius = Math.min(width, height) * 0.1;
+            
+            return [
+                [x - width/2 + cornerRadius, y - height/2],
+                [x + width/2 - cornerRadius, y - height/2],
+                [x + width/2, y - height/2 + cornerRadius],
+                [x + width/2, y + height/2 - cornerRadius],
+                [x + width/2 - cornerRadius, y + height/2],
+                [x - width/2 + cornerRadius, y + height/2],
+                [x - width/2, y + height/2 - cornerRadius],
+                [x - width/2, y - height/2 + cornerRadius]
+            ];
+        }
+
+        function createOvalRoom(x, y, area, scale) {
+            const vertices = [];
+            const radiusX = Math.sqrt(area / Math.PI) * 1.2;
+            const radiusY = Math.sqrt(area / Math.PI) * 0.8;
+            
+            for (let i = 0; i < 16; i++) {
+                const angle = (i * 2 * Math.PI) / 16;
+                vertices.push([
+                    x + Math.cos(angle) * radiusX,
+                    y + Math.sin(angle) * radiusY
+                ]);
+            }
+            return vertices;
+        }
+
+        function createCrossRoom(x, y, area, scale) {
+            const armWidth = Math.sqrt(area) * 0.3;
+            const armLength = Math.sqrt(area) * 0.7;
+            
+            return [
+                [x - armWidth/2, y - armLength],
+                [x + armWidth/2, y - armLength],
+                [x + armWidth/2, y - armWidth/2],
+                [x + armLength, y - armWidth/2],
+                [x + armLength, y + armWidth/2],
+                [x + armWidth/2, y + armWidth/2],
+                [x + armWidth/2, y + armLength],
+                [x - armWidth/2, y + armLength],
+                [x - armWidth/2, y + armWidth/2],
+                [x - armLength, y + armWidth/2],
+                [x - armLength, y - armWidth/2],
+                [x - armWidth/2, y - armWidth/2]
+            ];
+        }
+
+        function createRectangleRoom(x, y, area, scale) {
+            const width = Math.sqrt(area * 1.5);
+            const height = area / width;
+            
+            return [
+                [x - width/2, y - height/2],
+                [x + width/2, y - height/2],
+                [x + width/2, y + height/2],
+                [x - width/2, y + height/2]
+            ];
         }
 
         function drawLines(vertices, colors) {
