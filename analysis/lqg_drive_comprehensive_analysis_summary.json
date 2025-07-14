@@ -1,0 +1,342 @@
+{
+  "analysis_timestamp": "2025-07-14T15:54:44.136308",
+  "vessel_specifications": {
+    "diameter_m": 200.0,
+    "height_m": 24.0,
+    "volume_m3": 753982.2368615504
+  },
+  "velocity_analysis_summary": {
+    "total_points_analyzed": 12,
+    "viable_operating_points": 12,
+    "max_viable_velocity_c": 11.5,
+    "min_energy_requirement_J": 189799410.2713649,
+    "max_energy_requirement_J": 41119840341.97532,
+    "fastest_earth_proxima_days": 134.66608695652175,
+    "zero_exotic_energy_confirmed": true
+  },
+  "smear_time_summary": {
+    "scenarios_analyzed": 10,
+    "comfortable_scenarios": 0,
+    "min_smear_time_hours": 0.25,
+    "max_smear_time_hours": 48.0,
+    "avg_tidal_force_g": 6.427843224073614,
+    "optimal_acceleration_rate": 0.021
+  },
+  "performance_tables": {
+    "velocity_performance": [
+      {
+        "coordinate_velocity_c": 1.0,
+        "positive_energy_joules": 189799410.2713649,
+        "efficiency_factor": 189799410.2713649,
+        "scaling_factor": 1.0,
+        "t_stress_tensor": 251.45265806755717,
+        "lqg_correction_factor": 4207567.749111473,
+        "earth_proxima_travel_days": 1548.66,
+        "energy_per_ly_TJ": 0.00018979941027136489,
+        "viable_operation": true
+      },
+      {
+        "coordinate_velocity_c": 2.0,
+        "positive_energy_joules": 409046679.41544396,
+        "efficiency_factor": 204523339.70772198,
+        "scaling_factor": 2.1551525309304767,
+        "t_stress_tensor": 540.2455123002211,
+        "lqg_correction_factor": 6800700.299209229,
+        "earth_proxima_travel_days": 774.33,
+        "energy_per_ly_TJ": 0.000409046679415444,
+        "viable_operation": true
+      },
+      {
+        "coordinate_velocity_c": 3.0,
+        "positive_energy_joules": 1077227817.8991761,
+        "efficiency_factor": 359075939.29972535,
+        "scaling_factor": 2.6335082818386626,
+        "t_stress_tensor": 1415.5491664290985,
+        "lqg_correction_factor": 5359144.785826625,
+        "earth_proxima_travel_days": 516.22,
+        "energy_per_ly_TJ": 0.0010772278178991762,
+        "viable_operation": true
+      },
+      {
+        "coordinate_velocity_c": 4.0,
+        "positive_energy_joules": 3455414130.036317,
+        "efficiency_factor": 863853532.5090792,
+        "scaling_factor": 3.2076911425988897,
+        "t_stress_tensor": 4508.909438395026,
+        "lqg_correction_factor": 2804717.2808144954,
+        "earth_proxima_travel_days": 387.165,
+        "energy_per_ly_TJ": 0.0034554141300363168,
+        "viable_operation": true
+      },
+      {
+        "coordinate_velocity_c": 4.5,
+        "positive_energy_joules": 22110603054.811626,
+        "efficiency_factor": 4913467345.513695,
+        "scaling_factor": 6.398828685283879,
+        "t_stress_tensor": 28730.115635446808,
+        "lqg_correction_factor": 541885.6602041435,
+        "earth_proxima_travel_days": 344.1466666666667,
+        "energy_per_ly_TJ": 0.022110603054811627,
+        "viable_operation": true
+      },
+      {
+        "coordinate_velocity_c": 5.5,
+        "positive_energy_joules": 5742077022.918579,
+        "efficiency_factor": 1044014004.1670144,
+        "scaling_factor": 0.25969789284734185,
+        "t_stress_tensor": 7387.990435779874,
+        "lqg_correction_factor": 2994976.997397804,
+        "earth_proxima_travel_days": 281.57454545454544,
+        "energy_per_ly_TJ": 0.005742077022918579,
+        "viable_operation": true
+      },
+      {
+        "coordinate_velocity_c": 7.0,
+        "positive_energy_joules": 18703224117.31561,
+        "efficiency_factor": 2671889159.6165156,
+        "scaling_factor": 3.257222785877774,
+        "t_stress_tensor": 23630.653513161207,
+        "lqg_correction_factor": 1419667.9895273193,
+        "earth_proxima_travel_days": 221.23714285714286,
+        "energy_per_ly_TJ": 0.01870322411731561,
+        "viable_operation": true
+      },
+      {
+        "coordinate_velocity_c": 7.5,
+        "positive_energy_joules": 14333663439.455175,
+        "efficiency_factor": 1911155125.26069,
+        "scaling_factor": 0.7663739336890555,
+        "t_stress_tensor": 17984.7121329428,
+        "lqg_correction_factor": 2097573.8001170456,
+        "earth_proxima_travel_days": 206.488,
+        "energy_per_ly_TJ": 0.014333663439455175,
+        "viable_operation": true
+      },
+      {
+        "coordinate_velocity_c": 9.0,
+        "positive_energy_joules": 20184409590.22662,
+        "efficiency_factor": 2242712176.691847,
+        "scaling_factor": 1.4081821912091603,
+        "t_stress_tensor": 24742.191387781608,
+        "lqg_correction_factor": 2068679.8661417656,
+        "earth_proxima_travel_days": 172.07333333333335,
+        "energy_per_ly_TJ": 0.02018440959022662,
+        "viable_operation": true
+      },
+      {
+        "coordinate_velocity_c": 9.5,
+        "positive_energy_joules": 38186432142.10687,
+        "efficiency_factor": 4019624436.0112495,
+        "scaling_factor": 1.891877588562061,
+        "t_stress_tensor": 46409.73152618602,
+        "lqg_correction_factor": 1205317.6472072557,
+        "earth_proxima_travel_days": 163.01684210526318,
+        "energy_per_ly_TJ": 0.038186432142106874,
+        "viable_operation": true
+      },
+      {
+        "coordinate_velocity_c": 11.0,
+        "positive_energy_joules": 39515079570.56288,
+        "efficiency_factor": 3592279960.960262,
+        "scaling_factor": 1.034793704306063,
+        "t_stress_tensor": 46700.13103032175,
+        "lqg_correction_factor": 1516896.3311038858,
+        "earth_proxima_travel_days": 140.78727272727272,
+        "energy_per_ly_TJ": 0.03951507957056288,
+        "viable_operation": true
+      },
+      {
+        "coordinate_velocity_c": 11.5,
+        "positive_energy_joules": 41119840341.97532,
+        "efficiency_factor": 3575638290.6065493,
+        "scaling_factor": 1.0406113511310735,
+        "t_stress_tensor": 48111.42273617173,
+        "lqg_correction_factor": 1579249.2405026297,
+        "earth_proxima_travel_days": 134.66608695652175,
+        "energy_per_ly_TJ": 0.04111984034197532,
+        "viable_operation": true
+      }
+    ],
+    "smear_time_performance": [
+      {
+        "smear_time_hours": 0.25,
+        "acceleration_rate_c_per_min": 4.0,
+        "velocity_start_c": 1.0,
+        "velocity_end_c": 10.0,
+        "coordinate_velocity_range_c": 9.0,
+        "positive_energy_required_J": 2.11275e+57,
+        "average_tidal_force_g": 6.148745810639323,
+        "comfort_rating": "UNCOMFORTABLE",
+        "acceleration_duration_min": 2.25,
+        "smear_efficiency": 170.39403620873267
+      },
+      {
+        "smear_time_hours": 0.5,
+        "acceleration_rate_c_per_min": 2.0,
+        "velocity_start_c": 1.0,
+        "velocity_end_c": 20.0,
+        "coordinate_velocity_range_c": 19.0,
+        "positive_energy_required_J": 1.8832166666666668e+58,
+        "average_tidal_force_g": 8.400250907889534,
+        "comfort_rating": "UNCOMFORTABLE",
+        "acceleration_duration_min": 9.5,
+        "smear_efficiency": 20.1782411299815
+      },
+      {
+        "smear_time_hours": 1.0,
+        "acceleration_rate_c_per_min": 1.0,
+        "velocity_start_c": 1.0,
+        "velocity_end_c": 30.0,
+        "coordinate_velocity_range_c": 29.0,
+        "positive_energy_required_J": 8.774433333333333e+58,
+        "average_tidal_force_g": 7.246338260216856,
+        "comfort_rating": "UNCOMFORTABLE",
+        "acceleration_duration_min": 29.0,
+        "smear_efficiency": 3.3050567368073147
+      },
+      {
+        "smear_time_hours": 2.0,
+        "acceleration_rate_c_per_min": 0.5,
+        "velocity_start_c": 1.0,
+        "velocity_end_c": 50.0,
+        "coordinate_velocity_range_c": 49.0,
+        "positive_energy_required_J": 5.010086666666666e+59,
+        "average_tidal_force_g": 6.54580768739456,
+        "comfort_rating": "UNCOMFORTABLE",
+        "acceleration_duration_min": 98.0,
+        "smear_efficiency": 0.4890134967725109
+      },
+      {
+        "smear_time_hours": 4.0,
+        "acceleration_rate_c_per_min": 0.25,
+        "velocity_start_c": 1.0,
+        "velocity_end_c": 100.0,
+        "coordinate_velocity_range_c": 99.0,
+        "positive_energy_required_J": 9.439116923076923e+59,
+        "average_tidal_force_g": 6.8286959997034815,
+        "comfort_rating": "UNCOMFORTABLE",
+        "acceleration_duration_min": 396.0,
+        "smear_efficiency": 0.26220673185529414
+      },
+      {
+        "smear_time_hours": 6.0,
+        "acceleration_rate_c_per_min": 0.167,
+        "velocity_start_c": 1.0,
+        "velocity_end_c": 150.0,
+        "coordinate_velocity_range_c": 149.0,
+        "positive_energy_required_J": 2.22365216e+60,
+        "average_tidal_force_g": 6.796873730621008,
+        "comfort_rating": "UNCOMFORTABLE",
+        "acceleration_duration_min": 892.2155688622754,
+        "smear_efficiency": 0.11167813824502719
+      },
+      {
+        "smear_time_hours": 8.0,
+        "acceleration_rate_c_per_min": 0.125,
+        "velocity_start_c": 1.0,
+        "velocity_end_c": 200.0,
+        "coordinate_velocity_range_c": 199.0,
+        "positive_energy_required_J": 4.020036648648648e+60,
+        "average_tidal_force_g": 6.686782550088831,
+        "comfort_rating": "UNCOMFORTABLE",
+        "acceleration_duration_min": 1592.0,
+        "smear_efficiency": 0.061877545341189444
+      },
+      {
+        "smear_time_hours": 12.0,
+        "acceleration_rate_c_per_min": 0.083,
+        "velocity_start_c": 1.0,
+        "velocity_end_c": 300.0,
+        "coordinate_velocity_range_c": 299.0,
+        "positive_energy_required_J": 9.17459442622951e+60,
+        "average_tidal_force_g": 6.448010271669504,
+        "comfort_rating": "UNCOMFORTABLE",
+        "acceleration_duration_min": 3602.4096385542166,
+        "smear_efficiency": 0.02715833039489102
+      },
+      {
+        "smear_time_hours": 24.0,
+        "acceleration_rate_c_per_min": 0.042,
+        "velocity_start_c": 1.0,
+        "velocity_end_c": 500.0,
+        "coordinate_velocity_range_c": 499.0,
+        "positive_energy_required_J": 2.578377272180451e+61,
+        "average_tidal_force_g": 4.7960316732204165,
+        "comfort_rating": "UNCOMFORTABLE",
+        "acceleration_duration_min": 11880.95238095238,
+        "smear_efficiency": 0.008063857407912932
+      },
+      {
+        "smear_time_hours": 48.0,
+        "acceleration_rate_c_per_min": 0.021,
+        "velocity_start_c": 1.0,
+        "velocity_end_c": 1000.0,
+        "coordinate_velocity_range_c": 999.0,
+        "positive_energy_required_J": 1.03748869299639e+62,
+        "average_tidal_force_g": 4.380895349292622,
+        "comfort_rating": "UNCOMFORTABLE",
+        "acceleration_duration_min": 47571.428571428565,
+        "smear_efficiency": 0.0020060459589097824
+      }
+    ],
+    "mission_profiles": [
+      {
+        "mission_type": "Earth-Proxima Express",
+        "recommended_velocity_c": 11.5,
+        "energy_requirement_TJ": 0.04111984034197532,
+        "earth_proxima_travel_days": 134.66608695652175,
+        "tidal_stress_safety": "SAFE",
+        "priority_focus": "Speed"
+      },
+      {
+        "mission_type": "Interstellar Cargo",
+        "recommended_velocity_c": 11.5,
+        "energy_requirement_TJ": 0.04111984034197532,
+        "earth_proxima_travel_days": 134.66608695652175,
+        "tidal_stress_safety": "SAFE",
+        "priority_focus": "Efficiency"
+      },
+      {
+        "mission_type": "Deep Space Survey",
+        "recommended_velocity_c": 11.5,
+        "energy_requirement_TJ": 0.04111984034197532,
+        "earth_proxima_travel_days": 134.66608695652175,
+        "tidal_stress_safety": "SAFE",
+        "priority_focus": "Range"
+      },
+      {
+        "mission_type": "Emergency Rescue",
+        "recommended_velocity_c": 11.5,
+        "energy_requirement_TJ": 0.04111984034197532,
+        "earth_proxima_travel_days": 134.66608695652175,
+        "tidal_stress_safety": "SAFE",
+        "priority_focus": "Maximum Speed"
+      },
+      {
+        "mission_type": "Colony Transport",
+        "recommended_velocity_c": 11.5,
+        "energy_requirement_TJ": 0.04111984034197532,
+        "earth_proxima_travel_days": 134.66608695652175,
+        "tidal_stress_safety": "SAFE",
+        "priority_focus": "Safety"
+      }
+    ],
+    "optimal_regions": [
+      {
+        "region_type": "Most Efficient",
+        "velocity_range_c": "1.0 - 9.5",
+        "avg_energy_TJ": 0.012439189740445679,
+        "avg_travel_time_days": 461.49115304169516,
+        "characteristics": "Lowest energy consumption per light-year"
+      },
+      {
+        "region_type": "Fastest Safe",
+        "velocity_range_c": "3.0 - 11.5",
+        "avg_energy_TJ": 0.020442797122730817,
+        "avg_travel_time_days": 256.73748901007457,
+        "characteristics": "Maximum velocity with excellent safety margins"
+      }
+    ]
+  },
+  "analysis_duration_seconds": 0.043419
+}

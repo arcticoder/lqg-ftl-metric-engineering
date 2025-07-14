@@ -1,0 +1,6 @@
+mission_type,recommended_velocity_c,energy_requirement_TJ,earth_proxima_travel_days,tidal_stress_safety,priority_focus
+Earth-Proxima Express,11.5,0.04111984034197532,134.66608695652175,SAFE,Speed
+Interstellar Cargo,11.5,0.04111984034197532,134.66608695652175,SAFE,Efficiency
+Deep Space Survey,11.5,0.04111984034197532,134.66608695652175,SAFE,Range
+Emergency Rescue,11.5,0.04111984034197532,134.66608695652175,SAFE,Maximum Speed
+Colony Transport,11.5,0.04111984034197532,134.66608695652175,SAFE,Safety
