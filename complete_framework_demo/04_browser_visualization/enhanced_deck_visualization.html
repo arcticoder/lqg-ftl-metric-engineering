@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimized FTL Ship Deck Plans Visualization</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0a0a0a;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+        
+        #canvas-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        #hull-canvas {
+            display: block;
+            background: linear-gradient(to bottom, #000011, #000033);
+        }
+        
+        #control-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 350px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+        }
+        
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #aaa;
+            font-size: 12px;
+        }
+        
+        .control-group input[type="range"] {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+        
+        .control-group span {
+            color: #4ECDC4;
+            font-weight: bold;
+        }
+        
+        .control-group button {
+            width: 100%;
+            padding: 8px;
+            background: #333;
+            border: 1px solid #555;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 5px;
+        }
+        
+        .control-group button:hover {
+            background: #555;
+        }
+        
+        .control-group button.active {
+            background: #4ECDC4;
+            color: #000;
+        }
+        
+        #deck-controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 80vh;
+            overflow-y: auto;
+            width: 280px;
+        }
+        
+        .deck-button {
+            display: block;
+            width: 100%;
+            margin-bottom: 3px;
+            padding: 6px;
+            background: #222;
+            border: 1px solid #444;
+            color: #aaa;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 10px;
+            text-align: left;
+        }
+        
+        .deck-button:hover {
+            background: #333;
+            color: #fff;
+        }
+        
+        .deck-button.active {
+            background: #4ECDC4;
+            color: #000;
+        }
+        
+        #info-panel {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            max-width: 400px;
+            font-size: 12px;
+        }
+        
+        .info-item {
+            margin-bottom: 5px;
+        }
+        
+        .info-label {
+            color: #888;
+        }
+        
+        .info-value {
+            color: #4ECDC4;
+            font-weight: bold;
+        }
+        
+        #room-info {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #4ECDC4;
+            border-radius: 8px;
+            padding: 20px;
+            display: none;
+            max-width: 400px;
+            z-index: 1000;
+        }
+        
+        #room-info h3 {
+            margin-top: 0;
+            color: #4ECDC4;
+        }
+        
+        #room-info .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        
+        .room-detail {
+            margin-bottom: 8px;
+        }
+        
+        .amenity-list {
+            background: #111;
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+        
+        .amenity-tag {
+            display: inline-block;
+            background: #333;
+            color: #4ECDC4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            margin: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container">
+        <canvas id="hull-canvas" width="1200" height="800"></canvas>
+        
+        <div id="deck-controls">
+            <h3 style="margin-top: 0; color: #4ECDC4; font-size: 14px;">Deck Plans (99 crew)</h3>
+            <div id="deck-buttons"></div>
+        </div>
+        
+        <div id="control-panel">
+            <h3 style="margin-top: 0; color: #4ECDC4;">View Controls</h3>
+            
+            <div class="control-group">
+                <label>View Mode:</label>
+                <button id="view-side" class="active" onclick="setViewMode('side')">Side View</button>
+                <button id="view-top" onclick="setViewMode('top')">Top View</button>
+                <button id="view-3d" onclick="setViewMode('3d')">3D View</button>
+            </div>
+            
+            <div class="control-group">
+                <label for="zoom">Zoom Level:</label>
+                <input type="range" id="zoom" min="0.1" max="3.0" value="1.0" step="0.1" oninput="updateZoom(this.value)">
+                <span id="zoom_value">1.0x</span>
+            </div>
+            
+            <div class="control-group">
+                <label for="rotation">Rotation (degrees):</label>
+                <input type="range" id="rotation" min="0" max="360" value="0" step="5" oninput="updateRotation(this.value)">
+                <span id="rotation_value">0°</span>
+            </div>
+            
+            <div class="control-group">
+                <label>Display Options:</label>
+                <button id="show-rooms" class="active" onclick="toggleRooms()">Show Rooms</button>
+                <button id="show-labels" onclick="toggleLabels()">Show Labels</button>
+                <button id="show-hull" class="active" onclick="toggleHull()">Show Hull</button>
+            </div>
+            
+            <div class="control-group">
+                <label>Room Types:</label>
+                <button id="filter-diplomatic" class="active" onclick="toggleRoomType('diplomatic')">Diplomatic</button>
+                <button id="filter-crew" class="active" onclick="toggleRoomType('crew')">Crew</button>
+                <button id="filter-systems" class="active" onclick="toggleRoomType('systems')">Systems</button>
+                <button id="filter-common" class="active" onclick="toggleRoomType('common')">Common</button>
+            </div>
+            
+            <h4 style="color: #4ECDC4; margin-bottom: 10px;">Optimization Results</h4>
+            <div style="font-size: 11px;">
+                <div class="info-item"><span class="info-label">ROI:</span> <span class="info-value">249.05%</span></div>
+                <div class="info-item"><span class="info-label">Net Profit:</span> <span class="info-value">$512.59M</span></div>
+                <div class="info-item"><span class="info-label">Mission Type:</span> <span class="info-value">Diplomatic</span></div>
+                <div class="info-item"><span class="info-label">Total Crew:</span> <span class="info-value">99 people</span></div>
+                <div class="info-item"><span class="info-label">Operational:</span> <span class="info-value">36 crew</span></div>
+                <div class="info-item"><span class="info-label">Diplomatic:</span> <span class="info-value">63 passengers</span></div>
+            </div>
+        </div>
+        
+        <div id="info-panel">
+            <div id="current-deck-info">
+                <div class="info-item"><span class="info-label">Current Deck:</span> <span class="info-value" id="deck-name">Hull Only</span></div>
+                <div class="info-item"><span class="info-label">Level:</span> <span class="info-value" id="deck-level">-</span></div>
+                <div class="info-item"><span class="info-label">Function:</span> <span class="info-value" id="deck-function">-</span></div>
+                <div class="info-item"><span class="info-label">Occupancy:</span> <span class="info-value" id="deck-occupancy">-</span></div>
+                <div class="info-item"><span class="info-label">Rooms:</span> <span class="info-value" id="deck-rooms">-</span></div>
+            </div>
+        </div>
+        
+        <div id="room-info">
+            <button class="close-btn" onclick="closeRoomInfo()">×</button>
+            <h3 id="room-name">Room Details</h3>
+            <div class="room-detail"><strong>Type:</strong> <span id="room-type">-</span></div>
+            <div class="room-detail"><strong>Area:</strong> <span id="room-area">-</span> m²</div>
+            <div class="room-detail"><strong>Occupancy:</strong> <span id="room-occupancy">-</span> people</div>
+            <div class="room-detail"><strong>Privacy Level:</strong> <span id="room-privacy">-</span></div>
+            <div class="amenity-list">
+                <strong>Amenities:</strong>
+                <div id="room-amenities"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let canvas, gl, program;
+        let deckPlansData = null;
+        let currentDeck = -1;
+        let viewMode = 'side';
+        let zoomLevel = 1.0;
+        let rotationAngle = 0;
+        let showRooms = true;
+        let showLabels = false;
+        let showHull = true;
+        let roomFilters = {
+            diplomatic: true,
+            crew: true,
+            systems: true,
+            common: true
+        };
+        
+        // Mouse interaction
+        let mouseX = 0, mouseY = 0;
+        let isDragging = false;
+        let lastMouseX = 0, lastMouseY = 0;
+        let cameraX = 0, cameraY = 0;
+        
+        // Room colors by type
+        const roomColors = {
+            'vip_quarters': [1.0, 0.8, 0.2, 0.8],      // Gold
+            'diplomatic_quarters': [0.2, 0.8, 1.0, 0.8], // Light blue
+            'crew_quarters': [0.4, 0.8, 0.4, 0.8],     // Green
+            'senior_quarters': [0.8, 0.6, 1.0, 0.8],   // Purple
+            'bridge': [1.0, 0.2, 0.2, 0.8],            // Red
+            'office': [0.8, 0.8, 0.8, 0.8],            // White
+            'lounge': [1.0, 0.6, 0.8, 0.8],            // Pink
+            'meeting': [0.6, 0.6, 1.0, 0.8],           // Blue
+            'conference': [0.8, 0.4, 0.6, 0.8],        // Maroon
+            'dining': [1.0, 0.8, 0.4, 0.8],            // Orange
+            'recreation': [0.6, 1.0, 0.6, 0.8],        // Light green
+            'exercise': [1.0, 0.4, 0.4, 0.8],          // Red
+            'medical': [0.2, 1.0, 0.8, 0.8],           // Cyan
+            'operations': [0.8, 0.8, 0.2, 0.8],        // Yellow
+            'control': [1.0, 0.2, 0.8, 0.8],           // Magenta
+            'workshop': [0.6, 0.4, 0.2, 0.8],          // Brown
+            'training': [0.4, 0.6, 0.8, 0.8],          // Steel blue
+            'engine': [1.0, 0.0, 0.0, 0.8],            // Bright red
+            'processing': [0.0, 0.8, 0.8, 0.8],        // Teal
+            'storage': [0.5, 0.5, 0.5, 0.8],           // Gray
+            'cargo': [0.3, 0.3, 0.3, 0.8],             // Dark gray
+            'common': [0.7, 0.7, 0.9, 0.8]             // Light purple
+        };
+
+        // Initialize WebGL
+        function initWebGL() {
+            canvas = document.getElementById('hull-canvas');
+            gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            
+            if (!gl) {
+                alert('WebGL not supported');
+                return false;
+            }
+
+            // Vertex shader
+            const vertexShaderSource = `
+                attribute vec2 a_position;
+                attribute vec4 a_color;
+                uniform vec2 u_resolution;
+                uniform vec2 u_translation;
+                uniform float u_rotation;
+                uniform float u_scale;
+                varying vec4 v_color;
+                
+                void main() {
+                    // Apply transformations
+                    vec2 position = a_position;
+                    
+                    // Scale
+                    position *= u_scale;
+                    
+                    // Rotate
+                    float c = cos(u_rotation);
+                    float s = sin(u_rotation);
+                    position = vec2(
+                        position.x * c - position.y * s,
+                        position.x * s + position.y * c
+                    );
+                    
+                    // Translate
+                    position += u_translation;
+                    
+                    // Convert to clip space
+                    vec2 clipSpace = ((position / u_resolution) * 2.0) - 1.0;
+                    gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+                    v_color = a_color;
+                }
+            `;
+
+            // Fragment shader
+            const fragmentShaderSource = `
+                precision mediump float;
+                varying vec4 v_color;
+                
+                void main() {
+                    gl_FragColor = v_color;
+                }
+            `;
+
+            // Create shaders
+            const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+            const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+            
+            // Create program
+            program = createProgram(gl, vertexShader, fragmentShader);
+            
+            // Get attribute and uniform locations
+            program.positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
+            program.colorAttributeLocation = gl.getAttribLocation(program, 'a_color');
+            program.resolutionUniformLocation = gl.getUniformLocation(program, 'u_resolution');
+            program.translationUniformLocation = gl.getUniformLocation(program, 'u_translation');
+            program.rotationUniformLocation = gl.getUniformLocation(program, 'u_rotation');
+            program.scaleUniformLocation = gl.getUniformLocation(program, 'u_scale');
+
+            // Set up mouse events
+            setupMouseEvents();
+            
+            return true;
+        }
+
+        function createShader(gl, type, source) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+            
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                console.error('Shader compilation error:', gl.getShaderInfoLog(shader));
+                gl.deleteShader(shader);
+                return null;
+            }
+            
+            return shader;
+        }
+
+        function createProgram(gl, vertexShader, fragmentShader) {
+            const program = gl.createProgram();
+            gl.attachShader(program, vertexShader);
+            gl.attachShader(program, fragmentShader);
+            gl.linkProgram(program);
+            
+            if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                console.error('Program linking error:', gl.getProgramInfoLog(program));
+                gl.deleteProgram(program);
+                return null;
+            }
+            
+            return program;
+        }
+
+        function setupMouseEvents() {
+            canvas.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                lastMouseX = e.clientX;
+                lastMouseY = e.clientY;
+            });
+
+            canvas.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX - canvas.offsetLeft;
+                mouseY = e.clientY - canvas.offsetTop;
+                
+                if (isDragging) {
+                    const deltaX = e.clientX - lastMouseX;
+                    const deltaY = e.clientY - lastMouseY;
+                    
+                    cameraX += deltaX;
+                    cameraY += deltaY;
+                    
+                    lastMouseX = e.clientX;
+                    lastMouseY = e.clientY;
+                    
+                    render();
+                }
+            });
+
+            canvas.addEventListener('mouseup', (e) => {
+                if (!isDragging) {
+                    // Click to select room
+                    checkRoomClick(mouseX, mouseY);
+                }
+                isDragging = false;
+            });
+
+            canvas.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const delta = e.deltaY > 0 ? 0.9 : 1.1;
+                zoomLevel *= delta;
+                zoomLevel = Math.max(0.1, Math.min(5.0, zoomLevel));
+                document.getElementById('zoom').value = zoomLevel;
+                document.getElementById('zoom_value').textContent = zoomLevel.toFixed(1) + 'x';
+                render();
+            });
+        }
+
+        function checkRoomClick(x, y) {
+            if (currentDeck === -1 || !deckPlansData) return;
+            
+            const deck = deckPlansData.deck_plans[currentDeck];
+            if (!deck || !deck.rooms) return;
+            
+            // Convert screen coordinates to world coordinates
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const worldX = (x - centerX - cameraX) / zoomLevel;
+            const worldY = (y - centerY - cameraY) / zoomLevel;
+            
+            // Check each room
+            for (const room of deck.rooms) {
+                if (isPointInRoom(worldX, worldY, room)) {
+                    showRoomInfo(room);
+                    break;
+                }
+            }
+        }
+
+        function isPointInRoom(x, y, room) {
+            const boundary = room.boundary;
+            if (!boundary || boundary.length < 3) return false;
+            
+            // Scale coordinates based on view mode
+            const scale = viewMode === 'top' ? 3 : 2;
+            const roomX = room.center[0] * scale;
+            const roomY = viewMode === 'top' ? room.center[1] * scale : 0;
+            
+            let inside = false;
+            for (let i = 0, j = boundary.length - 1; i < boundary.length; j = i++) {
+                const xi = boundary[i][0] * scale + roomX;
+                const yi = viewMode === 'top' ? boundary[i][1] * scale + roomY : 0;
+                const xj = boundary[j][0] * scale + roomX;
+                const yj = viewMode === 'top' ? boundary[j][1] * scale + roomY : 0;
+                
+                if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) {
+                    inside = !inside;
+                }
+            }
+            
+            return inside;
+        }
+
+        function showRoomInfo(room) {
+            document.getElementById('room-name').textContent = room.name;
+            document.getElementById('room-type').textContent = room.type.replace('_', ' ');
+            document.getElementById('room-area').textContent = room.area.toFixed(1);
+            document.getElementById('room-occupancy').textContent = room.occupancy;
+            document.getElementById('room-privacy').textContent = room.privacy_level;
+            
+            const amenitiesDiv = document.getElementById('room-amenities');
+            amenitiesDiv.innerHTML = '';
+            if (room.amenities && room.amenities.length > 0) {
+                room.amenities.forEach(amenity => {
+                    const tag = document.createElement('span');
+                    tag.className = 'amenity-tag';
+                    tag.textContent = amenity.replace('_', ' ');
+                    amenitiesDiv.appendChild(tag);
+                });
+            } else {
+                amenitiesDiv.textContent = 'None';
+            }
+            
+            document.getElementById('room-info').style.display = 'block';
+        }
+
+        function closeRoomInfo() {
+            document.getElementById('room-info').style.display = 'none';
+        }
+
+        // Load deck plans data
+        async function loadDeckPlans() {
+            try {
+                const response = await fetch('optimized_deck_plans.json');
+                deckPlansData = await response.json();
+                console.log('Loaded optimized deck plans:', deckPlansData);
+                setupDeckButtons();
+                render();
+            } catch (error) {
+                console.error('Failed to load deck plans:', error);
+            }
+        }
+
+        function setupDeckButtons() {
+            const container = document.getElementById('deck-buttons');
+            container.innerHTML = '';
+            
+            // Add hull-only button
+            const hullButton = document.createElement('button');
+            hullButton.className = 'deck-button active';
+            hullButton.textContent = 'Hull Only';
+            hullButton.onclick = () => showDeck(-1);
+            container.appendChild(hullButton);
+            
+            // Add deck buttons
+            if (deckPlansData && deckPlansData.deck_plans) {
+                deckPlansData.deck_plans.forEach((deck, index) => {
+                    const button = document.createElement('button');
+                    button.className = 'deck-button';
+                    button.textContent = `${deck.name}: ${deck.function} (${deck.total_occupancy} crew)`;
+                    button.onclick = () => showDeck(index);
+                    container.appendChild(button);
+                });
+            }
+        }
+
+        function showDeck(deckIndex) {
+            currentDeck = deckIndex;
+            
+            // Update button states
+            const buttons = document.querySelectorAll('.deck-button');
+            buttons.forEach((btn, i) => {
+                btn.classList.toggle('active', i === deckIndex + 1);
+            });
+            
+            // Update info panel
+            if (deckIndex === -1) {
+                document.getElementById('deck-name').textContent = 'Hull Only';
+                document.getElementById('deck-level').textContent = '-';
+                document.getElementById('deck-function').textContent = '-';
+                document.getElementById('deck-occupancy').textContent = '-';
+                document.getElementById('deck-rooms').textContent = '-';
+            } else if (deckPlansData && deckPlansData.deck_plans[deckIndex]) {
+                const deck = deckPlansData.deck_plans[deckIndex];
+                document.getElementById('deck-name').textContent = deck.name;
+                document.getElementById('deck-level').textContent = deck.level.toFixed(1) + 'm';
+                document.getElementById('deck-function').textContent = deck.function;
+                document.getElementById('deck-occupancy').textContent = deck.total_occupancy + ' people';
+                document.getElementById('deck-rooms').textContent = deck.rooms ? deck.rooms.length : 0;
+            }
+            
+            render();
+        }
+
+        function setViewMode(mode) {
+            viewMode = mode;
+            
+            // Update button states
+            document.querySelectorAll('[id^="view-"]').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`view-${mode}`).classList.add('active');
+            
+            render();
+        }
+
+        function updateZoom(value) {
+            zoomLevel = parseFloat(value);
+            document.getElementById('zoom_value').textContent = zoomLevel.toFixed(1) + 'x';
+            render();
+        }
+
+        function updateRotation(value) {
+            rotationAngle = parseFloat(value) * Math.PI / 180;
+            document.getElementById('rotation_value').textContent = value + '°';
+            render();
+        }
+
+        function toggleRooms() {
+            showRooms = !showRooms;
+            document.getElementById('show-rooms').classList.toggle('active', showRooms);
+            render();
+        }
+
+        function toggleLabels() {
+            showLabels = !showLabels;
+            document.getElementById('show-labels').classList.toggle('active', showLabels);
+            render();
+        }
+
+        function toggleHull() {
+            showHull = !showHull;
+            document.getElementById('show-hull').classList.toggle('active', showHull);
+            render();
+        }
+
+        function toggleRoomType(type) {
+            roomFilters[type] = !roomFilters[type];
+            document.getElementById(`filter-${type}`).classList.toggle('active', roomFilters[type]);
+            render();
+        }
+
+        function getRoomTypeCategory(roomType) {
+            if (roomType.includes('diplomatic') || roomType.includes('vip') || roomType.includes('ambassador')) {
+                return 'diplomatic';
+            } else if (roomType.includes('crew') || roomType.includes('quarters') || roomType.includes('senior')) {
+                return 'crew';
+            } else if (roomType.includes('engine') || roomType.includes('control') || roomType.includes('processing') || roomType.includes('workshop')) {
+                return 'systems';
+            } else {
+                return 'common';
+            }
+        }
+
+        function render() {
+            if (!gl || !program) return;
+            
+            // Clear canvas
+            gl.viewport(0, 0, canvas.width, canvas.height);
+            gl.clearColor(0.02, 0.02, 0.05, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            
+            gl.useProgram(program);
+            
+            // Set uniforms
+            gl.uniform2f(program.resolutionUniformLocation, canvas.width, canvas.height);
+            gl.uniform2f(program.translationUniformLocation, cameraX + canvas.width/2, cameraY + canvas.height/2);
+            gl.uniform1f(program.rotationUniformLocation, rotationAngle);
+            gl.uniform1f(program.scaleUniformLocation, zoomLevel);
+            
+            // Enable blending for transparency
+            gl.enable(gl.BLEND);
+            gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+            
+            // Draw hull outline if enabled
+            if (showHull) {
+                drawHullOutline();
+            }
+            
+            // Draw deck plan if selected
+            if (currentDeck !== -1 && showRooms) {
+                drawDeckPlan();
+            }
+        }
+
+        function drawHullOutline() {
+            if (!deckPlansData || !deckPlansData.deck_plans[0]) return;
+            
+            const boundary = deckPlansData.deck_plans[0].boundary;
+            if (!boundary) return;
+            
+            const vertices = [];
+            const colors = [];
+            
+            // Create hull outline
+            for (let i = 0; i < boundary.length; i++) {
+                const current = boundary[i];
+                const next = boundary[(i + 1) % boundary.length];
+                
+                const scale = viewMode === 'top' ? 3 : 2;
+                
+                // Line from current to next
+                vertices.push(current[0] * scale, viewMode === 'top' ? current[1] * scale : 0);
+                vertices.push(next[0] * scale, viewMode === 'top' ? next[1] * scale : 0);
+                
+                // Hull color (cyan)
+                colors.push(0.3, 0.9, 0.9, 0.6);
+                colors.push(0.3, 0.9, 0.9, 0.6);
+            }
+            
+            drawLines(vertices, colors);
+        }
+
+        function drawDeckPlan() {
+            if (!deckPlansData || currentDeck === -1 || !deckPlansData.deck_plans[currentDeck]) return;
+            
+            const deck = deckPlansData.deck_plans[currentDeck];
+            if (!deck.rooms) return;
+            
+            const vertices = [];
+            const colors = [];
+            
+            deck.rooms.forEach(room => {
+                const category = getRoomTypeCategory(room.type);
+                if (!roomFilters[category]) return;
+                
+                const boundary = room.boundary;
+                if (!boundary || boundary.length < 3) return;
+                
+                const scale = viewMode === 'top' ? 3 : 2;
+                const centerX = room.center[0] * scale;
+                const centerY = viewMode === 'top' ? room.center[1] * scale : 0;
+                
+                // Get room color
+                const roomColor = roomColors[room.type] || [0.5, 0.5, 0.5, 0.8];
+                
+                // Create triangles for room fill
+                for (let i = 1; i < boundary.length - 1; i++) {
+                    // Triangle fan from first vertex
+                    vertices.push(
+                        boundary[0][0] * scale + centerX, boundary[0][1] * (viewMode === 'top' ? scale : 0) + centerY,
+                        boundary[i][0] * scale + centerX, boundary[i][1] * (viewMode === 'top' ? scale : 0) + centerY,
+                        boundary[i + 1][0] * scale + centerX, boundary[i + 1][1] * (viewMode === 'top' ? scale : 0) + centerY
+                    );
+                    
+                    // Colors for triangle
+                    for (let j = 0; j < 3; j++) {
+                        colors.push(...roomColor);
+                    }
+                }
+                
+                // Draw room outline
+                for (let i = 0; i < boundary.length; i++) {
+                    const current = boundary[i];
+                    const next = boundary[(i + 1) % boundary.length];
+                    
+                    vertices.push(
+                        current[0] * scale + centerX, current[1] * (viewMode === 'top' ? scale : 0) + centerY,
+                        next[0] * scale + centerX, next[1] * (viewMode === 'top' ? scale : 0) + centerY
+                    );
+                    
+                    // White outline
+                    colors.push(1.0, 1.0, 1.0, 0.8);
+                    colors.push(1.0, 1.0, 1.0, 0.8);
+                }
+            });
+            
+            if (vertices.length > 0) {
+                drawGeometry(vertices, colors);
+            }
+        }
+
+        function drawLines(vertices, colors) {
+            const positionBuffer = gl.createBuffer();
+            const colorBuffer = gl.createBuffer();
+            
+            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+            
+            gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+            
+            // Position attribute
+            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+            gl.enableVertexAttribArray(program.positionAttributeLocation);
+            gl.vertexAttribPointer(program.positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+            
+            // Color attribute
+            gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+            gl.enableVertexAttribArray(program.colorAttributeLocation);
+            gl.vertexAttribPointer(program.colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
+            
+            gl.drawArrays(gl.LINES, 0, vertices.length / 2);
+            
+            gl.deleteBuffer(positionBuffer);
+            gl.deleteBuffer(colorBuffer);
+        }
+
+        function drawGeometry(vertices, colors) {
+            const positionBuffer = gl.createBuffer();
+            const colorBuffer = gl.createBuffer();
+            
+            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+            
+            gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+            
+            // Position attribute
+            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+            gl.enableVertexAttribArray(program.positionAttributeLocation);
+            gl.vertexAttribPointer(program.positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+            
+            // Color attribute
+            gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+            gl.enableVertexAttribArray(program.colorAttributeLocation);
+            gl.vertexAttribPointer(program.colorAttributeLocation, 4, gl.FLOAT, false, 0, 0);
+            
+            gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 2);
+            
+            gl.deleteBuffer(positionBuffer);
+            gl.deleteBuffer(colorBuffer);
+        }
+
+        // Initialize everything
+        window.addEventListener('load', () => {
+            if (initWebGL()) {
+                loadDeckPlans();
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            render();
+        });
+    </script>
+</body>
+</html>
