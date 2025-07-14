@@ -75,7 +75,7 @@ class ShipHullGeometryFramework:
         self.logger.info(f"Framework initialized with output directory: {output_base_dir}")
         
     def execute_phase_1_hull_physics(self, 
-                                   warp_velocity: float = 48.0,
+                                   warp_velocity: float = 53.5,
                                    hull_length: float = 300.0,
                                    hull_beam: float = 50.0,
                                    hull_height: float = 40.0,

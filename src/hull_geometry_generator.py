@@ -8,7 +8,7 @@ Alcubierre metric constraints and WebGL visualization capabilities.
 Phase 1: Hull Physics Integration
 - Alcubierre metric constraints for FTL operations
 - Stress distribution analysis with exotic matter considerations  
-- Hull thickness optimization for 48c superluminal operations
+- Hull thickness optimization for 53.5c superluminal operations
 - Integration with zero exotic energy framework
 """
 
@@ -32,9 +32,9 @@ from zero_exotic_energy_framework import (
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Hull Physics Constants
-ALCUBIERRE_VELOCITY_COEFFICIENT = 48.0  # 48c design specification
-FTL_HULL_STRESS_FACTOR = 1e15  # N/m² - FTL stress amplification
+# Hull Physics Constants  
+ALCUBIERRE_VELOCITY_COEFFICIENT = 53.5  # 53.5c design specification for 30-day Proxima Centauri crewed missions
+FTL_HULL_STRESS_FACTOR = 2.86e15  # N/m² - FTL stress amplification (scales with v²)
 HULL_THICKNESS_MIN = 0.1  # meters - minimum viable thickness
 HULL_THICKNESS_MAX = 5.0  # meters - maximum practical thickness
 EXOTIC_MATTER_DENSITY_THRESHOLD = 1e-3  # kg/m³ - exotic matter detection limit
@@ -395,16 +395,16 @@ class HullPhysicsEngine:
 
 def create_alcubierre_hull_demo() -> Dict:
     """
-    Demonstration of physics-informed hull generation for 48c FTL operations.
+    Demonstration of physics-informed hull generation for 53.5c crewed vessel operations.
     
     Returns:
         demo_results: Complete demonstration results with performance metrics
     """
     logger.info("Starting Alcubierre Hull Generation Demo")
     
-    # Define Alcubierre constraints for 48c operations
+    # Define Alcubierre constraints for 53.5c crewed vessel operations
     constraints = AlcubierreMetricConstraints(
-        warp_velocity=48.0,  # 48c design velocity
+        warp_velocity=53.5,  # 53.5c design velocity for Proxima Centauri 30-day crewed missions
         bubble_radius=500.0,  # 500m bubble radius
         exotic_energy_density=0.0,  # Zero exotic energy (breakthrough achieved)
         metric_signature="(-,+,+,+)",  # Standard relativity signature
