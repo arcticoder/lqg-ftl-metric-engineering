@@ -1,0 +1,32 @@
+{
+  "analysis_timestamp": "2025-07-14T15:30:02.820459",
+  "lqg_framework_parameters": {
+    "mu_polymer": 0.15,
+    "beta_backreaction": 1.9443254780147017,
+    "enhancement_factor": 24200000000.0,
+    "vessel_diameter_m": 200.0,
+    "vessel_height_m": 24.0
+  },
+  "coordinate_velocity_analysis": {
+    "total_velocities_analyzed": 17,
+    "viable_operating_points": 6,
+    "max_viable_velocity_c": 13.0,
+    "energy_range_joules": [
+      3.337787207130948e+57,
+      6.8158186990204345e+59
+    ],
+    "fastest_earth_proxima_travel_days": 119.12769230769231,
+    "zero_exotic_energy_confirmed": true
+  },
+  "smear_time_optimization": {
+    "scenarios_analyzed": 10,
+    "comfortable_scenarios_count": 2,
+    "optimal_smear_time_hours": 0.25,
+    "average_tidal_force_g": -429.49380894923104
+  },
+  "mission_profiles": {
+    "profiles_analyzed": 8,
+    "average_recommended_velocity_c": 13.0,
+    "fastest_mission_travel_days": 119.12769230769231
+  }
+}

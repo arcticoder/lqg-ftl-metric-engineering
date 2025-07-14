@@ -1,0 +1,29 @@
+{
+  "analysis_timestamp": "2025-07-14T15:31:04.372495",
+  "framework_info": {
+    "name": "Ship Hull Geometry OBJ Framework",
+    "version": "1.0.0",
+    "enhancement_factor": 24200000000.0,
+    "zero_exotic_energy": true
+  },
+  "velocity_analysis": {
+    "total_points": 126,
+    "viable_points": 105,
+    "max_velocity_analyzed": 360.0,
+    "max_viable_velocity": 150.0,
+    "velocity_categories": {
+      "LOW_VELOCITY": 9,
+      "MEDIUM_VELOCITY": 90,
+      "HIGH_VELOCITY": 27
+    }
+  },
+  "performance_metrics": {
+    "fastest_earth_proxima_days": 10.3244,
+    "energy_range_joules": [
+      3.127661903992723e+58,
+      1.715658835546082e+62
+    ],
+    "average_scaling_factor": 1.1081481246470353,
+    "max_tidal_acceleration_g": 1.768186877543462
+  }
+}
