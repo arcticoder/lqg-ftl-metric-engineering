@@ -1,0 +1,152 @@
+{
+  "deck_count": 13,
+  "deck_plans": {
+    "lower_deck": {
+      "deck_name": "Lower_Deck",
+      "deck_level": -18.890346331466382,
+      "rooms": [
+        {
+          "id": "room_001",
+          "center": {
+            "x": 0.9473684210526301,
+            "y": 3.4657255712808137
+          },
+          "area": 1420.0,
+          "room_type": "cargo"
+        }
+      ],
+      "corridors": []
+    },
+    "deck_2": {
+      "deck_name": "Deck_2",
+      "deck_level": -15.741955276221985,
+      "rooms": [
+        {
+          "id": "room_001",
+          "center": {
+            "x": 0.18699056863999886,
+            "y": -3.5739030525779585
+          },
+          "area": 1378.597868708767,
+          "room_type": "cargo"
+        }
+      ],
+      "corridors": []
+    },
+    "deck_3": {
+      "deck_name": "Deck_3",
+      "deck_level": -12.593564220977587,
+      "rooms": [],
+      "corridors": []
+    },
+    "deck_4": {
+      "deck_name": "Deck_4",
+      "deck_level": -9.445173165733191,
+      "rooms": [],
+      "corridors": []
+    },
+    "deck_5": {
+      "deck_name": "Deck_5",
+      "deck_level": -6.2967821104887935,
+      "rooms": [],
+      "corridors": []
+    },
+    "deck_6": {
+      "deck_name": "Deck_6",
+      "deck_level": -3.148391055244396,
+      "rooms": [],
+      "corridors": []
+    },
+    "deck_7": {
+      "deck_name": "Deck_7",
+      "deck_level": 0.0,
+      "rooms": [
+        {
+          "id": "room_001",
+          "center": {
+            "x": 0.46650586730642374,
+            "y": 2.236101133760643
+          },
+          "area": 12315.478399692425,
+          "room_type": "cargo"
+        }
+      ],
+      "corridors": []
+    },
+    "deck_8": {
+      "deck_name": "Deck_8",
+      "deck_level": 3.1483910552443994,
+      "rooms": [],
+      "corridors": []
+    },
+    "deck_9": {
+      "deck_name": "Deck_9",
+      "deck_level": 6.296782110488795,
+      "rooms": [],
+      "corridors": []
+    },
+    "deck_10": {
+      "deck_name": "Deck_10",
+      "deck_level": 9.445173165733191,
+      "rooms": [],
+      "corridors": []
+    },
+    "deck_11": {
+      "deck_name": "Deck_11",
+      "deck_level": 12.59356422097759,
+      "rooms": [],
+      "corridors": []
+    },
+    "main_deck": {
+      "deck_name": "Main_Deck",
+      "deck_level": 15.741955276221987,
+      "rooms": [
+        {
+          "id": "room_001",
+          "center": {
+            "x": 0.18699056863999886,
+            "y": -3.5739030525779505
+          },
+          "area": 1378.5978687087666,
+          "room_type": "cargo"
+        }
+      ],
+      "corridors": []
+    },
+    "bridge_deck": {
+      "deck_name": "Bridge_Deck",
+      "deck_level": 18.890346331466382,
+      "rooms": [
+        {
+          "id": "room_001",
+          "center": {
+            "x": 0.9473684210526301,
+            "y": 3.465725571280836
+          },
+          "area": 1420.0,
+          "room_type": "cargo"
+        }
+      ],
+      "corridors": []
+    }
+  },
+  "ship_specifications": {
+    "total_rooms": 5,
+    "total_corridors": 0,
+    "deck_levels": [
+      -18.890346331466382,
+      -15.741955276221985,
+      -12.593564220977587,
+      -9.445173165733191,
+      -6.2967821104887935,
+      -3.148391055244396,
+      0.0,
+      3.1483910552443994,
+      6.296782110488795,
+      9.445173165733191,
+      12.59356422097759,
+      15.741955276221987,
+      18.890346331466382
+    ]
+  }
+}

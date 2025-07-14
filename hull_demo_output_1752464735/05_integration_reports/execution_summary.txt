@@ -1,0 +1,8 @@
+Ship Hull Geometry OBJ Framework - Execution Summary
+============================================================
+Total Execution Time: 3.17 seconds
+Total Output Files: 22
+Framework Status: SUCCESS
+Zero Exotic Energy: INTEGRATED
+WebGL Vertices: 262
+Hull Safety Margin: 0.00
