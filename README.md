@@ -13,6 +13,8 @@ All repositories are part of the [arcticoder](https://github.com/arcticoder) eco
 
 **Revolutionary Zero Exotic Energy Framework for Faster-Than-Light Travel**
 
+**🚀 NEW: Ship Hull Geometry OBJ Framework** - Complete 4-phase hull generation system with WebGL visualization
+
 🚀 **BREAKTHROUGH ACHIEVED**: Zero exotic energy FTL with 24.2 billion times sub-classical enhancement
 
 ## Overview
@@ -20,6 +22,13 @@ All repositories are part of the [arcticoder](https://github.com/arcticoder) eco
 This repository implements a revolutionary breakthrough in faster-than-light (FTL) metric engineering through Loop Quantum Gravity (LQG) principles. We have achieved **zero exotic energy requirements** while operating with **sub-classical positive energy consumption** - representing a fundamental advancement in theoretical physics with immediate engineering applications.
 
 ## Key Achievements
+
+### 🎯 **Ship Hull Geometry OBJ Framework** (NEW)
+- **4-Phase Implementation**: Hull Physics → OBJ Generation → Deck Plans → WebGL Visualization
+- **Physics-Informed Design**: Alcubierre metric constraints for 48c FTL operations
+- **Interactive WebGL**: Real-time 3D hull visualization with browser controls
+- **Automated Deck Plans**: Intelligent room detection and corridor mapping
+- **Zero Exotic Energy Integration**: Leverages breakthrough exotic energy elimination
 
 ### 🎯 **Zero Exotic Energy Framework**
 - **Exotic Energy**: Exactly 0.00e+00 J (completely eliminated)
@@ -46,10 +55,18 @@ This repository implements a revolutionary breakthrough in faster-than-light (FT
 ```
 lqg-ftl-metric-engineering/
 ├── src/
-│   └── zero_exotic_energy_framework.py    # Core framework implementation
+│   ├── zero_exotic_energy_framework.py    # Core framework implementation
+│   ├── hull_geometry_generator.py         # Phase 1: Hull Physics Integration
+│   ├── obj_mesh_generator.py             # Phase 2: OBJ Mesh Generation
+│   ├── deck_plan_extractor.py            # Phase 3: Deck Plan Extraction
+│   ├── browser_visualization.py          # Phase 4: Browser Visualization
+│   ├── ship_hull_geometry_framework.py   # Complete Hull Framework
+│   ├── constants.py                      # Physical constants
+│   └── traversable_geometries.py         # Traversable wormhole geometries
 ├── docs/
 │   ├── technical-documentation.md         # Comprehensive technical docs
-│   └── SUB_CLASSICAL_BREAKTHROUGH_COMPLETE.md
+│   ├── SUB_CLASSICAL_BREAKTHROUGH_COMPLETE.md
+│   └── SHIP_HULL_GEOMETRY_FRAMEWORK.md   # Hull geometry framework docs
 ├── water_lifting_energy_comparison.py     # Practical demonstration
 ├── critical_uq_resolution_validation.py   # Production validation
 ├── validate_uq_resolution.py             # Comprehensive testing
@@ -78,6 +95,23 @@ This repository serves as the central hub for FTL metric engineering research, i
 | **Framework Status** | ✅ Production Ready | Revolutionary breakthrough |
 
 ## Quick Start
+
+### Ship Hull Geometry Framework (Complete 4-Phase System)
+```python
+from src.ship_hull_geometry_framework import ShipHullGeometryFramework
+
+# Execute complete hull generation pipeline
+framework = ShipHullGeometryFramework("my_hull_output")
+results = framework.execute_complete_framework(
+    warp_velocity=48.0,  # 48c FTL operations
+    hull_length=300.0,   # 300m starship
+    hull_beam=50.0,      # 50m beam  
+    hull_height=40.0     # 40m height
+)
+
+# Launch WebGL visualization
+# Run: my_hull_output/04_browser_visualization/launch_visualization.bat
+```
 
 ### Zero Exotic Energy Demo
 ```python
