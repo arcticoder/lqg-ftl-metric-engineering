@@ -1,0 +1,29 @@
+{
+  "optimization_summary": {
+    "target_reduction": 5.0,
+    "best_reduction_achieved": 0,
+    "target_achieved": false,
+    "best_method": null,
+    "successful_methods": 0,
+    "total_methods": 3
+  },
+  "optimization_results": {
+    "adaptive": null,
+    "variational": null,
+    "multiscale": null
+  },
+  "boundary_configuration": {
+    "boundary_type": "spherical",
+    "radius_inner": 10.0,
+    "radius_outer": 100.0,
+    "aspect_ratio": 1.0,
+    "bc_type": "dirichlet",
+    "bc_strength": 1.0,
+    "bc_smoothness": 0.1,
+    "bc_adaptivity": 0.5,
+    "field_decay_rate": 0.1,
+    "num_boundary_points": 1000,
+    "num_field_points": 5000,
+    "optimization_method": "adaptive"
+  }
+}

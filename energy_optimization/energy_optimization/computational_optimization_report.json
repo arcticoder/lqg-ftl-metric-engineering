@@ -1,0 +1,36 @@
+{
+  "optimization_summary": {
+    "target_reduction": 8.0,
+    "best_reduction_achieved": 0,
+    "target_achieved": false,
+    "best_method": null,
+    "successful_methods": 0,
+    "total_methods": 3,
+    "system_resources": {
+      "cpu_cores": 12,
+      "memory_gb": 31.93356704711914
+    }
+  },
+  "optimization_results": {
+    "cpu": {
+      "energy_reduction_factor": 6992363.943172709,
+      "original_energy": 607500000.0,
+      "optimized_energy": 86.88048919323748,
+      "computation_time": 0.5807313105491323,
+      "memory_usage": 0.00390625,
+      "flops_per_joule": 10128856.41150944,
+      "parallelization_efficiency": 0.8,
+      "cache_hit_rate": 0.7,
+      "accuracy_achieved": 1.719006664874266e-09,
+      "constraint_violations": {
+        "real_time": 57.073131054913226,
+        "stability": 0.0005110435532831463
+      },
+      "optimized_config": {
+        "tensor_resolution": 64,
+        "time_steps": 500,
+        "num_cpu_cores": 11,
+        "num_gpu_cores": 0,
+        "memory_limit_gb": 24.215737588901295,
+        "precision": "float32",
+        "use_sparse_matrices": 
