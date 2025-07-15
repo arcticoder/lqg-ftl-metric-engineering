@@ -1,0 +1,47 @@
+{
+  "timestamp": "2025-07-14T21:18:03.932413",
+  "warp_energy": {
+    "original_j": 5400000000.0,
+    "optimized_j": 6300000.0,
+    "reduction_factor": 863.9
+  },
+  "corolla_baseline": {
+    "full_tank_energy_j": 1620000000.0,
+    "full_tank_energy_mj": 1620.0,
+    "full_tank_range_km": 745.0,
+    "energy_per_km_j": 2174496.644295302,
+    "energy_per_km_mj": 2.1744966442953024,
+    "energy_per_mile_j": 3499504.4295302015,
+    "daily_driving_energy_j": 108724832.21476512,
+    "daily_driving_energy_mj": 108.72483221476512,
+    "weekly_driving_energy_j": 761073825.5033559,
+    "monthly_driving_energy_j": 3261744966.4429536,
+    "annual_driving_energy_j": 32617449664.429535,
+    "annual_driving_energy_mj": 32617.449664429536
+  },
+  "comparisons": {
+    "original_warp": {
+      "energy_j": 5400000000.0,
+      "vs_full_tank": 3.3333333333333335,
+      "vs_daily_driving": 49.66666666666666,
+      "vs_annual_driving": 0.16555555555555554,
+      "equivalent_km": 2483.333333333333,
+      "equivalent_full_tanks": 3.3333333333333335
+    },
+    "optimized_warp": {
+      "energy_j": 6300000.0,
+      "vs_full_tank": 0.0038888888888888888,
+      "vs_daily_driving": 0.05794444444444444,
+      "vs_annual_driving": 0.00019314814814814813,
+      "equivalent_km": 2.897222222222222,
+      "equivalent_full_tanks": 0.0038888888888888888
+    }
+  },
+  "breakthrough_impact": {
+    "energy_saved_j": 5393700000.0,
+    "tanks_saved": 3.3294444444444444,
+    "km_equivalent_saved": 2480.4361111111107,
+    "years_equivalent_saved": 0.16536240740740737,
+    "money_equivalent_saved_usd": 199.76666666666665
+  }
+}
