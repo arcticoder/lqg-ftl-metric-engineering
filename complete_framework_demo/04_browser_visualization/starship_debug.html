@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics-Informed FTL Starship Visualization</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(ellipse at center, #001122 0%, #000000 100%);
+            color: #ffffff;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            overflow: hidden;
+        }
+        
+        #container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        #canvas3d {
+            display: block;
+            background: transparent;
+        }
+        
+        #ui-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        .control-panel {
+            position: absolute;
+            background: rgba(0, 10, 30, 0.95);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 100, 200, 0.2);
+            backdrop-filter: blur(10px);
+            pointer-events: auto;
+            font-size: 13px;
+        }
+        
+        #main-controls {
+            top: 20px;
+            right: 20px;
+            width: 320px;
+        }
+        
+        #info-panel {
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+        }
+        
+        .section-title {
+            color: #64C8FF;
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn {
+            background: rgba(100, 200, 255, 0.1);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            color: #B0C4DE;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.2s ease;
+            text-align: center;
+            margin: 4px;
+        }
+        
+        .btn:hover {
+            background: rgba(100, 200, 255, 0.2);
+            color: #ffffff;
+        }
+        
+        .btn.active {
+            background: rgba(100, 200, 255, 0.4);
+            color: #ffffff;
+            border-color: #64C8FF;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-item {
+            background: rgba(100, 200, 255, 0.1);
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(100, 200, 255, 0.2);
+        }
+        
+        .stat-label {
+            color: #B0C4DE;
+            font-size: 10px;
+            margin-bottom: 2px;
+        }
+        
+        .stat-value {
+            color: #64C8FF;
+            font-weight: 600;
+            font-size: 12px;
+        }
+        
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #64C8FF;
+            font-size: 18px;
+            text-align: center;
+            z-index: 200;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(100, 200, 255, 0.2);
+            border-top: 3px solid #64C8FF;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        #error-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 50, 50, 0.9);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+            z-index: 300;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <canvas id="canvas3d"></canvas>
+        
+        <div id="ui-overlay">
+            <div id="loading">
+                <div class="loading-spinner"></div>
+                <div>Initializing Physics-Informed Hull Geometry</div>
+                <div style="font-size: 12px; margin-top: 10px;">Loading Three.js...</div>
+            </div>
+            
+            <div id="error-message">
+                <h3>Initialization Error</h3>
+                <div id="error-details"></div>
+            </div>
+            
+            <div class="control-panel" id="main-controls" style="display: none;">
+                <div class="section-title">View Control</div>
+                <button class="btn active" onclick="setViewMode('orbit')">Orbit View</button>
+                <button class="btn" onclick="setViewMode('top')">Top Down</button>
+                <button class="btn" onclick="setViewMode('side')">Side Profile</button>
+                <button class="btn" onclick="setViewMode('cutaway')">Cutaway</button>
+                
+                <div class="section-title" style="margin-top: 20px;">Hull Physics</div>
+                <button class="btn" onclick="adjustWarp(-0.5)">Warp -</button>
+                <button class="btn" onclick="adjustWarp(0.5)">Warp +</button>
+                <div style="color: #64C8FF; margin: 10px 0;">Warp Factor: <span id="warp-display">8.5</span></div>
+                
+                <div class="section-title" style="margin-top: 20px;">Display Options</div>
+                <button class="btn active" onclick="toggleHull()">Hull</button>
+                <button class="btn active" onclick="toggleNacelles()">Nacelles</button>
+                <button class="btn" onclick="toggleWireframe()">Wireframe</button>
+                <button class="btn active" onclick="toggleStress()">Stress Lines</button>
+                
+                <div class="section-title" style="margin-top: 20px;">Mission Data</div>
+                <div style="color: #B0C4DE; font-size: 11px; line-height: 1.4;">
+                    Framework: Physics-Informed Hull<br>
+                    Optimization: 99 Crew Diplomatic<br>
+                    ROI: 249.05% ($512.59M profit)<br>
+                    Hull: Sears-Haack aerodynamic body
+                </div>
+            </div>
+            
+            <div class="control-panel" id="info-panel" style="display: none;">
+                <div class="section-title">Ship Status</div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">Length</div>
+                        <div class="stat-value">300.0m</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Beam</div>
+                        <div class="stat-value">50.0m</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Crew</div>
+                        <div class="stat-value">99 people</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">ROI</div>
+                        <div class="stat-value">249.05%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('Starting starship visualization...');
+        
+        // Global variables
+        let scene, camera, renderer;
+        let starshipGroup, hullMesh, nacelleGroup;
+        let viewMode = 'orbit';
+        let warpFactor = 8.5;
+        let animationId;
+        
+        // Function to show error
+        function showError(message, details) {
+            console.error('Error:', message, details);
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error-message').style.display = 'block';
+            document.getElementById('error-details').innerHTML = message + '<br><small>' + (details || '') + '</small>';
+        }
+        
+        // Function to update loading message
+        function updateLoading(message) {
+            const loadingDiv = document.getElementById('loading');
+            if (loadingDiv) {
+                loadingDiv.querySelector('div:last-child').textContent = message;
+            }
+        }
+        
+        // Check if we can load Three.js
+        function loadThreeJS() {
+            return new Promise((resolve, reject) => {
+                updateLoading('Loading Three.js library...');
+                
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+                script.onload = () => {
+                    console.log('Three.js loaded successfully');
+                    updateLoading('Three.js loaded successfully');
+                    resolve();
+                };
+                script.onerror = () => {
+                    console.error('Failed to load Three.js');
+                    reject('Failed to load Three.js from CDN');
+                };
+                document.head.appendChild(script);
+            });
+        }
+        
+        // Initialize Three.js scene
+        async function initThreeJS() {
+            updateLoading('Initializing 3D scene...');
+            
+            if (typeof THREE === 'undefined') {
+                throw new Error('Three.js not available');
+            }
+            
+            // Create scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000611);
+            console.log('Scene created');
+            
+            // Create camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
+            camera.position.set(500, 200, 500);
+            camera.lookAt(0, 0, 0);
+            console.log('Camera created');
+            
+            // Create renderer
+            const canvas = document.getElementById('canvas3d');
+            renderer = new THREE.WebGLRenderer({ 
+                canvas: canvas, 
+                antialias: true
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            console.log('Renderer created');
+            
+            // Add lighting
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.4);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(1000, 1000, 1000);
+            directionalLight.castShadow = true;
+            scene.add(directionalLight);
+            console.log('Lighting added');
+            
+            // Create starfield
+            createStarfield();
+            console.log('Starfield created');
+        }
+        
+        function createStarfield() {
+            const starGeometry = new THREE.BufferGeometry();
+            const starVertices = [];
+            
+            for (let i = 0; i < 1000; i++) {
+                const x = (Math.random() - 0.5) * 10000;
+                const y = (Math.random() - 0.5) * 10000;
+                const z = (Math.random() - 0.5) * 10000;
+                starVertices.push(x, y, z);
+            }
+            
+            starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+            
+            const starMaterial = new THREE.PointsMaterial({
+                color: 0xffffff,
+                size: 2
+            });
+            
+            const stars = new THREE.Points(starGeometry, starMaterial);
+            scene.add(stars);
+        }
+        
+        // Create the starship
+        async function createStarship() {
+            updateLoading('Building starship hull...');
+            
+            starshipGroup = new THREE.Group();
+            
+            // Create main hull using physics-informed Sears-Haack body
+            const points = [];
+            for (let i = 0; i <= 100; i++) {
+                const t = i / 100;
+                let x, radius;
+                
+                if (t < 0.1) {
+                    // Nose section - sharp point for minimal drag
+                    x = t * 30 - 150;
+                    radius = 2 * Math.sqrt(t * 10);
+                } else if (t > 0.9) {
+                    // Tail section - gradual taper
+                    x = (t - 0.1) * 333.33 - 120;
+                    radius = 25 * Math.sqrt((1 - t) * 10);
+                } else {
+                    // Main body - optimized Sears-Haack body
+                    x = (t - 0.1) * 300 - 120;
+                    const bodyT = (t - 0.1) / 0.8;
+                    radius = 25 * Math.sqrt(16 * bodyT * (1 - bodyT));
+                }
+                
+                points.push(new THREE.Vector2(x, Math.max(0.1, radius)));
+            }
+            
+            const hullGeometry = new THREE.LatheGeometry(points, 48);
+            const hullMaterial = new THREE.MeshPhongMaterial({
+                color: 0x2a4a6a,
+                shininess: 100,
+                specular: 0x4488aa,
+                transparent: false,
+                side: THREE.DoubleSide
+            });
+            
+            hullMesh = new THREE.Mesh(hullGeometry, hullMaterial);
+            hullMesh.castShadow = true;
+            hullMesh.receiveShadow = true;
+            starshipGroup.add(hullMesh);
+            console.log('Physics-informed hull created');
+            
+            // Add hull stress visualization lines
+            createHullStressLines();
+            
+            // Create warp nacelles
+            nacelleGroup = new THREE.Group();
+            
+            // More detailed nacelle geometry
+            const nacelleGeometry = new THREE.CylinderGeometry(6, 8, 140, 24);
+            const nacelleMaterial = new THREE.MeshPhongMaterial({
+                color: 0x3355dd,
+                emissive: 0x001133,
+                shininess: 150,
+                transparent: true,
+                opacity: 0.95
+            });
+            
+            // Port nacelle
+            const portNacelle = new THREE.Mesh(nacelleGeometry, nacelleMaterial);
+            portNacelle.position.set(35, -20, -20);
+            portNacelle.rotation.z = Math.PI / 2;
+            nacelleGroup.add(portNacelle);
+            
+            // Starboard nacelle
+            const starboardNacelle = new THREE.Mesh(nacelleGeometry, nacelleMaterial);
+            starboardNacelle.position.set(-35, -20, -20);
+            starboardNacelle.rotation.z = Math.PI / 2;
+            nacelleGroup.add(starboardNacelle);
+            
+            // Nacelle struts
+            const strutGeometry = new THREE.BoxGeometry(3, 25, 12);
+            const strutMaterial = new THREE.MeshPhongMaterial({
+                color: 0x555555,
+                shininess: 80
+            });
+            
+            const portStrut = new THREE.Mesh(strutGeometry, strutMaterial);
+            portStrut.position.set(25, -7, -60);
+            nacelleGroup.add(portStrut);
+            
+            const starboardStrut = new THREE.Mesh(strutGeometry, strutMaterial);
+            starboardStrut.position.set(-25, -7, -60);
+            nacelleGroup.add(starboardStrut);
+            
+            // Nacelle end caps with glow
+            const capGeometry = new THREE.CylinderGeometry(7, 7, 4, 16);
+            const capMaterial = new THREE.MeshPhongMaterial({
+                color: 0x6677ff,
+                emissive: 0x2244aa,
+                transparent: true,
+                opacity: 0.8
+            });
+            
+            const portCap = new THREE.Mesh(capGeometry, capMaterial);
+            portCap.position.set(35, -20, 50);
+            portCap.rotation.z = Math.PI / 2;
+            nacelleGroup.add(portCap);
+            
+            const starboardCap = new THREE.Mesh(capGeometry, capMaterial);
+            starboardCap.position.set(-35, -20, 50);
+            starboardCap.rotation.z = Math.PI / 2;
+            nacelleGroup.add(starboardCap);
+            
+            starshipGroup.add(nacelleGroup);
+            console.log('Enhanced warp nacelles created');
+            
+            // Create bridge superstructure
+            const bridgeGeometry = new THREE.SphereGeometry(18, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2);
+            const bridgeMaterial = new THREE.MeshPhongMaterial({
+                color: 0xddaa44,
+                emissive: 0x331100,
+                shininess: 120
+            });
+            
+            const bridge = new THREE.Mesh(bridgeGeometry, bridgeMaterial);
+            bridge.position.set(0, 28, -100);
+            starshipGroup.add(bridge);
+            
+            // Bridge windows
+            const windowGeometry = new THREE.RingGeometry(12, 16, 16);
+            const windowMaterial = new THREE.MeshBasicMaterial({
+                color: 0x88ccff,
+                transparent: true,
+                opacity: 0.7
+            });
+            
+            const bridgeWindows = new THREE.Mesh(windowGeometry, windowMaterial);
+            bridgeWindows.position.set(0, 28, -82);
+            bridgeWindows.rotation.y = Math.PI;
+            starshipGroup.add(bridgeWindows);
+            console.log('Bridge superstructure created');
+            
+            // Create deck indicators
+            createDeckIndicators();
+            
+            // Add deflector dish
+            const deflectorGeometry = new THREE.SphereGeometry(12, 16, 16, 0, Math.PI * 2, 0, Math.PI);
+            const deflectorMaterial = new THREE.MeshPhongMaterial({
+                color: 0xff6600,
+                emissive: 0x442200,
+                transparent: true,
+                opacity: 0.8
+            });
+            
+            const deflector = new THREE.Mesh(deflectorGeometry, deflectorMaterial);
+            deflector.position.set(0, 0, 120);
+            deflector.rotation.x = Math.PI;
+            starshipGroup.add(deflector);
+            console.log('Deflector dish created');
+            
+            scene.add(starshipGroup);
+            console.log('Complete starship added to scene');
+        }
+        
+        function createHullStressLines() {
+            const stressGeometry = new THREE.BufferGeometry();
+            const stressVertices = [];
+            
+            // Create longitudinal stress lines
+            for (let i = 0; i < 16; i++) {
+                const angle = (i / 16) * Math.PI * 2;
+                for (let j = 0; j < 60; j++) {
+                    const z = (j / 60) * 280 - 140;
+                    const t = (j / 60 + 0.1) / 0.8;
+                    const radius = 24 * Math.sqrt(16 * t * (1 - t));
+                    
+                    const x = Math.cos(angle) * radius;
+                    const y = Math.sin(angle) * radius;
+                    
+                    stressVertices.push(x, y, z);
+                    
+                    if (j < 59) {
+                        const nextT = ((j + 1) / 60 + 0.1) / 0.8;
+                        const nextRadius = 24 * Math.sqrt(16 * nextT * (1 - nextT));
+                        const nextX = Math.cos(angle) * nextRadius;
+                        const nextY = Math.sin(angle) * nextRadius;
+                        stressVertices.push(nextX, nextY, z + 4.7);
+                    }
+                }
+            }
+            
+            stressGeometry.setAttribute('position', new THREE.Float32BufferAttribute(stressVertices, 3));
+            
+            const stressMaterial = new THREE.LineBasicMaterial({
+                color: 0x44aaff,
+                opacity: 0.3,
+                transparent: true
+            });
+            
+            const stressLines = new THREE.LineSegments(stressGeometry, stressMaterial);
+            starshipGroup.add(stressLines);
+            console.log('Hull stress visualization added');
+        }
+        
+        function createDeckIndicators() {
+            // Create deck level indicators
+            for (let i = 0; i < 13; i++) {
+                const deckY = (i - 6) * 6.5;
+                const deckRadius = 23 * Math.sqrt(1 - Math.pow((i - 6) / 9, 2));
+                
+                if (deckRadius > 3) {
+                    const deckGeometry = new THREE.RingGeometry(deckRadius - 0.5, deckRadius, 32);
+                    const deckMaterial = new THREE.MeshBasicMaterial({
+                        color: 0x666666,
+                        transparent: true,
+                        opacity: 0.2,
+                        side: THREE.DoubleSide
+                    });
+                    
+                    const deck = new THREE.Mesh(deckGeometry, deckMaterial);
+                    deck.position.y = deckY;
+                    deck.rotation.x = Math.PI / 2;
+                    starshipGroup.add(deck);
+                }
+            }
+            console.log('Deck indicators created');
+        }
+        
+        // Animation loop
+        function animate() {
+            animationId = requestAnimationFrame(animate);
+            
+            // Animate nacelles with realistic warp field effects
+            if (nacelleGroup) {
+                const time = Date.now() * 0.001;
+                nacelleGroup.children.forEach((nacelle, index) => {
+                    if (nacelle.material && nacelle.material.emissive) {
+                        // Pulsing warp field effect
+                        const baseIntensity = warpFactor / 10 * 0.4;
+                        const pulse = 0.3 + 0.2 * Math.sin(time * 3 + index * Math.PI);
+                        const intensity = baseIntensity * pulse;
+                        
+                        if (nacelle.material.color.r > 0.3) { // Nacelle body
+                            nacelle.material.emissive.setRGB(
+                                intensity * 0.1,
+                                intensity * 0.2, 
+                                intensity * 0.8
+                            );
+                        } else { // End caps
+                            nacelle.material.emissive.setRGB(
+                                intensity * 0.4,
+                                intensity * 0.6,
+                                intensity * 1.0
+                            );
+                        }
+                    }
+                });
+            }
+            
+            // Subtle hull stress deformation based on warp factor
+            if (hullMesh && warpFactor > 5.0) {
+                const stress = (warpFactor - 5.0) / 5.0;
+                const time = Date.now() * 0.0005;
+                const deformation = stress * 0.02 * Math.sin(time);
+                
+                hullMesh.scale.setScalar(1 + deformation);
+            }
+            
+            // Slowly rotate the starship for better viewing
+            if (starshipGroup && viewMode === 'orbit') {
+                starshipGroup.rotation.y += 0.002;
+            }
+            
+            renderer.render(scene, camera);
+        }
+        
+        // View mode functions
+        function setViewMode(mode) {
+            viewMode = mode;
+            
+            // Update button states
+            document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            switch (mode) {
+                case 'orbit':
+                    camera.position.set(500, 200, 500);
+                    break;
+                case 'top':
+                    camera.position.set(0, 800, 0);
+                    break;
+                case 'side':
+                    camera.position.set(800, 0, 0);
+                    break;
+                case 'cutaway':
+                    camera.position.set(300, 100, 300);
+                    if (hullMesh) hullMesh.material.wireframe = true;
+                    break;
+            }
+            
+            if (mode !== 'cutaway' && hullMesh) {
+                hullMesh.material.wireframe = false;
+            }
+            
+            camera.lookAt(0, 0, 0);
+        }
+        
+        function adjustWarp(delta) {
+            warpFactor = Math.max(1, Math.min(9.99, warpFactor + delta));
+            document.getElementById('warp-display').textContent = warpFactor.toFixed(1);
+        }
+        
+        // Display toggle functions
+        let showHull = true;
+        let showNacelles = true;
+        let showWireframe = false;
+        let showStressLines = true;
+        
+        function toggleHull() {
+            showHull = !showHull;
+            if (hullMesh) hullMesh.visible = showHull;
+            event.target.classList.toggle('active', showHull);
+        }
+        
+        function toggleNacelles() {
+            showNacelles = !showNacelles;
+            if (nacelleGroup) nacelleGroup.visible = showNacelles;
+            event.target.classList.toggle('active', showNacelles);
+        }
+        
+        function toggleWireframe() {
+            showWireframe = !showWireframe;
+            if (hullMesh) hullMesh.material.wireframe = showWireframe;
+            event.target.classList.toggle('active', showWireframe);
+        }
+        
+        function toggleStress() {
+            showStressLines = !showStressLines;
+            if (starshipGroup) {
+                starshipGroup.children.forEach(child => {
+                    if (child.type === 'LineSegments') {
+                        child.visible = showStressLines;
+                    }
+                });
+            }
+            event.target.classList.toggle('active', showStressLines);
+        }
+        
+        // Mouse controls
+        function setupControls() {
+            let mouseDown = false;
+            let mouseX = 0;
+            let mouseY = 0;
+            
+            document.addEventListener('mousedown', (event) => {
+                mouseDown = true;
+                mouseX = event.clientX;
+                mouseY = event.clientY;
+            });
+            
+            document.addEventListener('mouseup', () => {
+                mouseDown = false;
+            });
+            
+            document.addEventListener('mousemove', (event) => {
+                if (!mouseDown || viewMode !== 'orbit') return;
+                
+                const deltaX = event.clientX - mouseX;
+                const deltaY = event.clientY - mouseY;
+                
+                // Rotate camera around ship
+                const spherical = new THREE.Spherical();
+                spherical.setFromVector3(camera.position);
+                spherical.theta -= deltaX * 0.01;
+                spherical.phi += deltaY * 0.01;
+                spherical.phi = Math.max(0.1, Math.min(Math.PI - 0.1, spherical.phi));
+                
+                camera.position.setFromSpherical(spherical);
+                camera.lookAt(0, 0, 0);
+                
+                mouseX = event.clientX;
+                mouseY = event.clientY;
+            });
+            
+            // Zoom with mouse wheel
+            document.addEventListener('wheel', (event) => {
+                const distance = camera.position.length();
+                const newDistance = distance + event.deltaY * 0.5;
+                camera.position.normalize().multiplyScalar(Math.max(100, Math.min(2000, newDistance)));
+            });
+        }
+        
+        // Window resize handler
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        
+        // Main initialization
+        async function init() {
+            try {
+                console.log('Starting initialization...');
+                updateLoading('Checking browser compatibility...');
+                
+                // Check WebGL support
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (!gl) {
+                    throw new Error('WebGL not supported in this browser');
+                }
+                console.log('WebGL supported');
+                
+                // Load Three.js
+                await loadThreeJS();
+                
+                // Initialize Three.js
+                await initThreeJS();
+                
+                // Create starship
+                await createStarship();
+                
+                // Setup controls
+                setupControls();
+                
+                // Setup event listeners
+                window.addEventListener('resize', onWindowResize);
+                
+                // Start animation
+                animate();
+                
+                // Show UI
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('main-controls').style.display = 'block';
+                document.getElementById('info-panel').style.display = 'block';
+                
+                console.log('Initialization complete!');
+                
+            } catch (error) {
+                console.error('Initialization failed:', error);
+                showError('Initialization failed: ' + error.message, error.stack);
+            }
+        }
+        
+        // Start when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, starting initialization...');
+            init();
+        });
+        
+        // Fallback if DOMContentLoaded already fired
+        if (document.readyState === 'loading') {
+            console.log('DOM still loading, waiting...');
+        } else {
+            console.log('DOM already loaded, starting immediately...');
+            init();
+        }
+    </script>
+</body>
+</html>

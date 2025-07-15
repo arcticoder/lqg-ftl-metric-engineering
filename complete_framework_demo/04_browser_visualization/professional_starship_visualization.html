@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics-Informed FTL Starship Visualization</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(ellipse at center, #001122 0%, #000000 100%);
+            color: #ffffff;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            overflow: hidden;
+        }
+        
+        #container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        #canvas3d {
+            display: block;
+            background: transparent;
+        }
+        
+        #ui-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        .control-panel {
+            position: absolute;
+            background: rgba(0, 10, 30, 0.95);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 100, 200, 0.2);
+            backdrop-filter: blur(10px);
+            pointer-events: auto;
+            font-size: 13px;
+        }
+        
+        #main-controls {
+            top: 20px;
+            right: 20px;
+            width: 320px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        
+        #deck-controls {
+            top: 20px;
+            left: 20px;
+            width: 280px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        
+        #info-panel {
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+        }
+        
+        .control-section {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(100, 200, 255, 0.2);
+        }
+        
+        .control-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        .section-title {
+            color: #64C8FF;
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .control-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .control-row label {
+            flex: 1;
+            color: #B0C4DE;
+            font-size: 12px;
+        }
+        
+        .control-row input[type="range"] {
+            flex: 2;
+            margin: 0 8px;
+        }
+        
+        .control-row .value {
+            flex: 0 0 60px;
+            color: #64C8FF;
+            font-weight: 500;
+            text-align: right;
+            font-size: 11px;
+        }
+        
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+        
+        .btn {
+            background: rgba(100, 200, 255, 0.1);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            color: #B0C4DE;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background: rgba(100, 200, 255, 0.2);
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+        
+        .btn.active {
+            background: rgba(100, 200, 255, 0.4);
+            color: #ffffff;
+            border-color: #64C8FF;
+            box-shadow: 0 0 10px rgba(100, 200, 255, 0.3);
+        }
+        
+        .deck-button {
+            width: 100%;
+            margin-bottom: 4px;
+            padding: 8px 12px;
+            background: rgba(100, 200, 255, 0.1);
+            border: 1px solid rgba(100, 200, 255, 0.2);
+            color: #B0C4DE;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 10px;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+        
+        .deck-button:hover {
+            background: rgba(100, 200, 255, 0.2);
+            transform: translateX(2px);
+        }
+        
+        .deck-button.active {
+            background: rgba(100, 200, 255, 0.4);
+            color: #ffffff;
+            border-color: #64C8FF;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-item {
+            background: rgba(100, 200, 255, 0.1);
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(100, 200, 255, 0.2);
+        }
+        
+        .stat-label {
+            color: #B0C4DE;
+            font-size: 10px;
+            margin-bottom: 2px;
+        }
+        
+        .stat-value {
+            color: #64C8FF;
+            font-weight: 600;
+            font-size: 12px;
+        }
+        
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #64C8FF;
+            font-size: 18px;
+            text-align: center;
+            z-index: 200;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(100, 200, 255, 0.2);
+            border-top: 3px solid #64C8FF;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .performance-warning {
+            background: rgba(255, 100, 100, 0.1);
+            border: 1px solid rgba(255, 100, 100, 0.3);
+            color: #FFB0B0;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <canvas id="canvas3d"></canvas>
+        
+        <div id="ui-overlay">
+            <div id="loading">
+                <div class="loading-spinner"></div>
+                <div>Initializing Physics-Informed Hull Geometry</div>
+            </div>
+            
+            <div class="control-panel" id="deck-controls" style="display: none;">
+                <div class="section-title">Deck Plans (99 Crew)</div>
+                <div id="deck-buttons"></div>
+            </div>
+            
+            <div class="control-panel" id="main-controls" style="display: none;">
+                <div class="control-section">
+                    <div class="section-title">View Control</div>
+                    <div class="button-group">
+                        <button class="btn active" onclick="setViewMode('orbit')">Orbit</button>
+                        <button class="btn" onclick="setViewMode('top')">Top Down</button>
+                        <button class="btn" onclick="setViewMode('side')">Profile</button>
+                        <button class="btn" onclick="setViewMode('cutaway')">Cutaway</button>
+                    </div>
+                </div>
+                
+                <div class="control-section">
+                    <div class="section-title">Camera</div>
+                    <div class="control-row">
+                        <label>Distance</label>
+                        <input type="range" id="camera-distance" min="200" max="1000" value="500" oninput="updateCamera()">
+                        <span class="value" id="camera-distance-val">500m</span>
+                    </div>
+                    <div class="control-row">
+                        <label>Field of View</label>
+                        <input type="range" id="camera-fov" min="30" max="120" value="75" oninput="updateCamera()">
+                        <span class="value" id="camera-fov-val">75°</span>
+                    </div>
+                </div>
+                
+                <div class="control-section">
+                    <div class="section-title">Hull Physics</div>
+                    <div class="control-row">
+                        <label>Warp Factor</label>
+                        <input type="range" id="warp-factor" min="1" max="9.99" step="0.1" value="8.5" oninput="updatePhysics()">
+                        <span class="value" id="warp-factor-val">8.5</span>
+                    </div>
+                    <div class="control-row">
+                        <label>Hull Stress</label>
+                        <input type="range" id="hull-stress" min="0.1" max="2.0" step="0.1" value="1.0" oninput="updatePhysics()">
+                        <span class="value" id="hull-stress-val">1.0</span>
+                    </div>
+                    <div class="control-row">
+                        <label>Field Geometry</label>
+                        <input type="range" id="field-geometry" min="0.5" max="1.5" step="0.05" value="1.0" oninput="updatePhysics()">
+                        <span class="value" id="field-geometry-val">1.0</span>
+                    </div>
+                </div>
+                
+                <div class="control-section">
+                    <div class="section-title">Rendering</div>
+                    <div class="button-group">
+                        <button class="btn active" onclick="toggleHull()">Hull</button>
+                        <button class="btn active" onclick="toggleNacelles()">Nacelles</button>
+                        <button class="btn" onclick="toggleWireframe()">Wireframe</button>
+                        <button class="btn active" onclick="toggleLighting()">Lighting</button>
+                    </div>
+                    <div class="control-row">
+                        <label>Detail Level</label>
+                        <input type="range" id="detail-level" min="1" max="4" value="3" oninput="updateDetail()">
+                        <span class="value" id="detail-level-val">High</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="control-panel" id="info-panel" style="display: none;">
+                <div class="section-title">Ship Status</div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">Length</div>
+                        <div class="stat-value">300.0m</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Beam</div>
+                        <div class="stat-value">50.0m</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Height</div>
+                        <div class="stat-value">40.0m</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Mass</div>
+                        <div class="stat-value">2.1M tons</div>
+                    </div>
+                </div>
+                
+                <div class="section-title">Mission Profile</div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">Crew</div>
+                        <div class="stat-value" id="current-crew">99 people</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Mission</div>
+                        <div class="stat-value">Diplomatic</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">ROI</div>
+                        <div class="stat-value">249.05%</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Profit</div>
+                        <div class="stat-value">$512.59M</div>
+                    </div>
+                </div>
+                
+                <div class="section-title">Current Deck</div>
+                <div id="deck-info">
+                    <div class="stat-item">
+                        <div class="stat-label">Deck</div>
+                        <div class="stat-value" id="current-deck-name">Hull Overview</div>
+                    </div>
+                    <div class="stat-item" style="grid-column: 1 / -1;">
+                        <div class="stat-label">Function</div>
+                        <div class="stat-value" id="current-deck-function">Complete ship structure</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Three.js for professional 3D rendering -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Global variables
+        let scene, camera, renderer, controls;
+        let starshipGroup, hullMesh, nacelleGroup, deckGroup;
+        let currentDeck = -1;
+        let viewMode = 'orbit';
+        let animationId;
+        
+        // Physics parameters
+        let warpFactor = 8.5;
+        let hullStress = 1.0;
+        let fieldGeometry = 1.0;
+        
+        // Render settings
+        let showHull = true;
+        let showNacelles = true;
+        let showWireframe = false;
+        let showLighting = true;
+        let detailLevel = 3;
+        
+        // Deck plans data (embedded)
+        const deckPlansData = {
+            metadata: {
+                framework: "Physics-Informed Hull Geometry Framework",
+                version: "3.0.0 - Professional Rendering",
+                generation_date: "2025-07-13",
+                crew_optimization: {
+                    total_crew: 99,
+                    operational_crew: 36,
+                    diplomatic_passengers: 63
+                },
+                economic_performance: {
+                    roi: "249.05%",
+                    net_profit: "$512.59M",
+                    mission_type: "diplomatic"
+                }
+            },
+            ship_specifications: {
+                length: 300.0,
+                beam: 50.0,
+                height: 40.0,
+                total_decks: 13,
+                deck_spacing: 3.33
+            },
+            deck_plans: [
+                {
+                    name: "Deck_13",
+                    level: 20.0,
+                    function: "Command & Control",
+                    total_occupancy: 1,
+                    rooms: [
+                        {id: "bridge", type: "bridge", name: "Main Bridge", area: 150.0, occupancy: 12},
+                        {id: "ready_room", type: "office", name: "Captain's Ready Room", area: 30.0, occupancy: 1},
+                        {id: "vip_lounge", type: "lounge", name: "VIP Diplomatic Lounge", area: 100.0, occupancy: 20}
+                    ]
+                },
+                {
+                    name: "Deck_12",
+                    level: 16.7,
+                    function: "VIP Diplomatic Quarters",
+                    total_occupancy: 12,
+                    rooms: [
+                        {id: "amb_suite_1", type: "vip_quarters", name: "Ambassador Suite 1", area: 50.0, occupancy: 1},
+                        {id: "amb_suite_2", type: "vip_quarters", name: "Ambassador Suite 2", area: 50.0, occupancy: 1},
+                        {id: "amb_suite_3", type: "vip_quarters", name: "Ambassador Suite 3", area: 50.0, occupancy: 1},
+                        {id: "amb_suite_4", type: "vip_quarters", name: "Ambassador Suite 4", area: 50.0, occupancy: 1},
+                        {id: "vip_dining", type: "dining", name: "VIP Diplomatic Dining", area: 100.0, occupancy: 20}
+                    ]
+                },
+                {
+                    name: "Deck_11",
+                    level: 13.3,
+                    function: "Diplomatic Staff A",
+                    total_occupancy: 15,
+                    rooms: [
+                        {id: "conference", type: "conference", name: "Main Conference Center", area: 120.0, occupancy: 50}
+                    ]
+                },
+                {
+                    name: "Deck_10",
+                    level: 10.0,
+                    function: "Diplomatic Staff B",
+                    total_occupancy: 15,
+                    rooms: [
+                        {id: "staff_lounge", type: "lounge", name: "Staff Lounge", area: 80.0, occupancy: 25}
+                    ]
+                },
+                {
+                    name: "Deck_9",
+                    level: 6.7,
+                    function: "Security & Technical",
+                    total_occupancy: 18,
+                    rooms: [
+                        {id: "security_center", type: "security", name: "Security Center", area: 60.0, occupancy: 8},
+                        {id: "tech_lab", type: "laboratory", name: "Technical Laboratory", area: 80.0, occupancy: 10}
+                    ]
+                },
+                {
+                    name: "Deck_8",
+                    level: 3.3,
+                    function: "Recreation & Support",
+                    total_occupancy: 5,
+                    rooms: [
+                        {id: "recreation", type: "recreation", name: "Main Recreation Center", area: 200.0, occupancy: 50},
+                        {id: "dining_hall", type: "dining", name: "Multi-Cultural Dining", area: 150.0, occupancy: 99}
+                    ]
+                },
+                {
+                    name: "Deck_7",
+                    level: 0.0,
+                    function: "Main Operations",
+                    total_occupancy: 3,
+                    rooms: [
+                        {id: "ops_center", type: "operations", name: "Operations Center", area: 120.0, occupancy: 15},
+                        {id: "medical_bay", type: "medical", name: "Medical Bay", area: 180.0, occupancy: 20}
+                    ]
+                },
+                {
+                    name: "Deck_6",
+                    level: -3.3,
+                    function: "Engineering & Medical Crew",
+                    total_occupancy: 22,
+                    rooms: [
+                        {id: "engineering_1", type: "engineering", name: "Engineering Section 1", area: 100.0, occupancy: 14},
+                        {id: "medical_quarters", type: "crew_quarters", name: "Medical Staff Quarters", area: 80.0, occupancy: 8}
+                    ]
+                },
+                {
+                    name: "Deck_5",
+                    level: -6.7,
+                    function: "Science & Support Crew",
+                    total_occupancy: 13,
+                    rooms: [
+                        {id: "science_lab", type: "laboratory", name: "Science Laboratory", area: 120.0, occupancy: 7},
+                        {id: "maintenance", type: "engineering", name: "Maintenance Section", area: 60.0, occupancy: 4},
+                        {id: "support_quarters", type: "crew_quarters", name: "Support Quarters", area: 40.0, occupancy: 2}
+                    ]
+                },
+                {
+                    name: "Deck_4",
+                    level: -10.0,
+                    function: "Engineering Support",
+                    total_occupancy: 0,
+                    rooms: [
+                        {id: "eng_workshop", type: "workshop", name: "Engineering Workshop", area: 200.0, occupancy: 15},
+                        {id: "fabrication", type: "manufacturing", name: "Fabrication Bay", area: 150.0, occupancy: 10}
+                    ]
+                },
+                {
+                    name: "Deck_3",
+                    level: -13.3,
+                    function: "Primary Engineering",
+                    total_occupancy: 0,
+                    rooms: [
+                        {id: "warp_core", type: "engine", name: "LQG Drive Core", area: 250.0, occupancy: 8},
+                        {id: "warp_control", type: "control", name: "Warp Field Control", area: 100.0, occupancy: 6}
+                    ]
+                },
+                {
+                    name: "Deck_2",
+                    level: -16.7,
+                    function: "Life Support",
+                    total_occupancy: 0,
+                    rooms: [
+                        {id: "life_support", type: "life_support", name: "Environmental Control", area: 200.0, occupancy: 4},
+                        {id: "waste_processing", type: "processing", name: "Waste Processing", area: 80.0, occupancy: 1}
+                    ]
+                },
+                {
+                    name: "Deck_1",
+                    level: -20.0,
+                    function: "Cargo & Storage",
+                    total_occupancy: 0,
+                    rooms: [
+                        {id: "cargo_bay", type: "cargo", name: "Main Cargo Bay", area: 300.0, occupancy: 0},
+                        {id: "storage", type: "storage", name: "Supply Storage", area: 200.0, occupancy: 0}
+                    ]
+                }
+            ]
+        };
+
+        // Initialize the application
+        async function init() {
+            try {
+                await initThreeJS();
+                await createStarship();
+                setupControls();
+                setupEventListeners();
+                animate();
+                
+                // Hide loading screen
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('deck-controls').style.display = 'block';
+                document.getElementById('main-controls').style.display = 'block';
+                document.getElementById('info-panel').style.display = 'block';
+                
+                console.log('Physics-Informed Starship Visualization initialized successfully');
+                
+            } catch (error) {
+                console.error('Initialization failed:', error);
+                document.getElementById('loading').innerHTML = 
+                    '<div style="color: #ff6666;">Initialization Failed</div><div style="font-size: 12px; margin-top: 10px;">' + error.message + '</div>';
+            }
+        }
+
+        async function initThreeJS() {
+            // Create scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000611);
+            
+            // Create camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
+            camera.position.set(500, 200, 500);
+            
+            // Create renderer
+            const canvas = document.getElementById('canvas3d');
+            renderer = new THREE.WebGLRenderer({ 
+                canvas: canvas, 
+                antialias: true,
+                powerPreference: "high-performance"
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.2;
+            
+            // Add ambient lighting
+            const ambientLight = new THREE.AmbientLight(0x1a2f4a, 0.3);
+            scene.add(ambientLight);
+            
+            // Add main directional light (star)
+            const starLight = new THREE.DirectionalLight(0xffffff, 1.5);
+            starLight.position.set(1000, 1000, 1000);
+            starLight.castShadow = true;
+            starLight.shadow.mapSize.width = 2048;
+            starLight.shadow.mapSize.height = 2048;
+            starLight.shadow.camera.near = 500;
+            starLight.shadow.camera.far = 4000;
+            starLight.shadow.camera.left = -1000;
+            starLight.shadow.camera.right = 1000;
+            starLight.shadow.camera.top = 1000;
+            starLight.shadow.camera.bottom = -1000;
+            scene.add(starLight);
+            
+            // Add fill light
+            const fillLight = new THREE.DirectionalLight(0x4488ff, 0.5);
+            fillLight.position.set(-500, 500, -500);
+            scene.add(fillLight);
+            
+            // Add rim light
+            const rimLight = new THREE.DirectionalLight(0xff8844, 0.3);
+            rimLight.position.set(0, -500, 1000);
+            scene.add(rimLight);
+            
+            // Add starfield
+            createStarfield();
+        }
+
+        function createStarfield() {
+            const starGeometry = new THREE.BufferGeometry();
+            const starMaterial = new THREE.PointsMaterial({
+                color: 0xffffff,
+                size: 2,
+                sizeAttenuation: false
+            });
+            
+            const starVertices = [];
+            for (let i = 0; i < 10000; i++) {
+                const x = (Math.random() - 0.5) * 20000;
+                const y = (Math.random() - 0.5) * 20000;
+                const z = (Math.random() - 0.5) * 20000;
+                starVertices.push(x, y, z);
+            }
+            
+            starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+            const stars = new THREE.Points(starGeometry, starMaterial);
+            scene.add(stars);
+        }
+
+        async function createStarship() {
+            starshipGroup = new THREE.Group();
+            
+            // Create hull with physics-informed geometry
+            await createHull();
+            
+            // Create warp nacelles
+            createNacelles();
+            
+            // Create bridge superstructure
+            createBridge();
+            
+            // Create deck structures
+            createDecks();
+            
+            scene.add(starshipGroup);
+        }
+
+        async function createHull() {
+            // Physics-informed hull shape based on optimal aerodynamics and structural stress
+            const hullShape = new THREE.Shape();
+            
+            // Define hull cross-section using Sears-Haack body for minimal wave drag
+            const length = 300;
+            const maxBeam = 50;
+            const points = [];
+            
+            for (let i = 0; i <= 100; i++) {
+                const x = (i / 100) * length - length/2;
+                const t = i / 100;
+                
+                // Sears-Haack body equation for supersonic flow optimization
+                const radius = maxBeam/2 * Math.sqrt(16 * t * (1 - t));
+                points.push(new THREE.Vector2(x, radius));
+            }
+            
+            // Create hull geometry using lathe
+            const hullGeometry = new THREE.LatheGeometry(points, 32);
+            
+            // Advanced material with physics-based properties
+            const hullMaterial = new THREE.MeshPhysicalMaterial({
+                color: 0x2a4a6a,
+                metalness: 0.8,
+                roughness: 0.2,
+                clearcoat: 0.1,
+                clearcoatRoughness: 0.1,
+                reflectivity: 0.9,
+                envMapIntensity: 1.0
+            });
+            
+            hullMesh = new THREE.Mesh(hullGeometry, hullMaterial);
+            hullMesh.castShadow = true;
+            hullMesh.receiveShadow = true;
+            
+            // Add hull stress visualization
+            addHullStressLines();
+            
+            starshipGroup.add(hullMesh);
+        }
+
+        function addHullStressLines() {
+            const stressGeometry = new THREE.BufferGeometry();
+            const stressVertices = [];
+            
+            // Create stress concentration lines based on hull curvature
+            for (let i = 0; i < 20; i++) {
+                const angle = (i / 20) * Math.PI * 2;
+                for (let j = 0; j < 50; j++) {
+                    const z = (j / 50) * 300 - 150;
+                    const radius = 25 * Math.sqrt(16 * (j/50) * (1 - j/50));
+                    
+                    const x = Math.cos(angle) * radius;
+                    const y = Math.sin(angle) * radius;
+                    
+                    stressVertices.push(x, y, z);
+                    
+                    if (j < 49) {
+                        const nextRadius = 25 * Math.sqrt(16 * ((j+1)/50) * (1 - (j+1)/50));
+                        const nextX = Math.cos(angle) * nextRadius;
+                        const nextY = Math.sin(angle) * nextRadius;
+                        stressVertices.push(nextX, nextY, z + 6);
+                    }
+                }
+            }
+            
+            stressGeometry.setAttribute('position', new THREE.Float32BufferAttribute(stressVertices, 3));
+            
+            const stressMaterial = new THREE.LineBasicMaterial({
+                color: 0x44aaff,
+                opacity: 0.3,
+                transparent: true
+            });
+            
+            const stressLines = new THREE.LineSegments(stressGeometry, stressMaterial);
+            starshipGroup.add(stressLines);
+        }
+
+        function createNacelles() {
+            nacelleGroup = new THREE.Group();
+            
+            // Create warp nacelle geometry
+            const nacelleGeometry = new THREE.CylinderGeometry(4, 6, 120, 16);
+            const nacelleMaterial = new THREE.MeshPhysicalMaterial({
+                color: 0x4466ff,
+                emissive: 0x001144,
+                metalness: 0.9,
+                roughness: 0.1,
+                transparent: true,
+                opacity: 0.9
+            });
+            
+            // Port nacelle
+            const portNacelle = new THREE.Mesh(nacelleGeometry, nacelleMaterial);
+            portNacelle.position.set(30, -15, 0);
+            portNacelle.rotation.z = Math.PI / 2;
+            nacelleGroup.add(portNacelle);
+            
+            // Starboard nacelle
+            const starboardNacelle = new THREE.Mesh(nacelleGeometry, nacelleMaterial);
+            starboardNacelle.position.set(-30, -15, 0);
+            starboardNacelle.rotation.z = Math.PI / 2;
+            nacelleGroup.add(starboardNacelle);
+            
+            // Nacelle struts
+            const strutGeometry = new THREE.BoxGeometry(2, 20, 8);
+            const strutMaterial = new THREE.MeshPhysicalMaterial({
+                color: 0x555555,
+                metalness: 0.8,
+                roughness: 0.3
+            });
+            
+            const portStrut = new THREE.Mesh(strutGeometry, strutMaterial);
+            portStrut.position.set(20, -5, -50);
+            nacelleGroup.add(portStrut);
+            
+            const starboardStrut = new THREE.Mesh(strutGeometry, strutMaterial);
+            starboardStrut.position.set(-20, -5, -50);
+            nacelleGroup.add(starboardStrut);
+            
+            starshipGroup.add(nacelleGroup);
+        }
+
+        function createBridge() {
+            // Bridge dome
+            const bridgeGeometry = new THREE.SphereGeometry(15, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2);
+            const bridgeMaterial = new THREE.MeshPhysicalMaterial({
+                color: 0xffaa44,
+                emissive: 0x442200,
+                metalness: 0.7,
+                roughness: 0.2,
+                transparent: true,
+                opacity: 0.8
+            });
+            
+            const bridge = new THREE.Mesh(bridgeGeometry, bridgeMaterial);
+            bridge.position.set(0, 25, -80);
+            starshipGroup.add(bridge);
+            
+            // Bridge windows
+            const windowGeometry = new THREE.RingGeometry(8, 12, 8);
+            const windowMaterial = new THREE.MeshBasicMaterial({
+                color: 0x88ccff,
+                transparent: true,
+                opacity: 0.6
+            });
+            
+            const bridgeWindows = new THREE.Mesh(windowGeometry, windowMaterial);
+            bridgeWindows.position.set(0, 25, -65);
+            bridgeWindows.rotation.y = Math.PI;
+            starshipGroup.add(bridgeWindows);
+        }
+
+        function createDecks() {
+            deckGroup = new THREE.Group();
+            
+            // Create visible deck sections
+            for (let i = 0; i < 13; i++) {
+                const deckY = (i - 6) * 6;
+                const deckRadius = 22 * Math.sqrt(1 - Math.pow((i - 6) / 8, 2));
+                
+                if (deckRadius > 2) {
+                    const deckGeometry = new THREE.RingGeometry(deckRadius - 1, deckRadius, 32);
+                    const deckMaterial = new THREE.MeshPhysicalMaterial({
+                        color: 0x666666,
+                        metalness: 0.5,
+                        roughness: 0.8,
+                        transparent: true,
+                        opacity: 0.3
+                    });
+                    
+                    const deck = new THREE.Mesh(deckGeometry, deckMaterial);
+                    deck.position.y = deckY;
+                    deck.rotation.x = Math.PI / 2;
+                    deckGroup.add(deck);
+                }
+            }
+            
+            starshipGroup.add(deckGroup);
+        }
+
+        function setupControls() {
+            // Setup deck buttons
+            const container = document.getElementById('deck-buttons');
+            container.innerHTML = '';
+            
+            // Hull overview button
+            const hullButton = document.createElement('button');
+            hullButton.className = 'deck-button active';
+            hullButton.textContent = 'Hull Overview - Complete Structure';
+            hullButton.onclick = () => showDeck(-1);
+            container.appendChild(hullButton);
+            
+            // Deck buttons
+            deckPlansData.deck_plans.forEach((deck, index) => {
+                const button = document.createElement('button');
+                button.className = 'deck-button';
+                button.innerHTML = `
+                    <div style="font-weight: 600;">${deck.name} (${deck.level}m)</div>
+                    <div style="opacity: 0.8; margin-top: 2px;">${deck.function}</div>
+                    <div style="opacity: 0.6; font-size: 9px; margin-top: 2px;">${deck.total_occupancy} crew, ${deck.rooms.length} rooms</div>
+                `;
+                button.onclick = () => showDeck(index);
+                container.appendChild(button);
+            });
+        }
+
+        function setupEventListeners() {
+            window.addEventListener('resize', onWindowResize);
+            
+            // Mouse controls for camera
+            let mouseDown = false;
+            let mouseX = 0;
+            let mouseY = 0;
+            
+            document.addEventListener('mousedown', (event) => {
+                mouseDown = true;
+                mouseX = event.clientX;
+                mouseY = event.clientY;
+            });
+            
+            document.addEventListener('mouseup', () => {
+                mouseDown = false;
+            });
+            
+            document.addEventListener('mousemove', (event) => {
+                if (!mouseDown) return;
+                
+                const deltaX = event.clientX - mouseX;
+                const deltaY = event.clientY - mouseY;
+                
+                if (viewMode === 'orbit') {
+                    // Rotate camera around ship
+                    const spherical = new THREE.Spherical();
+                    spherical.setFromVector3(camera.position);
+                    spherical.theta -= deltaX * 0.01;
+                    spherical.phi += deltaY * 0.01;
+                    spherical.phi = Math.max(0.1, Math.min(Math.PI - 0.1, spherical.phi));
+                    
+                    camera.position.setFromSpherical(spherical);
+                    camera.lookAt(0, 0, 0);
+                }
+                
+                mouseX = event.clientX;
+                mouseY = event.clientY;
+            });
+            
+            // Wheel zoom
+            document.addEventListener('wheel', (event) => {
+                const distance = camera.position.length();
+                const newDistance = distance + event.deltaY * 0.5;
+                camera.position.normalize().multiplyScalar(Math.max(100, Math.min(2000, newDistance)));
+                updateCameraDisplays();
+            });
+        }
+
+        function animate() {
+            animationId = requestAnimationFrame(animate);
+            
+            // Animate warp nacelles
+            if (nacelleGroup) {
+                const time = Date.now() * 0.001;
+                nacelleGroup.children.forEach((nacelle, index) => {
+                    if (nacelle.material && nacelle.material.emissive) {
+                        const intensity = 0.3 + 0.2 * Math.sin(time * 2 + index);
+                        nacelle.material.emissive.setScalar(intensity * warpFactor / 10);
+                    }
+                });
+            }
+            
+            // Update physics-based deformations
+            updatePhysicsDeformation();
+            
+            renderer.render(scene, camera);
+        }
+
+        function updatePhysicsDeformation() {
+            if (!hullMesh) return;
+            
+            // Apply subtle hull stress deformation based on warp factor
+            const geometry = hullMesh.geometry;
+            const position = geometry.attributes.position;
+            
+            if (geometry.userData.originalPositions) {
+                const original = geometry.userData.originalPositions;
+                const time = Date.now() * 0.001;
+                
+                for (let i = 0; i < position.count; i++) {
+                    const x = original[i * 3];
+                    const y = original[i * 3 + 1];
+                    const z = original[i * 3 + 2];
+                    
+                    // Apply physics-based stress deformation
+                    const stress = (warpFactor - 1) / 9 * hullStress;
+                    const deformation = stress * 0.1 * Math.sin(time + z * 0.01);
+                    
+                    position.setXYZ(i, x * (1 + deformation), y * (1 + deformation), z);
+                }
+                
+                position.needsUpdate = true;
+            } else {
+                // Store original positions
+                geometry.userData.originalPositions = position.array.slice();
+            }
+        }
+
+        function setViewMode(mode) {
+            viewMode = mode;
+            
+            // Update button states
+            document.querySelectorAll('#main-controls .btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Set camera position based on view mode
+            switch (mode) {
+                case 'orbit':
+                    camera.position.set(500, 200, 500);
+                    camera.lookAt(0, 0, 0);
+                    break;
+                case 'top':
+                    camera.position.set(0, 800, 0);
+                    camera.lookAt(0, 0, 0);
+                    break;
+                case 'side':
+                    camera.position.set(800, 0, 0);
+                    camera.lookAt(0, 0, 0);
+                    break;
+                case 'cutaway':
+                    camera.position.set(300, 100, 300);
+                    camera.lookAt(0, 0, 0);
+                    // Enable wireframe for cutaway view
+                    if (hullMesh) {
+                        hullMesh.material.wireframe = true;
+                        hullMesh.material.opacity = 0.3;
+                    }
+                    break;
+            }
+            
+            // Restore hull material for non-cutaway views
+            if (mode !== 'cutaway' && hullMesh) {
+                hullMesh.material.wireframe = showWireframe;
+                hullMesh.material.opacity = 1.0;
+            }
+            
+            updateCameraDisplays();
+        }
+
+        function showDeck(deckIndex) {
+            currentDeck = deckIndex;
+            
+            // Update button states
+            document.querySelectorAll('.deck-button').forEach((btn, i) => {
+                btn.classList.toggle('active', i === deckIndex + 1);
+            });
+            
+            // Update info panel
+            if (deckIndex === -1) {
+                document.getElementById('current-deck-name').textContent = 'Hull Overview';
+                document.getElementById('current-deck-function').textContent = 'Complete ship structure';
+            } else if (deckPlansData.deck_plans[deckIndex]) {
+                const deck = deckPlansData.deck_plans[deckIndex];
+                document.getElementById('current-deck-name').textContent = deck.name;
+                document.getElementById('current-deck-function').textContent = deck.function;
+            }
+            
+            // Highlight selected deck
+            highlightDeck(deckIndex);
+        }
+
+        function highlightDeck(deckIndex) {
+            // Reset all deck materials
+            deckGroup.children.forEach(deck => {
+                deck.material.color.setHex(0x666666);
+                deck.material.opacity = 0.3;
+            });
+            
+            // Highlight selected deck
+            if (deckIndex >= 0 && deckIndex < deckGroup.children.length) {
+                const selectedDeck = deckGroup.children[deckIndex];
+                selectedDeck.material.color.setHex(0x44aaff);
+                selectedDeck.material.opacity = 0.8;
+            }
+        }
+
+        function updateCamera() {
+            const distance = document.getElementById('camera-distance').value;
+            const fov = document.getElementById('camera-fov').value;
+            
+            camera.fov = fov;
+            camera.updateProjectionMatrix();
+            
+            // Maintain current direction but update distance
+            const direction = camera.position.clone().normalize();
+            camera.position.copy(direction.multiplyScalar(distance));
+            
+            updateCameraDisplays();
+        }
+
+        function updateCameraDisplays() {
+            const distance = camera.position.length();
+            document.getElementById('camera-distance').value = distance;
+            document.getElementById('camera-distance-val').textContent = Math.round(distance) + 'm';
+            document.getElementById('camera-fov-val').textContent = Math.round(camera.fov) + '°';
+        }
+
+        function updatePhysics() {
+            warpFactor = parseFloat(document.getElementById('warp-factor').value);
+            hullStress = parseFloat(document.getElementById('hull-stress').value);
+            fieldGeometry = parseFloat(document.getElementById('field-geometry').value);
+            
+            document.getElementById('warp-factor-val').textContent = warpFactor.toFixed(1);
+            document.getElementById('hull-stress-val').textContent = hullStress.toFixed(1);
+            document.getElementById('field-geometry-val').textContent = fieldGeometry.toFixed(2);
+            
+            // Update visual effects based on physics parameters
+            updateWarpEffects();
+        }
+
+        function updateWarpEffects() {
+            if (nacelleGroup) {
+                nacelleGroup.children.forEach(nacelle => {
+                    if (nacelle.material && nacelle.material.emissive) {
+                        const baseIntensity = warpFactor / 10 * 0.3;
+                        nacelle.material.emissive.setScalar(baseIntensity);
+                    }
+                });
+            }
+        }
+
+        function updateDetail() {
+            detailLevel = parseInt(document.getElementById('detail-level').value);
+            const levels = ['Low', 'Medium', 'High', 'Ultra'];
+            document.getElementById('detail-level-val').textContent = levels[detailLevel - 1];
+            
+            // Update geometry detail level
+            // This would typically recreate geometry with different subdivision levels
+        }
+
+        function toggleHull() {
+            showHull = !showHull;
+            if (hullMesh) {
+                hullMesh.visible = showHull;
+            }
+            event.target.classList.toggle('active', showHull);
+        }
+
+        function toggleNacelles() {
+            showNacelles = !showNacelles;
+            if (nacelleGroup) {
+                nacelleGroup.visible = showNacelles;
+            }
+            event.target.classList.toggle('active', showNacelles);
+        }
+
+        function toggleWireframe() {
+            showWireframe = !showWireframe;
+            if (hullMesh && viewMode !== 'cutaway') {
+                hullMesh.material.wireframe = showWireframe;
+            }
+            event.target.classList.toggle('active', showWireframe);
+        }
+
+        function toggleLighting() {
+            showLighting = !showLighting;
+            scene.children.forEach(child => {
+                if (child.isDirectionalLight || child.isAmbientLight) {
+                    child.visible = showLighting;
+                }
+            });
+            event.target.classList.toggle('active', showLighting);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
