@@ -1,0 +1,163 @@
+{
+  "metadata": {
+    "analysis_type": "field_concentration_optimization",
+    "version": "1.0",
+    "phase": "Phase 2 - Field Concentration",
+    "timestamp": "2025-01-XX",
+    "base_energy": 5400000000.0,
+    "target_volume": 12.4,
+    "constraints": {
+      "max_concentration": 5.0,
+      "min_stability": 0.4,
+      "field_energy_fraction": 0.2
+    }
+  },
+  "analysis_results": {
+    "total_profiles_analyzed": 13,
+    "stable_profiles_count": 13,
+    "baseline_energy": 5400000000.0,
+    "field_energy_fraction": 0.2,
+    "max_energy_reduction": 780000000.0,
+    "reduction_percentage": 14.444444444444443,
+    "profiles_data": [
+      {
+        "profile_type": "Gaussian (\u03c3=0.30)",
+        "concentration_factor": 1.329807601338109,
+        "energy_reduction": 267852439.01955593,
+        "stability_impact": 0.9010577195985673,
+        "implementation_difficulty": "Low",
+        "field_uniformity": 0.7519884823893,
+        "meets_stability": true
+      },
+      {
+        "profile_type": "Gaussian (\u03c3=0.50)",
+        "concentration_factor": 0.7978845608028654,
+        "energy_reduction": -273579268.30074024,
+        "stability_impact": 1.0606346317591404,
+        "implementation_difficulty": "Low",
+        "field_uniformity": 1.2533141373155001,
+        "meets_stability": true
+      },
+      {
+        "profile_type": "Gaussian (\u03c3=0.70)",
+        "concentration_factor": 0.5699175434306182,
+        "energy_reduction": -815010975.621036,
+        "stability_impact": 1.1290247369708146,
+        "implementation_difficulty": "Low",
+        "field_uniformity": 1.7546397922417,
+        "meets_stability": true
+      },
+      {
+        "profile_type": "Parabolic (peak=2.0)",
+        "concentration_factor": 2.0,
+        "energy_reduction": 308571428.57142854,
+        "stability_impact": 0.8,
+        "implementation_difficulty": "Low",
+        "field_uniformity": 0.35,
+        "meets_stability": true
+      },
+      {
+        "profile_type": "Parabolic (peak=3.0)",
+        "concentration_factor": 3.0,
+        "energy_reduction": 565714285.7142856,
+        "stability_impact": 0.6,
+        "implementation_difficulty": "Medium",
+        "field_uniformity": 0.2333333333333333,
+        "meets_stability": true
+      },
+      {
+        "profile_type": "Parabolic (peak=4.0)",
+        "concentration_factor": 4.0,
+        "energy_reduction": 694285714.2857143,
+        "stability_impact": 0.4,
+        "implementation_difficulty": "High",
+        "field_uniformity": 0.175,
+        "meets_stability": true
+      },
+      {
+        "profile_type": "Layered (2 layers)",
+        "concentration_factor": 3.0,
+        "energy_reduction": 565714285.7142856,
+        "stability_impact": 0.7,
+        "implementation_difficulty": "Low",
+        "field_uniformity": 0.26666666666666666,
+        "meets_stability": true
+      },
+      {
+        "profile_type": "Layered (3 layers)",
+        "concentration_factor": 3.5,
+        "energy_reduction": 694285714.2857144,
+        "stability_impact": 0.625,
+        "implementation_difficulty": "Medium",
+        "field_uniformity": 0.2285714285714286,
+        "meets_stability": true
+      },
+      {
+        "profile_type": "Layered (4 layers)",
+        "concentration_factor": 4.0,
+        "energy_reduction": 780000000.0,
+        "stability_impact": 0.55,
+        "implementation_difficulty": "Medium",
+        "field_uniformity": 0.2,
+        "meets_stability": true
+      },
+      {
+        "profile_type": "Adaptive (rate=0.05)",
+        "concentration_factor": 2.75,
+        "energy_reduction": 646047212.4560523,
+        "stability_impact": 0.875,
+        "implementation_difficulty": "High",
+        "field_uniformity": 0.3,
+        "meets_stability": true
+      },
+      {
+        "profile_type": "Adaptive (rate=0.10)",
+        "concentration_factor": 3.0,
+        "energy_reduction": 684395604.3956044,
+        "stability_impact": 0.9,
+        "implementation_difficulty": "High",
+        "field_uniformity": 0.3,
+        "meets_stability": true
+      },
+      {
+        "profile_type": "Adaptive (rate=0.20)",
+        "concentration_factor": 3.5,
+        "energy_reduction": 744596273.2919254,
+        "stability_impact": 0.95,
+        "implementation_difficulty": "High",
+        "field_uniformity": 0.3,
+        "meets_stability": true
+      },
+      {
+        "profile_type": "Hybrid (Parabolic+Layered)",
+        "concentration_factor": 2.5,
+        "energy_reduction": 571764705.882353,
+        "stability_impact": 0.8200000000000001,
+        "implementation_difficulty": "Medium",
+        "field_uniformity": 0.24,
+        "meets_stability": true
+      }
+    ],
+    "optimal_profiles": {
+      "best_energy_reduction": {
+        "profile_type": "Layered (4 layers)",
+        "energy_reduction": 780000000.0,
+        "stability_impact": 0.55,
+        "concentration_factor": 4.0
+      },
+      "best_stability": {
+        "profile_type": "Gaussian (\u03c3=0.70)",
+        "energy_reduction": -815010975.621036,
+        "stability_impact": 1.1290247369708146,
+        "concentration_factor": 0.5699175434306182
+      },
+      "best_balanced": {
+        "profile_type": "Adaptive (rate=0.20)",
+        "energy_reduction": 744596273.2919254,
+        "stability_impact": 0.95,
+        "concentration_factor": 3.5,
+        "balance_score": 707366459.6273291
+      }
+    }
+  }
+}

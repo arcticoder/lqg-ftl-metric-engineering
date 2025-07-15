@@ -1,0 +1,105 @@
+{
+  "metadata": {
+    "analysis_type": "shape_efficiency_analysis",
+    "version": "1.0",
+    "phase": "Phase 2 - Shape Optimization",
+    "timestamp": "2025-01-XX",
+    "target_volume": 12.4,
+    "safety_constraints": {
+      "max_curvature_limit": 0.0001,
+      "min_stability": 0.3
+    }
+  },
+  "analysis_results": {
+    "total_shapes_analyzed": 15,
+    "safe_shapes_count": 0,
+    "shapes_data": [
+      {
+        "name": "Sphere",
+        "aspect_ratio": 1.0,
+        "surface_area": 25.907882253291056,
+        "max_curvature": 0.6964484476691145,
+        "stability_factor": 1.0,
+        "energy_efficiency": 1.0,
+        "meets_safety": false
+      },
+      {
+        "name": "Prolate Spheroid (AR=1.5)",
+        "aspect_ratio": 1.5,
+        "surface_area": 26.618433822311378,
+        "max_curvature": 0.7972344572509942,
+        "stability_factor": 1.0,
+        "energy_efficiency": 0.9862869615881078,
+        "meets_safety": false
+      },
+      {
+        "name": "Prolate Spheroid (AR=2.0)",
+        "aspect_ratio": 2.0,
+        "surface_area": 27.895749036781847,
+        "max_curvature": 0.8774700593849254,
+        "stability_factor": 1.0,
+        "energy_efficiency": 0.9616358688823693,
+        "meets_safety": false
+      },
+      {
+        "name": "Prolate Spheroid (AR=2.5)",
+        "aspect_ratio": 2.5,
+        "surface_area": 29.270551272353785,
+        "max_curvature": 0.9452259677016103,
+        "stability_factor": 0.8,
+        "energy_efficiency": 0.9480826879451242,
+        "meets_safety": false
+      },
+      {
+        "name": "Prolate Spheroid (AR=3.0)",
+        "aspect_ratio": 3.0,
+        "surface_area": 30.620443458499615,
+        "max_curvature": 1.004452474392042,
+        "stability_factor": 0.6666666666666666,
+        "energy_efficiency": 0.9393677291060725,
+        "meets_safety": false
+      },
+      {
+        "name": "Prolate Spheroid (AR=4.0)",
+        "aspect_ratio": 4.0,
+        "surface_area": 33.13423617835133,
+        "max_curvature": 1.105542998471572,
+        "stability_factor": 0.5,
+        "energy_efficiency": 0.9302687705771251,
+        "meets_safety": false
+      },
+      {
+        "name": "Oblate Spheroid (AR=1.5)",
+        "aspect_ratio": 1.5,
+        "surface_area": 31.586387755783008,
+        "max_curvature": 0.9126056378694883,
+        "stability_factor": 1.0,
+        "energy_efficiency": 0.9342458162310359,
+        "meets_safety": false
+      },
+      {
+        "name": "Oblate Spheroid (AR=2.0)",
+        "aspect_ratio": 2.0,
+        "surface_area": 36.198170354422324,
+        "max_curvature": 1.105542998471572,
+        "stability_factor": 0.75,
+        "energy_efficiency": 0.9106328027849353,
+        "meets_safety": false
+      },
+      {
+        "name": "Oblate Spheroid (AR=2.5)",
+        "aspect_ratio": 2.5,
+        "surface_area": 40.17793692405974,
+        "max_curvature": 1.2828690091961095,
+        "stability_factor": 0.6,
+        "energy_efficiency": 0.9008560477608286,
+        "meets_safety": false
+      },
+      {
+        "name": "Torus (R/r=2.0)",
+        "aspect_ratio": 2.0,
+        "surface_area": 24.799999999999997,
+        "max_curvature": 1.7843047259899627,
+        "stability_factor": 0.6,
+        "energy_efficiency": 0.7521643234826436,
+        "meets_safety": 
