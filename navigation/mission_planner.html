@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LQG FTL Mission Planner - Complete Navigation Planning</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            font-family: 'Courier New', monospace;
+            color: #00ff88;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: rgba(0, 20, 40, 0.95);
+            padding: 15px 20px;
+            border-bottom: 2px solid #00ff88;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #00ff88;
+            text-shadow: 0 0 15px #00ff88;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #88ddff;
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 300px 1fr 320px;
+            grid-template-rows: auto 1fr;
+            grid-template-areas: 
+                "mission-setup visualization vessel-config"
+                "trajectory-params visualization mission-stats";
+            height: calc(100vh - 80px);
+            gap: 10px;
+            padding: 10px;
+        }
+
+        .mission-setup {
+            grid-area: mission-setup;
+            background: rgba(0, 20, 40, 0.8);
+            border: 1px solid #00ff88;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .vessel-config {
+            grid-area: vessel-config;
+            background: rgba(0, 20, 40, 0.8);
+            border: 1px solid #88ddff;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .trajectory-params {
+            grid-area: trajectory-params;
+            background: rgba(0, 20, 40, 0.8);
+            border: 1px solid #ffaa00;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .mission-stats {
+            grid-area: mission-stats;
+            background: rgba(0, 20, 40, 0.8);
+            border: 1px solid #ff4488;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .visualization {
+            grid-area: visualization;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00ff88;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-title {
+            color: #88ddff;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            border-bottom: 2px solid currentColor;
+            padding-bottom: 8px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #cccccc;
+            font-size: 13px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #666;
+            border-radius: 4px;
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: #00ff88;
+            outline: none;
+            box-shadow: 0 0 5px #00ff88;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #005500, #00aa00);
+            border: 1px solid #00ff88;
+            color: #ffffff;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            margin: 5px 5px 5px 0;
+            transition: all 0.3s;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: linear-gradient(45deg, #007700, #00cc00);
+            box-shadow: 0 0 10px #00ff88;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #444, #666);
+            border-color: #888;
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(45deg, #555, #777);
+            box-shadow: 0 0 10px #888;
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #550000, #aa0000);
+            border-color: #ff4444;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(45deg, #770000, #cc0000);
+            box-shadow: 0 0 10px #ff4444;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #333;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #aaa;
+            margin-bottom: 3px;
+        }
+
+        .stat-value {
+            font-size: 14px;
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        .canvas-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        #missionCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .vessel-card {
+            background: rgba(0, 40, 80, 0.6);
+            border: 1px solid #88ddff;
+            border-radius: 6px;
+            padding: 10px;
+            margin: 8px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .vessel-card:hover {
+            background: rgba(0, 50, 100, 0.8);
+            border-color: #00ff88;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+
+        .vessel-card.selected {
+            background: rgba(0, 80, 40, 0.8);
+            border-color: #00ff88;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+        }
+
+        .vessel-name {
+            font-weight: bold;
+            color: #88ddff;
+            margin-bottom: 5px;
+        }
+
+        .vessel-specs {
+            font-size: 11px;
+            color: #cccccc;
+        }
+
+        .progress-section {
+            margin: 15px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #666;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 5px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #88ddff);
+            width: 0%;
+            transition: width 0.5s;
+        }
+
+        .mission-log {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 10px;
+            height: 200px;
+            overflow-y: auto;
+            font-size: 11px;
+            color: #cccccc;
+            margin-top: 10px;
+        }
+
+        .log-entry {
+            margin: 2px 0;
+            padding: 2px 0;
+        }
+
+        .log-info { color: #88ddff; }
+        .log-success { color: #00ff88; }
+        .log-warning { color: #ffaa00; }
+        .log-error { color: #ff4444; }
+
+        .coordinate-input {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 5px;
+        }
+
+        .coordinate-input input {
+            text-align: center;
+            font-size: 11px;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #666;
+            color: #aaa;
+            cursor: pointer;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .tab.active {
+            background: rgba(0, 40, 80, 0.8);
+            color: #88ddff;
+            border-color: #88ddff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .optimization-results {
+            background: rgba(0, 40, 0, 0.3);
+            border: 1px solid #00aa00;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        .warning-box {
+            background: rgba(80, 40, 0, 0.3);
+            border: 1px solid #ffaa00;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="title">🌌 LQG FTL Mission Planner</div>
+        <div class="subtitle">Complete Navigation Planning with Vessel Hull Integration</div>
+    </div>
+
+    <div class="main-container">
+        <!-- Mission Setup Panel -->
+        <div class="mission-setup">
+            <div class="section-title">🚀 Mission Configuration</div>
+            
+            <div class="form-group">
+                <label>Mission ID:</label>
+                <input type="text" id="missionId" value="MISSION_001" placeholder="Enter mission identifier">
+            </div>
+            
+            <div class="form-group">
+                <label>Origin System:</label>
+                <select id="originSystem">
+                    <option value="sol">Sol System (Earth)</option>
+                    <option value="alpha_centauri">Alpha Centauri</option>
+                    <option value="vega">Vega System</option>
+                    <option value="sirius">Sirius System</option>
+                    <option value="custom">Custom Coordinates</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="originCoords" style="display: none;">
+                <label>Origin Coordinates (x, y, z) [light years]:</label>
+                <div class="coordinate-input">
+                    <input type="number" id="originX" value="0" step="0.1">
+                    <input type="number" id="originY" value="0" step="0.1">
+                    <input type="number" id="originZ" value="0" step="0.1">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Destination System:</label>
+                <select id="destinationSystem">
+                    <option value="proxima_centauri">Proxima Centauri</option>
+                    <option value="wolf_359">Wolf 359</option>
+                    <option value="barnards_star">Barnard's Star</option>
+                    <option value="tau_ceti">Tau Ceti</option>
+                    <option value="custom">Custom Coordinates</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="destCoords" style="display: none;">
+                <label>Destination Coordinates (x, y, z) [light years]:</label>
+                <div class="coordinate-input">
+                    <input type="number" id="destX" value="4.24" step="0.1">
+                    <input type="number" id="destY" value="0" step="0.1">
+                    <input type="number" id="destZ" value="0" step="0.1">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Mission Duration (days):</label>
+                <input type="number" id="missionDuration" value="365" min="1" max="3650">
+            </div>
+            
+            <div class="form-group">
+                <label>Mission Priority:</label>
+                <select id="missionPriority">
+                    <option value="exploration">Scientific Exploration</option>
+                    <option value="cargo">Cargo Transport</option>
+                    <option value="diplomatic">Diplomatic Mission</option>
+                    <option value="emergency">Emergency Response</option>
+                    <option value="military">Military Operation</option>
+                </select>
+            </div>
+            
+            <button class="btn" id="generateMissionBtn">🎯 Generate Mission</button>
+            <button class="btn btn-secondary" id="loadMissionBtn">📂 Load Mission</button>
+        </div>
+
+        <!-- Vessel Configuration Panel -->
+        <div class="vessel-config">
+            <div class="section-title">🚁 Vessel Selection</div>
+            
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('fleet')">Fleet</div>
+                <div class="tab" onclick="switchTab('custom')">Custom</div>
+            </div>
+            
+            <div class="tab-content active" id="fleet-tab">
+                <div class="vessel-card selected" data-vessel="enterprise">
+                    <div class="vessel-name">USS Enterprise NX-01</div>
+                    <div class="vessel-specs">
+                        Max Warp: 75 | Energy: 1.5×10²⁰ J<br>
+                        Crew: 82 | Hull: Constitution Class
+                    </div>
+                </div>
+                
+                <div class="vessel-card" data-vessel="discovery">
+                    <div class="vessel-name">USS Discovery NCC-1031</div>
+                    <div class="vessel-specs">
+                        Max Warp: 120 | Energy: 2.8×10²⁰ J<br>
+                        Crew: 136 | Hull: Crossfield Class
+                    </div>
+                </div>
+                
+                <div class="vessel-card" data-vessel="voyager">
+                    <div class="vessel-name">USS Voyager NCC-74656</div>
+                    <div class="vessel-specs">
+                        Max Warp: 95 | Energy: 2.1×10²⁰ J<br>
+                        Crew: 150 | Hull: Intrepid Class
+                    </div>
+                </div>
+                
+                <div class="vessel-card" data-vessel="prometheus">
+                    <div class="vessel-name">USS Prometheus NX-59650</div>
+                    <div class="vessel-specs">
+                        Max Warp: 150 | Energy: 4.2×10²⁰ J<br>
+                        Crew: 4 | Hull: Prometheus Class
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="custom-tab">
+                <div class="form-group">
+                    <label>Vessel Name:</label>
+                    <input type="text" id="customVesselName" placeholder="Enter vessel name">
+                </div>
+                
+                <div class="form-group">
+                    <label>Maximum Warp Factor:</label>
+                    <input type="number" id="customMaxWarp" value="75" min="1" max="1000">
+                </div>
+                
+                <div class="form-group">
+                    <label>Energy Budget (J):</label>
+                    <input type="text" id="customEnergyBudget" value="1.5e20">
+                </div>
+                
+                <div class="form-group">
+                    <label>Crew Capacity:</label>
+                    <input type="number" id="customCrew" value="100" min="1" max="10000">
+                </div>
+                
+                <div class="form-group">
+                    <label>Hull Class:</label>
+                    <input type="text" id="customHullClass" placeholder="Custom Class">
+                </div>
+                
+                <button class="btn" id="createCustomVesselBtn">⚙️ Create Vessel</button>
+            </div>
+            
+            <div id="selectedVesselInfo" class="optimization-results">
+                <strong>Selected Vessel: USS Enterprise NX-01</strong><br>
+                <small>Constitution Class | Max Warp: 75 | Energy: 1.5×10²⁰ J</small>
+            </div>
+        </div>
+
+        <!-- Trajectory Parameters Panel -->
+        <div class="trajectory-params">
+            <div class="section-title">⚡ Trajectory Optimization</div>
+            
+            <div class="form-group">
+                <label>Optimization Method:</label>
+                <select id="optimizationMethod">
+                    <option value="energy_efficient">Energy Efficient</option>
+                    <option value="time_optimal">Time Optimal</option>
+                    <option value="balanced">Balanced Approach</option>
+                    <option value="safety_first">Safety Priority</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Trajectory Smoothness:</label>
+                <input type="range" id="trajectorySmoothness" min="0.1" max="1.0" value="0.8" step="0.1">
+                <small>Current: <span id="smoothnessValue">0.8</span></small>
+            </div>
+            
+            <div class="form-group">
+                <label>Safety Margin (%):</label>
+                <input type="range" id="safetyMargin" min="5" max="50" value="15" step="5">
+                <small>Current: <span id="safetyValue">15</span>%</small>
+            </div>
+            
+            <div class="form-group">
+                <label>Gravitational Bodies:</label>
+                <div style="font-size: 11px;">
+                    <label><input type="checkbox" id="includeSun" checked> Sol</label><br>
+                    <label><input type="checkbox" id="includeJupiter" checked> Jupiter</label><br>
+                    <label><input type="checkbox" id="includeProxima" checked> Proxima Centauri</label><br>
+                    <label><input type="checkbox" id="includeAlpha" checked> Alpha Centauri A/B</label>
+                </div>
+            </div>
+            
+            <div class="progress-section">
+                <label>Optimization Progress:</label>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="optimizationProgress"></div>
+                </div>
+                <small id="progressText">Ready to optimize</small>
+            </div>
+            
+            <button class="btn" id="optimizeTrajectoryBtn">🎯 Optimize Trajectory</button>
+            <button class="btn btn-secondary" id="previewTrajectoryBtn">👁️ Preview</button>
+            
+            <div class="warning-box" id="warningBox" style="display: none;">
+                ⚠️ <span id="warningText">Warning message</span>
+            </div>
+        </div>
+
+        <!-- Mission Statistics Panel -->
+        <div class="mission-stats">
+            <div class="section-title">📊 Mission Analysis</div>
+            
+            <div class="stat-grid">
+                <div class="stat-item">
+                    <div class="stat-label">Total Distance</div>
+                    <div class="stat-value" id="statDistance">-</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Flight Time</div>
+                    <div class="stat-value" id="statFlightTime">-</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Max Velocity</div>
+                    <div class="stat-value" id="statMaxVelocity">-</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Peak Warp</div>
+                    <div class="stat-value" id="statPeakWarp">-</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Energy Usage</div>
+                    <div class="stat-value" id="statEnergyUsage">-</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Efficiency</div>
+                    <div class="stat-value" id="statEfficiency">-</div>
+                </div>
+            </div>
+            
+            <div class="optimization-results" id="optimizationResults" style="display: none;">
+                <strong>🎯 Optimization Complete</strong><br>
+                <div id="optimizationSummary"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Mission Actions:</label>
+                <button class="btn" id="exportMissionBtn">💾 Export Mission</button>
+                <button class="btn" id="viewTrajectoryBtn">🌌 View 3D</button>
+                <button class="btn btn-danger" id="clearMissionBtn">🗑️ Clear</button>
+            </div>
+            
+            <div class="mission-log" id="missionLog">
+                <div class="log-entry log-info">Mission Planner initialized</div>
+                <div class="log-entry log-info">Ready for mission configuration</div>
+            </div>
+        </div>
+
+        <!-- 3D Visualization Panel -->
+        <div class="visualization">
+            <div class="canvas-container">
+                <canvas id="missionCanvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class MissionPlanner {
+            constructor() {
+                this.currentMission = null;
+                this.selectedVessel = 'enterprise';
+                this.trajectoryData = [];
+                this.canvas = document.getElementById('missionCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.camera = { x: 0, y: 0, zoom: 1 };
+                this.isOptimizing = false;
+                
+                this.vesselDatabase = {
+                    enterprise: {
+                        name: "USS Enterprise NX-01",
+                        maxWarp: 75,
+                        energyBudget: 1.5e20,
+                        crew: 82,
+                        hullClass: "Constitution Class"
+                    },
+                    discovery: {
+                        name: "USS Discovery NCC-1031",
+                        maxWarp: 120,
+                        energyBudget: 2.8e20,
+                        crew: 136,
+                        hullClass: "Crossfield Class"
+                    },
+                    voyager: {
+                        name: "USS Voyager NCC-74656",
+                        maxWarp: 95,
+                        energyBudget: 2.1e20,
+                        crew: 150,
+                        hullClass: "Intrepid Class"
+                    },
+                    prometheus: {
+                        name: "USS Prometheus NX-59650",
+                        maxWarp: 150,
+                        energyBudget: 4.2e20,
+                        crew: 4,
+                        hullClass: "Prometheus Class"
+                    }
+                };
+                
+                this.starSystems = {
+                    sol: { name: "Sol System", coords: [0, 0, 0] },
+                    alpha_centauri: { name: "Alpha Centauri", coords: [4.37, 0, 0] },
+                    proxima_centauri: { name: "Proxima Centauri", coords: [4.24, 0, 0] },
+                    vega: { name: "Vega System", coords: [25, 7, 0] },
+                    sirius: { name: "Sirius System", coords: [8.6, -2.5, 0] },
+                    wolf_359: { name: "Wolf 359", coords: [7.8, 0, 0] },
+                    barnards_star: { name: "Barnard's Star", coords: [6, 0, 0] },
+                    tau_ceti: { name: "Tau Ceti", coords: [11.9, 0, 0] }
+                };
+                
+                this.initCanvas();
+                this.bindEvents();
+                this.logMessage("Mission Planner ready", "success");
+            }
+
+            initCanvas() {
+                this.resizeCanvas();
+                window.addEventListener('resize', () => this.resizeCanvas());
+                this.startRender();
+            }
+
+            resizeCanvas() {
+                const container = this.canvas.parentElement;
+                this.canvas.width = container.clientWidth;
+                this.canvas.height = container.clientHeight;
+            }
+
+            bindEvents() {
+                // Mission generation
+                document.getElementById('generateMissionBtn').addEventListener('click', () => this.generateMission());
+                document.getElementById('optimizeTrajectoryBtn').addEventListener('click', () => this.optimizeTrajectory());
+                document.getElementById('previewTrajectoryBtn').addEventListener('click', () => this.previewTrajectory());
+                
+                // Vessel selection
+                document.querySelectorAll('.vessel-card').forEach(card => {
+                    card.addEventListener('click', () => this.selectVessel(card.dataset.vessel));
+                });
+                
+                // System selection
+                document.getElementById('originSystem').addEventListener('change', () => this.updateCoordinateVisibility('origin'));
+                document.getElementById('destinationSystem').addEventListener('change', () => this.updateCoordinateVisibility('destination'));
+                
+                // Slider updates
+                document.getElementById('trajectorySmoothness').addEventListener('input', (e) => {
+                    document.getElementById('smoothnessValue').textContent = e.target.value;
+                });
+                
+                document.getElementById('safetyMargin').addEventListener('input', (e) => {
+                    document.getElementById('safetyValue').textContent = e.target.value;
+                });
+                
+                // Export and view actions
+                document.getElementById('exportMissionBtn').addEventListener('click', () => this.exportMission());
+                document.getElementById('viewTrajectoryBtn').addEventListener('click', () => this.viewTrajectory3D());
+                document.getElementById('clearMissionBtn').addEventListener('click', () => this.clearMission());
+                
+                // Custom vessel
+                document.getElementById('createCustomVesselBtn').addEventListener('click', () => this.createCustomVessel());
+            }
+
+            switchTab(tabName) {
+                document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                event.target.classList.add('active');
+                document.getElementById(tabName + '-tab').classList.add('active');
+            }
+
+            selectVessel(vesselId) {
+                this.selectedVessel = vesselId;
+                
+                document.querySelectorAll('.vessel-card').forEach(card => {
+                    card.classList.remove('selected');
+                });
+                
+                document.querySelector(`[data-vessel="${vesselId}"]`).classList.add('selected');
+                
+                const vessel = this.vesselDatabase[vesselId];
+                document.getElementById('selectedVesselInfo').innerHTML = `
+                    <strong>Selected Vessel: ${vessel.name}</strong><br>
+                    <small>${vessel.hullClass} | Max Warp: ${vessel.maxWarp} | Energy: ${vessel.energyBudget.toExponential(2)} J</small>
+                `;
+                
+                this.logMessage(`Selected vessel: ${vessel.name}`, "info");
+            }
+
+            updateCoordinateVisibility(type) {
+                const selectId = type === 'origin' ? 'originSystem' : 'destinationSystem';
+                const coordsId = type === 'origin' ? 'originCoords' : 'destCoords';
+                
+                const selected = document.getElementById(selectId).value;
+                const coordsDiv = document.getElementById(coordsId);
+                
+                if (selected === 'custom') {
+                    coordsDiv.style.display = 'block';
+                } else {
+                    coordsDiv.style.display = 'none';
+                    
+                    // Auto-fill known coordinates
+                    if (this.starSystems[selected]) {
+                        const coords = this.starSystems[selected].coords;
+                        if (type === 'origin') {
+                            document.getElementById('originX').value = coords[0];
+                            document.getElementById('originY').value = coords[1];
+                            document.getElementById('originZ').value = coords[2];
+                        } else {
+                            document.getElementById('destX').value = coords[0];
+                            document.getElementById('destY').value = coords[1];
+                            document.getElementById('destZ').value = coords[2];
+                        }
+                    }
+                }
+            }
+
+            generateMission() {
+                this.logMessage("Generating mission parameters...", "info");
+                
+                const missionData = this.collectMissionData();
+                this.currentMission = missionData;
+                
+                // Calculate basic trajectory
+                this.calculateBasicTrajectory();
+                
+                // Update statistics
+                this.updateMissionStatistics();
+                
+                this.logMessage(`Mission ${missionData.id} generated successfully`, "success");
+                this.logMessage(`Route: ${missionData.origin.name} → ${missionData.destination.name}`, "info");
+            }
+
+            collectMissionData() {
+                const originSystem = document.getElementById('originSystem').value;
+                const destSystem = document.getElementById('destinationSystem').value;
+                
+                let originCoords, destCoords;
+                
+                if (originSystem === 'custom') {
+                    originCoords = [
+                        parseFloat(document.getElementById('originX').value),
+                        parseFloat(document.getElementById('originY').value),
+                        parseFloat(document.getElementById('originZ').value)
+                    ];
+                } else {
+                    originCoords = this.starSystems[originSystem].coords;
+                }
+                
+                if (destSystem === 'custom') {
+                    destCoords = [
+                        parseFloat(document.getElementById('destX').value),
+                        parseFloat(document.getElementById('destY').value),
+                        parseFloat(document.getElementById('destZ').value)
+                    ];
+                } else {
+                    destCoords = this.starSystems[destSystem].coords;
+                }
+                
+                return {
+                    id: document.getElementById('missionId').value,
+                    origin: {
+                        name: originSystem === 'custom' ? 'Custom Origin' : this.starSystems[originSystem].name,
+                        coords: originCoords
+                    },
+                    destination: {
+                        name: destSystem === 'custom' ? 'Custom Destination' : this.starSystems[destSystem].name,
+                        coords: destCoords
+                    },
+                    duration: parseInt(document.getElementById('missionDuration').value),
+                    priority: document.getElementById('missionPriority').value,
+                    vessel: this.vesselDatabase[this.selectedVessel],
+                    optimizationMethod: document.getElementById('optimizationMethod').value,
+                    smoothness: parseFloat(document.getElementById('trajectorySmoothness').value),
+                    safetyMargin: parseInt(document.getElementById('safetyMargin').value)
+                };
+            }
+
+            calculateBasicTrajectory() {
+                if (!this.currentMission) return;
+                
+                const origin = this.currentMission.origin.coords;
+                const dest = this.currentMission.destination.coords;
+                const duration = this.currentMission.duration * 24 * 3600; // Convert to seconds
+                
+                // Calculate distance in light years
+                const dx = dest[0] - origin[0];
+                const dy = dest[1] - origin[1];
+                const dz = dest[2] - origin[2];
+                const distance = Math.sqrt(dx*dx + dy*dy + dz*dz);
+                
+                this.trajectoryData = [];
+                const numPoints = 50;
+                
+                for (let i = 0; i < numPoints; i++) {
+                    const progress = i / (numPoints - 1);
+                    const t = progress * duration;
+                    
+                    // Simple linear interpolation for basic trajectory
+                    const position = [
+                        origin[0] + progress * dx,
+                        origin[1] + progress * dy,
+                        origin[2] + progress * dz
+                    ];
+                    
+                    // Required average velocity in c
+                    const requiredVelocity = distance / (duration / (365.25 * 24 * 3600)); // ly/year
+                    const warpFactor = Math.max(1, requiredVelocity);
+                    
+                    this.trajectoryData.push({
+                        timestamp: t,
+                        position: position,
+                        warp_factor: Math.min(warpFactor, this.currentMission.vessel.maxWarp),
+                        energy_density: 1.23e15 * (warpFactor ** 2.5),
+                        progress: progress
+                    });
+                }
+            }
+
+            async optimizeTrajectory() {
+                if (!this.currentMission) {
+                    this.showWarning("Please generate a mission first");
+                    return;
+                }
+                
+                this.isOptimizing = true;
+                this.logMessage("Starting trajectory optimization...", "info");
+                
+                // Simulate optimization process
+                for (let progress = 0; progress <= 100; progress += 10) {
+                    document.getElementById('optimizationProgress').style.width = progress + '%';
+                    document.getElementById('progressText').textContent = `Optimizing... ${progress}%`;
+                    
+                    if (progress === 30) {
+                        this.logMessage("Calculating spacetime geodesics...", "info");
+                    } else if (progress === 60) {
+                        this.logMessage("Optimizing energy consumption...", "info");
+                    } else if (progress === 90) {
+                        this.logMessage("Validating physics constraints...", "info");
+                    }
+                    
+                    await this.sleep(200);
+                }
+                
+                // Apply optimization
+                this.applyOptimization();
+                
+                document.getElementById('progressText').textContent = "Optimization complete";
+                this.isOptimizing = false;
+                
+                this.showOptimizationResults();
+                this.logMessage("Trajectory optimization completed", "success");
+            }
+
+            applyOptimization() {
+                const method = this.currentMission.optimizationMethod;
+                const vessel = this.currentMission.vessel;
+                
+                for (let point of this.trajectoryData) {
+                    switch (method) {
+                        case 'energy_efficient':
+                            point.warp_factor = Math.min(point.warp_factor * 0.8, vessel.maxWarp);
+                            break;
+                        case 'time_optimal':
+                            point.warp_factor = Math.min(point.warp_factor * 1.2, vessel.maxWarp);
+                            break;
+                        case 'safety_first':
+                            point.warp_factor = Math.min(point.warp_factor * 0.7, vessel.maxWarp);
+                            break;
+                        default: // balanced
+                            // Keep current values
+                            break;
+                    }
+                    
+                    point.energy_density = 1.23e15 * (point.warp_factor ** 2.5);
+                    point.stability_factor = Math.max(0.5, 1.0 - (point.warp_factor - 1) / 100);
+                }
+                
+                this.updateMissionStatistics();
+            }
+
+            showOptimizationResults() {
+                const stats = this.calculateTrajectoryStats();
+                const resultsDiv = document.getElementById('optimizationResults');
+                const summaryDiv = document.getElementById('optimizationSummary');
+                
+                summaryDiv.innerHTML = `
+                    Energy Efficiency: ${(stats.energyEfficiency * 100).toFixed(1)}%<br>
+                    Time Efficiency: ${(stats.timeEfficiency * 100).toFixed(1)}%<br>
+                    Safety Rating: ${(stats.safetyRating * 100).toFixed(1)}%<br>
+                    Overall Score: ${stats.overallScore.toFixed(2)}/10
+                `;
+                
+                resultsDiv.style.display = 'block';
+            }
+
+            calculateTrajectoryStats() {
+                if (this.trajectoryData.length === 0) return {};
+                
+                let maxWarp = 0;
+                let totalEnergy = 0;
+                let minStability = 1.0;
+                
+                for (const point of this.trajectoryData) {
+                    maxWarp = Math.max(maxWarp, point.warp_factor);
+                    totalEnergy += point.energy_density;
+                    minStability = Math.min(minStability, point.stability_factor || 0.5);
+                }
+                
+                const vessel = this.currentMission.vessel;
+                const energyEfficiency = Math.min(1.0, vessel.energyBudget / totalEnergy);
+                const timeEfficiency = maxWarp / vessel.maxWarp;
+                const safetyRating = minStability;
+                const overallScore = (energyEfficiency + timeEfficiency + safetyRating) * 10 / 3;
+                
+                return {
+                    energyEfficiency,
+                    timeEfficiency,
+                    safetyRating,
+                    overallScore
+                };
+            }
+
+            updateMissionStatistics() {
+                if (!this.currentMission || this.trajectoryData.length === 0) return;
+                
+                const origin = this.currentMission.origin.coords;
+                const dest = this.currentMission.destination.coords;
+                
+                // Calculate distance
+                const dx = dest[0] - origin[0];
+                const dy = dest[1] - origin[1];
+                const dz = dest[2] - origin[2];
+                const distance = Math.sqrt(dx*dx + dy*dy + dz*dz);
+                
+                let maxWarp = 0;
+                let totalEnergy = 0;
+                
+                for (const point of this.trajectoryData) {
+                    maxWarp = Math.max(maxWarp, point.warp_factor);
+                    totalEnergy += point.energy_density;
+                }
+                
+                const maxVelocity = maxWarp; // Simplified: warp factor ≈ velocity in c
+                const efficiency = this.calculateTrajectoryStats().overallScore || 0;
+                
+                document.getElementById('statDistance').textContent = distance.toFixed(2) + ' ly';
+                document.getElementById('statFlightTime').textContent = this.currentMission.duration + ' days';
+                document.getElementById('statMaxVelocity').textContent = maxVelocity.toFixed(1) + 'c';
+                document.getElementById('statPeakWarp').textContent = 'Warp ' + maxWarp.toFixed(1);
+                document.getElementById('statEnergyUsage').textContent = totalEnergy.toExponential(2) + ' J';
+                document.getElementById('statEfficiency').textContent = efficiency.toFixed(1) + '/10';
+            }
+
+            previewTrajectory() {
+                if (!this.currentMission) {
+                    this.showWarning("Please generate a mission first");
+                    return;
+                }
+                
+                this.logMessage("Generating trajectory preview...", "info");
+                // The render loop will display the current trajectory
+            }
+
+            exportMission() {
+                if (!this.currentMission) {
+                    this.showWarning("No mission to export");
+                    return;
+                }
+                
+                const exportData = {
+                    metadata: this.currentMission,
+                    trajectory: this.trajectoryData
+                };
+                
+                const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${this.currentMission.id}_mission_plan.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                this.logMessage("Mission exported successfully", "success");
+            }
+
+            viewTrajectory3D() {
+                const url = 'trajectory_viewer.html';
+                window.open(url, '_blank');
+                this.logMessage("Opening 3D trajectory viewer...", "info");
+            }
+
+            clearMission() {
+                this.currentMission = null;
+                this.trajectoryData = [];
+                document.getElementById('optimizationResults').style.display = 'none';
+                document.getElementById('optimizationProgress').style.width = '0%';
+                document.getElementById('progressText').textContent = 'Ready to optimize';
+                
+                // Clear statistics
+                ['statDistance', 'statFlightTime', 'statMaxVelocity', 'statPeakWarp', 'statEnergyUsage', 'statEfficiency'].forEach(id => {
+                    document.getElementById(id).textContent = '-';
+                });
+                
+                this.logMessage("Mission cleared", "warning");
+            }
+
+            createCustomVessel() {
+                const name = document.getElementById('customVesselName').value;
+                const maxWarp = parseFloat(document.getElementById('customMaxWarp').value);
+                const energyBudget = parseFloat(document.getElementById('customEnergyBudget').value);
+                const crew = parseInt(document.getElementById('customCrew').value);
+                const hullClass = document.getElementById('customHullClass').value;
+                
+                if (!name) {
+                    this.showWarning("Please enter a vessel name");
+                    return;
+                }
+                
+                const customId = 'custom_' + Date.now();
+                this.vesselDatabase[customId] = {
+                    name: name,
+                    maxWarp: maxWarp,
+                    energyBudget: energyBudget,
+                    crew: crew,
+                    hullClass: hullClass || 'Custom Class'
+                };
+                
+                this.logMessage(`Custom vessel "${name}" created`, "success");
+            }
+
+            showWarning(message) {
+                document.getElementById('warningText').textContent = message;
+                document.getElementById('warningBox').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('warningBox').style.display = 'none';
+                }, 5000);
+            }
+
+            logMessage(message, type = "info") {
+                const log = document.getElementById('missionLog');
+                const entry = document.createElement('div');
+                entry.className = `log-entry log-${type}`;
+                entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+                log.appendChild(entry);
+                log.scrollTop = log.scrollHeight;
+            }
+
+            sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            // Canvas rendering
+            worldToScreen(x, y) {
+                const screenX = (x + this.camera.x) * this.camera.zoom + this.canvas.width / 2;
+                const screenY = (y + this.camera.y) * this.camera.zoom + this.canvas.height / 2;
+                return { x: screenX, y: screenY };
+            }
+
+            render() {
+                this.ctx.fillStyle = '#000011';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Draw star field
+                this.drawStarField();
+                
+                // Draw star systems
+                this.drawStarSystems();
+                
+                // Draw trajectory if available
+                if (this.trajectoryData.length > 0) {
+                    this.drawTrajectory();
+                }
+            }
+
+            drawStarField() {
+                this.ctx.fillStyle = '#ffffff';
+                for (let i = 0; i < 100; i++) {
+                    const x = Math.random() * this.canvas.width;
+                    const y = Math.random() * this.canvas.height;
+                    const size = Math.random() * 2;
+                    this.ctx.beginPath();
+                    this.ctx.arc(x, y, size, 0, 2 * Math.PI);
+                    this.ctx.fill();
+                }
+            }
+
+            drawStarSystems() {
+                for (const [id, system] of Object.entries(this.starSystems)) {
+                    const screen = this.worldToScreen(system.coords[0] * 1e15, system.coords[1] * 1e15);
+                    
+                    this.ctx.fillStyle = '#ffaa00';
+                    this.ctx.beginPath();
+                    this.ctx.arc(screen.x, screen.y, 8, 0, 2 * Math.PI);
+                    this.ctx.fill();
+                    
+                    this.ctx.fillStyle = '#88ddff';
+                    this.ctx.font = '12px Courier New';
+                    this.ctx.fillText(system.name, screen.x + 12, screen.y + 4);
+                }
+            }
+
+            drawTrajectory() {
+                if (this.trajectoryData.length < 2) return;
+                
+                // Draw trajectory line
+                this.ctx.strokeStyle = '#00ff88';
+                this.ctx.lineWidth = 2;
+                this.ctx.beginPath();
+                
+                for (let i = 0; i < this.trajectoryData.length; i++) {
+                    const point = this.trajectoryData[i];
+                    const screen = this.worldToScreen(point.position[0] * 1e15, point.position[1] * 1e15);
+                    
+                    if (i === 0) {
+                        this.ctx.moveTo(screen.x, screen.y);
+                    } else {
+                        this.ctx.lineTo(screen.x, screen.y);
+                    }
+                }
+                this.ctx.stroke();
+                
+                // Draw waypoints
+                for (let i = 0; i < this.trajectoryData.length; i += 5) {
+                    const point = this.trajectoryData[i];
+                    const screen = this.worldToScreen(point.position[0] * 1e15, point.position[1] * 1e15);
+                    
+                    const warpIntensity = Math.min(point.warp_factor / 100, 1);
+                    const red = Math.floor(255 * warpIntensity);
+                    const green = Math.floor(255 * (1 - warpIntensity));
+                    
+                    this.ctx.fillStyle = `rgba(${red}, ${green}, 100, 0.8)`;
+                    this.ctx.beginPath();
+                    this.ctx.arc(screen.x, screen.y, 3 + warpIntensity * 3, 0, 2 * Math.PI);
+                    this.ctx.fill();
+                }
+            }
+
+            startRender() {
+                const animate = () => {
+                    this.render();
+                    requestAnimationFrame(animate);
+                };
+                animate();
+            }
+        }
+
+        // Global functions for tabs
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+
+        // Initialize mission planner
+        window.addEventListener('load', () => {
+            new MissionPlanner();
+        });
+    </script>
+</body>
+</html>

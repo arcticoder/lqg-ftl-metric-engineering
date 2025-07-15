@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LQG FTL Trajectory Viewer - 3D Navigation Planning</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            font-family: 'Courier New', monospace;
+            color: #00ff88;
+            overflow: hidden;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 20, 40, 0.9);
+            padding: 10px 20px;
+            z-index: 1000;
+            border-bottom: 2px solid #00ff88;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00ff88;
+            text-shadow: 0 0 10px #00ff88;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #88ddff;
+            margin-top: 5px;
+        }
+
+        .control-panel {
+            position: fixed;
+            left: 10px;
+            top: 80px;
+            width: 300px;
+            background: rgba(0, 20, 40, 0.8);
+            border: 1px solid #00ff88;
+            border-radius: 8px;
+            padding: 15px;
+            z-index: 900;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+
+        .control-section {
+            margin-bottom: 20px;
+        }
+
+        .control-title {
+            color: #88ddff;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #88ddff;
+            padding-bottom: 5px;
+        }
+
+        .control-item {
+            margin: 8px 0;
+        }
+
+        .control-item label {
+            display: block;
+            color: #cccccc;
+            font-size: 12px;
+            margin-bottom: 3px;
+        }
+
+        .control-item input, .control-item select {
+            width: 100%;
+            padding: 5px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #888;
+            border-radius: 3px;
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+        }
+
+        .control-item input:focus, .control-item select:focus {
+            border-color: #00ff88;
+            outline: none;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #005500, #00aa00);
+            border: 1px solid #00ff88;
+            color: #ffffff;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin: 5px 5px 5px 0;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: linear-gradient(45deg, #007700, #00cc00);
+            box-shadow: 0 0 10px #00ff88;
+        }
+
+        .stats-panel {
+            position: fixed;
+            right: 10px;
+            top: 80px;
+            width: 280px;
+            background: rgba(0, 20, 40, 0.8);
+            border: 1px solid #88ddff;
+            border-radius: 8px;
+            padding: 15px;
+            z-index: 900;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-size: 12px;
+        }
+
+        .stat-label {
+            color: #cccccc;
+        }
+
+        .stat-value {
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        .canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #trajectoryCanvas {
+            display: block;
+        }
+
+        .waypoint-marker {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #ff4444;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 800;
+            transform: translate(-50%, -50%);
+        }
+
+        .waypoint-marker:hover {
+            background: #ff8888;
+            box-shadow: 0 0 10px #ff4444;
+        }
+
+        .progress-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #888;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #88ddff);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .time-display {
+            position: fixed;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #88ddff;
+            font-size: 14px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="title">🚀 LQG FTL Trajectory Viewer</div>
+        <div class="subtitle">Interactive 3D Flight Path Visualization and Mission Planning</div>
+    </div>
+
+    <div class="control-panel">
+        <div class="control-section">
+            <div class="control-title">📂 Mission Control</div>
+            <div class="control-item">
+                <label>Load Trajectory File (NDJSON):</label>
+                <input type="file" id="trajectoryFile" accept=".ndjson,.json">
+            </div>
+            <div class="control-item">
+                <button class="btn" id="loadSampleBtn">Load Sample Mission</button>
+                <button class="btn" id="generateBtn">Generate New</button>
+            </div>
+        </div>
+
+        <div class="control-section">
+            <div class="control-title">🎮 View Controls</div>
+            <div class="control-item">
+                <label>Camera Mode:</label>
+                <select id="cameraMode">
+                    <option value="free">Free Camera</option>
+                    <option value="follow">Follow Trajectory</option>
+                    <option value="cockpit">Cockpit View</option>
+                </select>
+            </div>
+            <div class="control-item">
+                <label>Zoom Level:</label>
+                <input type="range" id="zoomLevel" min="0.1" max="10" value="1" step="0.1">
+            </div>
+            <div class="control-item">
+                <button class="btn" id="resetViewBtn">Reset View</button>
+                <button class="btn" id="centerTrajectoryBtn">Center</button>
+            </div>
+        </div>
+
+        <div class="control-section">
+            <div class="control-title">⚡ Warp Parameters</div>
+            <div class="control-item">
+                <label>Max Warp Factor:</label>
+                <input type="number" id="maxWarpFactor" value="75" min="1" max="1000">
+            </div>
+            <div class="control-item">
+                <label>Energy Budget (J):</label>
+                <input type="number" id="energyBudget" value="1.5e20" step="1e18">
+            </div>
+            <div class="control-item">
+                <button class="btn" id="optimizeBtn">Optimize Trajectory</button>
+            </div>
+        </div>
+
+        <div class="control-section">
+            <div class="control-title">🎬 Animation</div>
+            <div class="control-item">
+                <label>Animation Speed:</label>
+                <input type="range" id="animationSpeed" min="0.1" max="10" value="1" step="0.1">
+            </div>
+            <div class="control-item">
+                <button class="btn" id="playBtn">▶ Play</button>
+                <button class="btn" id="pauseBtn">⏸ Pause</button>
+                <button class="btn" id="resetBtn">⏮ Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats-panel">
+        <div class="control-title">📊 Mission Statistics</div>
+        <div class="stat-item">
+            <span class="stat-label">Total Distance:</span>
+            <span class="stat-value" id="totalDistance">-</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Mission Duration:</span>
+            <span class="stat-value" id="missionDuration">-</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Max Velocity:</span>
+            <span class="stat-value" id="maxVelocity">-</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Max Warp Factor:</span>
+            <span class="stat-value" id="maxWarpDisplay">-</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Total Energy:</span>
+            <span class="stat-value" id="totalEnergy">-</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Current Position:</span>
+            <span class="stat-value" id="currentPosition">-</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Current Velocity:</span>
+            <span class="stat-value" id="currentVelocity">-</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Current Warp:</span>
+            <span class="stat-value" id="currentWarp">-</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Energy Density:</span>
+            <span class="stat-value" id="energyDensity">-</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Stability Factor:</span>
+            <span class="stat-value" id="stabilityFactor">-</span>
+        </div>
+    </div>
+
+    <div class="canvas-container">
+        <canvas id="trajectoryCanvas"></canvas>
+    </div>
+
+    <div class="time-display">
+        <div>Mission Time: <span id="missionTime">00:00:00</span></div>
+        <div>Progress: <span id="progressPercent">0%</span></div>
+    </div>
+
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <script>
+        // Three.js would normally be imported, but for demo purposes we'll create a simplified version
+        class TrajectoryViewer {
+            constructor() {
+                this.canvas = document.getElementById('trajectoryCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.trajectoryData = [];
+                this.currentFrame = 0;
+                this.animationId = null;
+                this.isPlaying = false;
+                this.animationSpeed = 1;
+                this.camera = { x: 0, y: 0, zoom: 1 };
+                
+                this.initCanvas();
+                this.bindEvents();
+                this.loadSampleTrajectory();
+                this.startRender();
+            }
+
+            initCanvas() {
+                this.resizeCanvas();
+                window.addEventListener('resize', () => this.resizeCanvas());
+            }
+
+            resizeCanvas() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+
+            bindEvents() {
+                document.getElementById('trajectoryFile').addEventListener('change', (e) => this.loadFile(e));
+                document.getElementById('loadSampleBtn').addEventListener('click', () => this.loadSampleTrajectory());
+                document.getElementById('generateBtn').addEventListener('click', () => this.generateTrajectory());
+                document.getElementById('playBtn').addEventListener('click', () => this.play());
+                document.getElementById('pauseBtn').addEventListener('click', () => this.pause());
+                document.getElementById('resetBtn').addEventListener('click', () => this.reset());
+                document.getElementById('resetViewBtn').addEventListener('click', () => this.resetView());
+                document.getElementById('centerTrajectoryBtn').addEventListener('click', () => this.centerTrajectory());
+                document.getElementById('optimizeBtn').addEventListener('click', () => this.optimizeTrajectory());
+                
+                document.getElementById('animationSpeed').addEventListener('input', (e) => {
+                    this.animationSpeed = parseFloat(e.target.value);
+                });
+                
+                document.getElementById('zoomLevel').addEventListener('input', (e) => {
+                    this.camera.zoom = parseFloat(e.target.value);
+                });
+
+                // Mouse controls for panning
+                let isDragging = false;
+                let lastMousePos = { x: 0, y: 0 };
+
+                this.canvas.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                    lastMousePos = { x: e.clientX, y: e.clientY };
+                });
+
+                this.canvas.addEventListener('mousemove', (e) => {
+                    if (isDragging) {
+                        const dx = e.clientX - lastMousePos.x;
+                        const dy = e.clientY - lastMousePos.y;
+                        this.camera.x += dx / this.camera.zoom;
+                        this.camera.y += dy / this.camera.zoom;
+                        lastMousePos = { x: e.clientX, y: e.clientY };
+                    }
+                });
+
+                this.canvas.addEventListener('mouseup', () => {
+                    isDragging = false;
+                });
+
+                // Wheel zoom
+                this.canvas.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+                    this.camera.zoom *= zoomFactor;
+                    this.camera.zoom = Math.max(0.1, Math.min(10, this.camera.zoom));
+                    document.getElementById('zoomLevel').value = this.camera.zoom;
+                });
+            }
+
+            loadFile(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        this.parseNDJSON(e.target.result);
+                    } catch (error) {
+                        console.error('Error parsing file:', error);
+                        alert('Error loading trajectory file');
+                    }
+                };
+                reader.readAsText(file);
+            }
+
+            parseNDJSON(text) {
+                const lines = text.trim().split('\n');
+                this.trajectoryData = [];
+                
+                for (const line of lines) {
+                    if (line.trim()) {
+                        try {
+                            const data = JSON.parse(line);
+                            if (data.metadata) {
+                                this.missionMetadata = data.metadata;
+                            } else if (data.timestamp !== undefined) {
+                                this.trajectoryData.push(data);
+                            }
+                        } catch (e) {
+                            console.warn('Skipping invalid JSON line:', line);
+                        }
+                    }
+                }
+                
+                this.currentFrame = 0;
+                this.updateStatistics();
+                this.centerTrajectory();
+                console.log(`Loaded ${this.trajectoryData.length} trajectory points`);
+            }
+
+            loadSampleTrajectory() {
+                // Generate sample Earth to Proxima Centauri trajectory
+                this.trajectoryData = [];
+                const numPoints = 100;
+                const totalTime = 365.25 * 24 * 3600; // 1 year in seconds
+                const distance = 4.24 * 9.461e15; // 4.24 light years in meters
+                
+                for (let i = 0; i < numPoints; i++) {
+                    const t = (i / (numPoints - 1)) * totalTime;
+                    const progress = i / (numPoints - 1);
+                    
+                    // Smooth acceleration/cruise/deceleration profile
+                    let velocityFactor;
+                    if (progress < 0.1) {
+                        velocityFactor = 0.5 * (progress / 0.1) ** 2;
+                    } else if (progress > 0.9) {
+                        const decelProgress = (progress - 0.9) / 0.1;
+                        velocityFactor = 0.5 + 0.4 * (1 - 0.5 * decelProgress ** 2);
+                    } else {
+                        velocityFactor = 0.5 + 0.4 * ((progress - 0.1) / 0.8);
+                    }
+                    
+                    const warpFactor = 1 + velocityFactor * 74; // Up to warp 75
+                    const velocity = velocityFactor * 0.9 * 299792458 * warpFactor;
+                    
+                    this.trajectoryData.push({
+                        timestamp: t,
+                        position: [progress * distance, 0, 0],
+                        velocity: [velocity, 0, 0],
+                        warp_factor: warpFactor,
+                        energy_density: 1.23e15 * (warpFactor ** 2.5),
+                        stability_factor: Math.max(0.5, 1.0 - (warpFactor - 1) / 100)
+                    });
+                }
+                
+                this.missionMetadata = {
+                    mission_id: 'SAMPLE_EARTH_PROXIMA',
+                    origin: 'Earth, Sol System',
+                    destination: 'Proxima Centauri b',
+                    total_energy_budget: 1.5e20,
+                    mission_duration: totalTime
+                };
+                
+                this.currentFrame = 0;
+                this.updateStatistics();
+                this.centerTrajectory();
+                console.log('Loaded sample trajectory with', this.trajectoryData.length, 'points');
+            }
+
+            generateTrajectory() {
+                // Simple trajectory generator
+                const startPos = [0, 0, 0];
+                const endPos = [1e16, 1e15, 0]; // Random destination
+                const duration = 180 * 24 * 3600; // 6 months
+                const numPoints = 80;
+                
+                this.trajectoryData = [];
+                
+                for (let i = 0; i < numPoints; i++) {
+                    const t = (i / (numPoints - 1)) * duration;
+                    const progress = i / (numPoints - 1);
+                    
+                    const position = [
+                        startPos[0] + progress * (endPos[0] - startPos[0]),
+                        startPos[1] + progress * (endPos[1] - startPos[1]) + Math.sin(progress * Math.PI * 4) * 1e14,
+                        startPos[2] + progress * (endPos[2] - startPos[2])
+                    ];
+                    
+                    const warpFactor = 1 + Math.sin(progress * Math.PI) * 30;
+                    const velocity = [
+                        299792458 * warpFactor * 0.5,
+                        Math.cos(progress * Math.PI * 4) * 299792458 * 0.1,
+                        0
+                    ];
+                    
+                    this.trajectoryData.push({
+                        timestamp: t,
+                        position: position,
+                        velocity: velocity,
+                        warp_factor: warpFactor,
+                        energy_density: 1.23e15 * (warpFactor ** 2),
+                        stability_factor: 0.9
+                    });
+                }
+                
+                this.currentFrame = 0;
+                this.updateStatistics();
+                this.centerTrajectory();
+                console.log('Generated new trajectory');
+            }
+
+            optimizeTrajectory() {
+                if (this.trajectoryData.length === 0) return;
+                
+                const maxWarp = parseFloat(document.getElementById('maxWarpFactor').value);
+                const energyBudget = parseFloat(document.getElementById('energyBudget').value);
+                
+                // Simple optimization: cap warp factors and adjust energy
+                let totalEnergy = 0;
+                
+                for (const point of this.trajectoryData) {
+                    point.warp_factor = Math.min(point.warp_factor, maxWarp);
+                    point.energy_density = 1.23e15 * (point.warp_factor ** 2.5);
+                    totalEnergy += point.energy_density;
+                }
+                
+                // Scale energy if over budget
+                if (totalEnergy > energyBudget) {
+                    const scaleFactor = energyBudget / totalEnergy;
+                    for (const point of this.trajectoryData) {
+                        point.warp_factor *= Math.sqrt(scaleFactor);
+                        point.warp_factor = Math.max(1.0, point.warp_factor);
+                        point.energy_density = 1.23e15 * (point.warp_factor ** 2.5);
+                    }
+                }
+                
+                this.updateStatistics();
+                console.log('Trajectory optimized');
+            }
+
+            updateStatistics() {
+                if (this.trajectoryData.length === 0) return;
+                
+                let totalDistance = 0;
+                let maxVelocity = 0;
+                let maxWarp = 0;
+                let totalEnergy = 0;
+                
+                for (let i = 0; i < this.trajectoryData.length; i++) {
+                    const point = this.trajectoryData[i];
+                    const velocity = Math.sqrt(point.velocity.reduce((sum, v) => sum + v*v, 0));
+                    maxVelocity = Math.max(maxVelocity, velocity);
+                    maxWarp = Math.max(maxWarp, point.warp_factor);
+                    totalEnergy += point.energy_density;
+                    
+                    if (i > 0) {
+                        const prev = this.trajectoryData[i-1];
+                        const dx = point.position[0] - prev.position[0];
+                        const dy = point.position[1] - prev.position[1];
+                        const dz = point.position[2] - prev.position[2];
+                        totalDistance += Math.sqrt(dx*dx + dy*dy + dz*dz);
+                    }
+                }
+                
+                const duration = this.trajectoryData[this.trajectoryData.length - 1].timestamp - this.trajectoryData[0].timestamp;
+                
+                document.getElementById('totalDistance').textContent = (totalDistance / 9.461e15).toFixed(2) + ' ly';
+                document.getElementById('missionDuration').textContent = (duration / 86400).toFixed(1) + ' days';
+                document.getElementById('maxVelocity').textContent = (maxVelocity / 299792458).toFixed(1) + 'c';
+                document.getElementById('maxWarpDisplay').textContent = maxWarp.toFixed(1);
+                document.getElementById('totalEnergy').textContent = totalEnergy.toExponential(2) + ' J';
+            }
+
+            updateCurrentStats() {
+                if (this.trajectoryData.length === 0 || this.currentFrame >= this.trajectoryData.length) return;
+                
+                const point = this.trajectoryData[this.currentFrame];
+                const velocity = Math.sqrt(point.velocity.reduce((sum, v) => sum + v*v, 0));
+                
+                document.getElementById('currentPosition').textContent = 
+                    `[${(point.position[0]/1e15).toFixed(2)}, ${(point.position[1]/1e15).toFixed(2)}, ${(point.position[2]/1e15).toFixed(2)}] Pm`;
+                document.getElementById('currentVelocity').textContent = (velocity / 299792458).toFixed(2) + 'c';
+                document.getElementById('currentWarp').textContent = point.warp_factor.toFixed(2);
+                document.getElementById('energyDensity').textContent = point.energy_density.toExponential(2) + ' J/m³';
+                document.getElementById('stabilityFactor').textContent = (point.stability_factor || 0.5).toFixed(3);
+                
+                // Update time display
+                const hours = Math.floor(point.timestamp / 3600);
+                const minutes = Math.floor((point.timestamp % 3600) / 60);
+                const seconds = Math.floor(point.timestamp % 60);
+                document.getElementById('missionTime').textContent = 
+                    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                const progress = this.currentFrame / (this.trajectoryData.length - 1) * 100;
+                document.getElementById('progressPercent').textContent = progress.toFixed(1) + '%';
+                document.getElementById('progressFill').style.width = progress + '%';
+            }
+
+            centerTrajectory() {
+                if (this.trajectoryData.length === 0) return;
+                
+                let minX = Infinity, maxX = -Infinity;
+                let minY = Infinity, maxY = -Infinity;
+                
+                for (const point of this.trajectoryData) {
+                    minX = Math.min(minX, point.position[0]);
+                    maxX = Math.max(maxX, point.position[0]);
+                    minY = Math.min(minY, point.position[1]);
+                    maxY = Math.max(maxY, point.position[1]);
+                }
+                
+                this.camera.x = -(minX + maxX) / 2;
+                this.camera.y = -(minY + maxY) / 2;
+                
+                const rangeX = maxX - minX;
+                const rangeY = maxY - minY;
+                const maxRange = Math.max(rangeX, rangeY);
+                
+                if (maxRange > 0) {
+                    this.camera.zoom = Math.min(this.canvas.width, this.canvas.height) * 0.8 / maxRange;
+                    document.getElementById('zoomLevel').value = this.camera.zoom;
+                }
+            }
+
+            resetView() {
+                this.camera.x = 0;
+                this.camera.y = 0;
+                this.camera.zoom = 1;
+                document.getElementById('zoomLevel').value = 1;
+            }
+
+            worldToScreen(worldX, worldY) {
+                const screenX = (worldX + this.camera.x) * this.camera.zoom + this.canvas.width / 2;
+                const screenY = (worldY + this.camera.y) * this.camera.zoom + this.canvas.height / 2;
+                return { x: screenX, y: screenY };
+            }
+
+            render() {
+                this.ctx.fillStyle = '#000011';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                if (this.trajectoryData.length === 0) return;
+                
+                // Draw trajectory path
+                this.ctx.strokeStyle = '#00ff88';
+                this.ctx.lineWidth = 2;
+                this.ctx.beginPath();
+                
+                for (let i = 0; i < this.trajectoryData.length; i++) {
+                    const point = this.trajectoryData[i];
+                    const screen = this.worldToScreen(point.position[0], point.position[1]);
+                    
+                    if (i === 0) {
+                        this.ctx.moveTo(screen.x, screen.y);
+                    } else {
+                        this.ctx.lineTo(screen.x, screen.y);
+                    }
+                }
+                this.ctx.stroke();
+                
+                // Draw warp field visualization
+                for (let i = 0; i < this.trajectoryData.length; i += 5) {
+                    const point = this.trajectoryData[i];
+                    const screen = this.worldToScreen(point.position[0], point.position[1]);
+                    
+                    // Color based on warp factor
+                    const warpIntensity = Math.min(point.warp_factor / 50, 1);
+                    const red = Math.floor(255 * warpIntensity);
+                    const green = Math.floor(255 * (1 - warpIntensity));
+                    
+                    this.ctx.fillStyle = `rgba(${red}, ${green}, 100, 0.6)`;
+                    this.ctx.beginPath();
+                    this.ctx.arc(screen.x, screen.y, 3 + warpIntensity * 5, 0, 2 * Math.PI);
+                    this.ctx.fill();
+                }
+                
+                // Draw current position
+                if (this.currentFrame < this.trajectoryData.length) {
+                    const currentPoint = this.trajectoryData[this.currentFrame];
+                    const screen = this.worldToScreen(currentPoint.position[0], currentPoint.position[1]);
+                    
+                    this.ctx.fillStyle = '#ffffff';
+                    this.ctx.strokeStyle = '#00ff88';
+                    this.ctx.lineWidth = 3;
+                    this.ctx.beginPath();
+                    this.ctx.arc(screen.x, screen.y, 8, 0, 2 * Math.PI);
+                    this.ctx.fill();
+                    this.ctx.stroke();
+                    
+                    // Draw velocity vector
+                    const velocity = currentPoint.velocity;
+                    const velMag = Math.sqrt(velocity[0]*velocity[0] + velocity[1]*velocity[1]);
+                    if (velMag > 0) {
+                        const scale = 1e-13; // Adjust scale for visibility
+                        const endScreen = this.worldToScreen(
+                            currentPoint.position[0] + velocity[0] * scale,
+                            currentPoint.position[1] + velocity[1] * scale
+                        );
+                        
+                        this.ctx.strokeStyle = '#88ddff';
+                        this.ctx.lineWidth = 2;
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(screen.x, screen.y);
+                        this.ctx.lineTo(endScreen.x, endScreen.y);
+                        this.ctx.stroke();
+                        
+                        // Arrow head
+                        const angle = Math.atan2(endScreen.y - screen.y, endScreen.x - screen.x);
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(endScreen.x, endScreen.y);
+                        this.ctx.lineTo(endScreen.x - 10 * Math.cos(angle - Math.PI/6), endScreen.y - 10 * Math.sin(angle - Math.PI/6));
+                        this.ctx.moveTo(endScreen.x, endScreen.y);
+                        this.ctx.lineTo(endScreen.x - 10 * Math.cos(angle + Math.PI/6), endScreen.y - 10 * Math.sin(angle + Math.PI/6));
+                        this.ctx.stroke();
+                    }
+                }
+                
+                // Draw coordinate grid
+                this.drawGrid();
+                
+                this.updateCurrentStats();
+            }
+
+            drawGrid() {
+                this.ctx.strokeStyle = '#333355';
+                this.ctx.lineWidth = 1;
+                
+                const gridSpacing = 1e15; // 1 petameter
+                const screenSpacing = gridSpacing * this.camera.zoom;
+                
+                if (screenSpacing > 20) { // Only draw if grid is visible
+                    const offsetX = (this.camera.x % gridSpacing) * this.camera.zoom;
+                    const offsetY = (this.camera.y % gridSpacing) * this.camera.zoom;
+                    
+                    // Vertical lines
+                    for (let x = offsetX; x < this.canvas.width; x += screenSpacing) {
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(x, 0);
+                        this.ctx.lineTo(x, this.canvas.height);
+                        this.ctx.stroke();
+                    }
+                    
+                    // Horizontal lines
+                    for (let y = offsetY; y < this.canvas.height; y += screenSpacing) {
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(0, y);
+                        this.ctx.lineTo(this.canvas.width, y);
+                        this.ctx.stroke();
+                    }
+                }
+            }
+
+            play() {
+                this.isPlaying = true;
+                document.getElementById('playBtn').style.opacity = '0.5';
+                document.getElementById('pauseBtn').style.opacity = '1';
+            }
+
+            pause() {
+                this.isPlaying = false;
+                document.getElementById('playBtn').style.opacity = '1';
+                document.getElementById('pauseBtn').style.opacity = '0.5';
+            }
+
+            reset() {
+                this.currentFrame = 0;
+                this.pause();
+            }
+
+            startRender() {
+                const animate = () => {
+                    if (this.isPlaying && this.trajectoryData.length > 0) {
+                        this.currentFrame += this.animationSpeed;
+                        if (this.currentFrame >= this.trajectoryData.length) {
+                            this.currentFrame = this.trajectoryData.length - 1;
+                            this.pause();
+                        }
+                    }
+                    
+                    this.render();
+                    requestAnimationFrame(animate);
+                };
+                animate();
+            }
+        }
+
+        // Initialize the trajectory viewer when the page loads
+        window.addEventListener('load', () => {
+            new TrajectoryViewer();
+        });
+    </script>
+</body>
+</html>
