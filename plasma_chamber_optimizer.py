@@ -50,6 +50,7 @@ class AdvancedPlasmaOptimizer:
         # LQG enhancement parameters
         self.polymer_coupling = 0.94  # 94% efficiency improvement
         self.polymer_field_coupling = 0.94  # Consistent with other components
+        self.lqg_enhancement_factor = 1.15  # LQG quantum enhancement factor
         self.sinc_modulation_freq = np.pi  # μ parameter for sinc(πμ)
         
     def sinc_enhancement_factor(self, mu_param):
