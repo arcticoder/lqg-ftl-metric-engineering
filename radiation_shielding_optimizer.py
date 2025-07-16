@@ -246,7 +246,7 @@ class AdvancedRadiationShieldingOptimizer:
             'total_dose_Sv_year': total_dose_rate,
             'neutron_transmission': neutron_transmission,
             'gamma_transmission': gamma_transmission,
-            'final_neutron_energy_MeV': final_energy / 1e6
+            'final_neutron_energy_MeV': average_energy / 1e6
         }
     
     def calculate_shielding_cost(self, material_stack):

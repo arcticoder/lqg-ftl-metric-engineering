@@ -346,28 +346,31 @@ class MagneticStabilityEnhancer:
         error_trend = np.mean(recent_errors[-10:]) - np.mean(recent_errors[-20:-10]) if len(recent_errors) >= 20 else 0
         error_variance = np.var(recent_errors)
         
+        # Calculate average error from recent data
+        average_error = np.mean(recent_errors) if recent_errors else 0.01
+        
         # PRECISION-TARGETED adaptive gains
-        if recent_performance['average_error'] > 3.0:  # Reduced from 5.0 for tighter control
+        if average_error > 3.0:  # Reduced from 5.0 for tighter control
             # Large errors: AGGRESSIVE correction
-            self.kp *= 1.8  # Increased from 1.2
-            self.ki *= 1.6  # Increased from 1.1
-            self.kd *= 1.4  # Increased from 1.05
-        elif recent_performance['average_error'] > 1.5:  # New intermediate range
+            self.enhanced_feedback_gain *= 1.8  # Increased from 1.2
+            self.integral_gain *= 1.6  # Increased from 1.1
+            self.derivative_gain *= 1.4  # Increased from 1.05
+        elif average_error > 1.5:  # New intermediate range
             # Medium errors: MODERATE correction  
-            self.kp *= 1.4
-            self.ki *= 1.3
-            self.kd *= 1.2
-        elif recent_performance['average_error'] < 0.8:  # Ultra-precision target
+            self.enhanced_feedback_gain *= 1.4
+            self.integral_gain *= 1.3
+            self.derivative_gain *= 1.2
+        elif average_error < 0.8:  # Ultra-precision target
             # Already precise: FINE-TUNING
             if error_variance > 0.1:  # High variance needs damping
-                self.kp *= 0.98  # Slight reduction
-                self.kd *= 1.1   # Increase damping
+                self.enhanced_feedback_gain *= 0.98  # Slight reduction
+                self.derivative_gain *= 1.1   # Increase damping
             else:  # Low variance: enhance precision
-                self.kp *= 1.02  # Slight increase
-                self.ki *= 1.01  # Minimal integral boost
+                self.enhanced_feedback_gain *= 1.02  # Slight increase
+                self.integral_gain *= 1.01  # Minimal integral boost
         
         # QUANTUM-ENHANCED LQG adaptive coupling
-        if hasattr(recent_performance, 'ml_optimization'):
+        if hasattr(recent_performance, 'get') and 'ml_optimization' in recent_performance:
             ml_performance = recent_performance.get('ml_optimization', {})
             stability_score = ml_performance.get('stability_score', 0.8)
             
@@ -376,11 +379,12 @@ class MagneticStabilityEnhancer:
                 self.polymer_field_coupling = min(0.98, self.polymer_field_coupling * 1.02)
             elif stability_score < 0.80:
                 self.polymer_field_coupling = max(0.85, self.polymer_field_coupling * 0.98)
+                self.polymer_field_coupling = max(0.85, self.polymer_field_coupling * 0.98)
         
         # Enhanced bounds checking with tighter limits
-        self.kp = np.clip(self.kp, 100, 8000)    # Increased max from 5000
-        self.ki = np.clip(self.ki, 10, 200)     # Increased max from 100  
-        self.kd = np.clip(self.kd, 20, 400)     # Increased max from 200
+        self.enhanced_feedback_gain = np.clip(self.enhanced_feedback_gain, 100, 8000)    # Increased max from 5000
+        self.integral_gain = np.clip(self.integral_gain, 10, 200)     # Increased max from 100  
+        self.derivative_gain = np.clip(self.derivative_gain, 20, 400)     # Increased max from 200
         
         # Analyze recent performance
         recent_errors = self.control_error_history[-10:]
