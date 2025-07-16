@@ -277,7 +277,7 @@ class AdvancedRadiationShieldingOptimizer:
         return {
             'total_cost_USD': total_cost,
             'total_mass_kg': total_mass,
-            'cost_per_dose_reduction': total_cost / max(1e-6, 1 - self.calculate_dose_rate(material_stack)['total_dose_Sv_year'] / 1e-2)
+            'cost_per_dose_reduction': total_cost / max(1e-6, 1e-3)  # Use fixed reference dose
         }
     
     def optimize_shielding_design(self):
@@ -380,7 +380,7 @@ class AdvancedRadiationShieldingOptimizer:
         for start_point in starting_points:
             try:
                 result = minimize(objective_function, start_point, bounds=bounds, 
-                                method='L-BFGS-B', options={'maxiter': 1000})
+                                method='L-BFGS-B', options={'maxiter': 100})  # Reduced from 1000
                 
                 if result.success and result.fun < best_objective:
                     best_result = result
@@ -390,7 +390,8 @@ class AdvancedRadiationShieldingOptimizer:
         
         if best_result is None:
             # Fallback optimization
-            best_result = minimize(objective_function, x0, bounds=bounds, method='L-BFGS-B')
+            best_result = minimize(objective_function, x0, bounds=bounds, 
+                                 method='L-BFGS-B', options={'maxiter': 100})  # Reduced from default
         
         # Extract optimal design
         optimal_thicknesses = best_result.x
