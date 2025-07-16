@@ -1,0 +1,57 @@
+{
+  "timestamp": "20250716_142922",
+  "target_dose_limit_mSv_year": 10.0,
+  "safety_factor": 3,
+  "reactor_power_MW": 500.0,
+  "optimization_results": {
+    "optimization_results": {
+      "optimization_success": true,
+      "optimal_thicknesses": "[0.5 2.  5.  3. ]",
+      "optimal_stack": [
+        [
+          "tungsten",
+          0.5
+        ],
+        [
+          "borated_polyethylene",
+          2.0
+        ],
+        [
+          "concrete",
+          5.0
+        ],
+        [
+          "water",
+          3.0
+        ]
+      ],
+      "final_objective": 5.322204053733446e+35
+    },
+    "dose_analysis": {
+      "neutron_dose_Sv_year": 6996442344202.554,
+      "gamma_dose_Sv_year": 298901413108.3111,
+      "total_dose_Sv_year": 7295343757310.865,
+      "neutron_transmission": 0.5996100847596357,
+      "gamma_transmission": 0.2632806009254953,
+      "final_neutron_energy_MeV": 5.59629
+    },
+    "cost_analysis": {
+      "total_cost_USD": 11171000.82134073,
+      "total_mass_kg": 13864633.778455153,
+      "cost_per_dose_reduction": 11171000821340.73
+    },
+    "magnetic_shielding": {
+      "proton_cyclotron_radius_m": 0.13518725165021694,
+      "alpha_cyclotron_radius_m": 0.13470154737944542,
+      "proton_deflected": "True",
+      "alpha_deflected": "True",
+      "magnetic_field_T": 2.0,
+      "shielding_radius_m": 15,
+      "required_current_A": 31830988.618379068,
+      "stored_energy_MJ": 7161.97243913529,
+      "power_efficiency": 0.95
+    },
+    "meets_dose_limit": "False",
+    "total_protection_adequate": "False"
+  }
+}
