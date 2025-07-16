@@ -1,0 +1,76 @@
+{
+  "timestamp": "20250716_140038",
+  "controller_specifications": {
+    "plasma_volume_m3": 155,
+    "target_density_m3": 1e+20,
+    "fusion_power_MW": 500.0,
+    "beam_power_MW": 0.0,
+    "tritium_inventory_kg": 2.0,
+    "crew_complement": 100
+  },
+  "diagnostics_results": {
+    "beam_injection": {
+      "injection_rate_particles_s": 1e+20,
+      "beam_current_A": 16.02,
+      "beam_voltage_V": 6.242197253433209e+23,
+      "beam_power_MW": 1e+19,
+      "penetration_depth_m": 154672056222436.47,
+      "heating_efficiency": 0.7,
+      "beam_width_m": 0.2,
+      "beam_divergence_rad": 0.01
+    },
+    "tritium_breeding": {
+      "neutron_flux_per_s": 2.4582074478969516e+16,
+      "tritium_production_particles_s": 5149330051482139.0,
+      "tritium_production_kg_s": 2.564366365638105e-11,
+      "breeding_ratio": 0.209475,
+      "li6_contribution": 1261060420771136.0,
+      "li7_contribution": 3888269630711003.0
+    },
+    "fuel_consumption": {
+      "deuterium_consumption_kg_s": 8.161248727017878e-11,
+      "tritium_consumption_kg_s": 1.2241873090526817e-10,
+      "tritium_production_kg_s": 2.564366365638105e-11,
+      "net_tritium_balance_kg_s": -9.677506724888712e-11,
+      "helium_waste_kg_s": 1.6322497454035757e-10,
+      "annual_projections": {
+        "deuterium_needed_kg": 0.002573731398552358,
+        "tritium_consumed_kg": 0.0038605970978285373,
+        "tritium_produced_kg": 0.0008086985770676328,
+        "net_tritium_kg": -0.0030518985207609044
+      }
+    },
+    "radiation_safety": {
+      "neutron_source_per_s": 2.4582074478969516e+16,
+      "neutron_flux_boundary_m2_s": 78247173295622.52,
+      "shielding_transmission": 2.061153622438558e-09,
+      "dose_rate_mSv_year": 2446.4182209914975,
+      "dose_limit_mSv_year": 10.0,
+      "safety_margin": 0.004087608534875589,
+      "tritium_inventory_GBq": 720000000000000.0,
+      "radiation_zones_status": [
+        "SAFE",
+        "SAFE",
+        "SAFE",
+        "SAFE",
+        "SAFE",
+        "SAFE",
+        "SAFE",
+        "SAFE",
+        "SAFE",
+        "SAFE",
+        "SAFE",
+        "SAFE"
+      ],
+      "crew_protection_adequate": "False"
+    },
+    "system_operational": "False"
+  },
+  "emergency_test": {
+    "shutdown_time_s": 0.08512425422668457,
+    "within_time_limit": true,
+    "steps_completed": 8,
+    "tritium_contained": true,
+    "radiation_levels_safe": true
+  }
+}

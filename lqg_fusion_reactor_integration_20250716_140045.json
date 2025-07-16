@@ -1,0 +1,142 @@
+{
+  "timestamp": "20250716_140045",
+  "reactor_specifications": {
+    "target_thermal_power_MW": 500.0,
+    "target_electrical_power_MW": 200.0,
+    "thermal_efficiency": 0.4,
+    "lqg_enhancement_active": true,
+    "safety_systems_active": true
+  },
+  "integration_results": {
+    "lqg_coordination": {
+      "lqg_coupling_plasma": 0.94,
+      "lqg_coupling_magnetic": 0.94,
+      "sinc_enhancement": 0.001900840418345828,
+      "coordination_active": true
+    },
+    "plasma_magnetic_integration": {
+      "plasma_optimization": {
+        "optimal_density": 1e+20,
+        "optimal_temperature": 174004344.67776972,
+        "optimal_B_field": 3.0,
+        "optimization_success": true,
+        "final_objective": 1031660138.2017382
+      },
+      "magnetic_equilibrium": {
+        "optimal_currents": "[0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]",
+        "equilibrium_error": 12.88659793814433,
+        "convergence_success": true
+      },
+      "integration_success": true,
+      "optimal_parameters": {
+        "density_m3": 1e+20,
+        "temperature_keV": 14.999999999999998,
+        "B_field_T": 3.0
+      }
+    },
+    "fuel_coordination": {
+      "fuel_injection_coordinated": true,
+      "injection_rate_particles_s": 1.1239518727352822e+24,
+      "beam_parameters": {
+        "injection_rate_particles_s": 1.1239518727352822e+24,
+        "beam_current_A": 180057.0900121922,
+        "beam_voltage_V": 6.242197253433209e+23,
+        "beam_power_MW": 1.1239518727352823e+23,
+        "penetration_depth_m": 154672056222436.47,
+        "heating_efficiency": 0.7,
+        "beam_width_m": 0.2,
+        "beam_divergence_rad": 0.01
+      },
+      "tritium_breeding": {
+        "neutron_flux_per_s": 2.4582074478969516e+16,
+        "tritium_production_particles_s": 5149330051482139.0,
+        "tritium_production_kg_s": 2.564366365638105e-11,
+        "breeding_ratio": 0.209475,
+        "li6_contribution": 1261060420771136.0,
+        "li7_contribution": 3888269630711003.0
+      },
+      "power_match_ratio": 8.897178111073126e-05
+    },
+    "safety_integration": {
+      "radiation_safety": {
+        "neutron_source_per_s": 2.4582074478969516e+16,
+        "neutron_flux_boundary_m2_s": 78247173295622.52,
+        "shielding_transmission": 2.061153622438558e-09,
+        "dose_rate_mSv_year": 2446.4182209914975,
+        "dose_limit_mSv_year": 10.0,
+        "safety_margin": 0.004087608534875589,
+        "tritium_inventory_GBq": 720000000000000.0,
+        "radiation_zones_status": [
+          "SAFE",
+          "SAFE",
+          "SAFE",
+          "SAFE",
+          "SAFE",
+          "SAFE",
+          "SAFE",
+          "SAFE",
+          "SAFE",
+          "SAFE",
+          "SAFE",
+          "SAFE"
+        ],
+        "crew_protection_adequate": "False"
+      },
+      "magnetic_safety": {
+        "quench_detected": false,
+        "tf_currents_status": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "pf_currents_status": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          2e-13
+        ]
+      },
+      "plasma_stability": "True",
+      "overall_safety_status": "RED",
+      "crew_protection_adequate": "False",
+      "emergency_systems_ready": true
+    },
+    "power_analysis": {
+      "base_fusion_power_MW": 0.04448589055536563,
+      "lqg_enhancement_factor": 1.001786789993245,
+      "thermal_power_MW": 0.04233710862447802,
+      "electrical_power_MW": 0.01693484344979121,
+      "thermal_efficiency": 0.4,
+      "target_achievement": 8.467421724895604e-05,
+      "integration_efficiency": 0.95
+    },
+    "reactor_status": "OFFLINE",
+    "subsystem_health": {
+      "plasma_chamber": "NOMINAL",
+      "magnetic_confinement": "NOMINAL",
+      "fuel_injection": "NOMINAL",
+      "lqg_enhancement": "NOMINAL"
+    }
+  }
+}

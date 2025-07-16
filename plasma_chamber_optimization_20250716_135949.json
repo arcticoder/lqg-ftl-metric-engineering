@@ -1,0 +1,31 @@
+{
+  "timestamp": "20250716_135949",
+  "chamber_specifications": {
+    "major_radius_m": 3.5,
+    "minor_radius_m": 1.2,
+    "volume_m3": 99.48561236298072,
+    "target_power_MW": 500.0
+  },
+  "results": {
+    "optimization_results": {
+      "optimal_density": 1e+20,
+      "optimal_temperature": 174004344.67776972,
+      "optimal_B_field": 3.0,
+      "optimization_success": true,
+      "final_objective": 1031660138.2017382
+    },
+    "performance_metrics": {
+      "fusion_power_MW": 0.04448589055536563,
+      "confinement_time_s": 3301312442.2458467,
+      "H_factor": 1.94,
+      "beta": 0.06710441908067798,
+      "stable": "True"
+    },
+    "vacuum_system": {
+      "surface_area_m2": 165.8093539383012,
+      "outgassing_rate": 1.6580935393830118e-06,
+      "required_pumping_speed_L_s": 1658.0935393830116,
+      "target_pressure_torr": 1e-09
+    }
+  }
+}
