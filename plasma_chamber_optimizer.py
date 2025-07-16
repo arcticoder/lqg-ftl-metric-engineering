@@ -49,6 +49,7 @@ class AdvancedPlasmaOptimizer:
         
         # LQG enhancement parameters
         self.polymer_coupling = 0.94  # 94% efficiency improvement
+        self.polymer_field_coupling = 0.94  # Consistent with other components
         self.sinc_modulation_freq = np.pi  # μ parameter for sinc(πμ)
         
     def sinc_enhancement_factor(self, mu_param):
@@ -429,6 +430,15 @@ class AdvancedPlasmaOptimizer:
                 },
                 'error': 'Plasma optimization failed'
             }
+    
+    def generate_plasma_optimization_report(self):
+        """Generate plasma optimization report for testing framework"""
+        print("🔥 Optimizing plasma parameters...")
+        result = self.optimize_plasma_performance()
+        if result['optimization_success']:
+            return "PASSED"
+        else:
+            return "FAILED"
 
 def main():
     """Main execution function."""
