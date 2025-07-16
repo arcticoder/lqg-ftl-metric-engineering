@@ -1,0 +1,100 @@
+{
+  "timestamp": "20250716_144250",
+  "target_dose_limit_mSv_year": 10.0,
+  "safety_factor": 3,
+  "reactor_power_MW": 500.0,
+  "optimization_results": {
+    "optimization_results": {
+      "optimization_success": true,
+      "optimal_stack": [
+        [
+          "tungsten",
+          0.2
+        ],
+        [
+          "lithium_hydride",
+          0.5
+        ],
+        [
+          "borated_polyethylene",
+          1.0
+        ],
+        [
+          "beryllium",
+          0.1
+        ],
+        [
+          "concrete",
+          3.0
+        ],
+        [
+          "water",
+          2.0
+        ]
+      ],
+      "optimal_thicknesses": "[0.2 1.  0.5 3.  2.  0.1]",
+      "final_dose_Sv_year": 626480429484.6382,
+      "final_cost_USD": 6615038.022363584,
+      "meets_dose_limit": "False",
+      "optimization_objective": 6.638749630134596e+50
+    },
+    "dose_analysis": {
+      "neutron_dose_Sv_year": 2342418.3774438147,
+      "gamma_dose_Sv_year": 626478087066.2607,
+      "total_dose_Sv_year": 626480429484.6382,
+      "neutron_transmission": 5.942207959015258e-07,
+      "gamma_transmission": 0.5518191617571635,
+      "final_neutron_energy_MeV": 0.43146
+    },
+    "cost_analysis": {
+      "total_cost_USD": 6615038.022363584,
+      "total_mass_kg": 6794023.980616557,
+      "cost_per_dose_reduction": 6615038022363.584
+    },
+    "magnetic_shielding": {
+      "proton_cyclotron_radius_m": 0.13518725165021694,
+      "alpha_cyclotron_radius_m": 0.13470154737944542,
+      "proton_deflected": "True",
+      "alpha_deflected": "True",
+      "magnetic_field_T": 2.0,
+      "shielding_radius_m": 15,
+      "stored_energy_MJ": 7161.97243913529,
+      "coil_current_A": 31830988.618379068,
+      "shielding_effective": "True"
+    },
+    "passive_adequate": "False",
+    "active_adequate": "True",
+    "total_protection_adequate": "False",
+    "optimized_design": {
+      "annual_dose_mSv": 626480429484638.1,
+      "layers": [
+        [
+          "tungsten",
+          0.2
+        ],
+        [
+          "lithium_hydride",
+          0.5
+        ],
+        [
+          "borated_polyethylene",
+          1.0
+        ],
+        [
+          "beryllium",
+          0.1
+        ],
+        [
+          "concrete",
+          3.0
+        ],
+        [
+          "water",
+          2.0
+        ]
+      ],
+      "total_cost": 6615038.022363584,
+      "total_mass_kg": 6794023.980616557
+    }
+  }
+}
