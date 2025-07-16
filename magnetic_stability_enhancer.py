@@ -28,11 +28,11 @@ class MagneticStabilityEnhancer:
     """
     
     def __init__(self):
-        # Enhanced control parameters
-        self.position_tolerance = 0.005  # 5mm target (improved from 10mm)
-        self.enhanced_feedback_gain = 2000  # Increased gain
-        self.derivative_gain = 100  # Added derivative control
-        self.integral_gain = 50    # Added integral control
+        # ULTRA-PRECISION control parameters for ≤5mm, ≥95% targets
+        self.position_tolerance = 0.002  # 2mm - EXCEEDS 5mm target for safety margin
+        self.enhanced_feedback_gain = 25000  # 12.5× boost for ultra-precision
+        self.derivative_gain = 1500  # 15× boost for stability damping
+        self.integral_gain = 800    # 16× boost for steady-state accuracy
         
         # Reactor geometry
         self.major_radius = 3.5    # meters
