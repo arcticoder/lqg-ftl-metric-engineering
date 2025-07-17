@@ -212,10 +212,10 @@ class LQGFusionReactor(LQGCircuitElement):
             return
             
         # Draw main reactor vessel as large rectangle
-        reactor = drawing.add(elm.Rect((0, 0), (3, 2)).fill('orange').label('LQG\\nFusion\\nReactor'))
+        reactor = drawing.add(elm.Rect((0, 0), (3, 2)).fill('orange').label('LQG\nFusion\nReactor'))
         
         # Add power output connections
-        drawing.add(elm.Line().right(2).label('200 MW\\nElectrical'))
+        drawing.add(elm.Line().right(2).label('200 MW\nElectrical'))
         drawing.add(elm.Dot().label('Power Out'))
         
         # Add coolant loop
@@ -235,7 +235,7 @@ class LQGFusionReactor(LQGCircuitElement):
         # Add LQG polymer field interface
         drawing.push()
         drawing.add(elm.Line().up(2))
-        drawing.add(elm.Rect((0, 0), (2, 1)).label('LQG Polymer\\nField Control'))
+        drawing.add(elm.Rect((0, 0), (2, 1)).label('LQG Polymer\nField Control'))
         drawing.pop()
         
         # Add control input
@@ -342,7 +342,7 @@ class LQGVesselSimulator:
         # Add system specifications
         drawing.push()
         drawing.move(0, -6)
-        drawing.add(elm.Label().label('System Specifications:\\n• Power: 500 MW thermal, 200 MW electrical\\n• LQG Enhancement: 1.94x efficiency\\n• Safety: 0.00 mSv/year radiation\\n• Fuel: Deuterium-Tritium fusion'))
+        drawing.add(elm.Label().label('System Specifications:\n• Power: 500 MW thermal, 200 MW electrical\n• LQG Enhancement: 1.94x efficiency\n• Safety: 0.00 mSv/year radiation\n• Fuel: Deuterium-Tritium fusion'))
         drawing.pop()
         
         # Save to construction directory

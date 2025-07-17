@@ -35,24 +35,24 @@ def generate_assembly_layout_schematic():
     # Central reactor vessel (large rectangle representing toroidal chamber)
     drawing.push()
     drawing.move(0, -2)
-    reactor_vessel = drawing.add(elm.Rect((-3, -2), (3, 2)).fill('lightblue').label('TOROIDAL\\nREACTOR VESSEL\\n3.5m Major Radius'))
+    reactor_vessel = drawing.add(elm.Rect((-3, -2), (3, 2)).fill('lightblue').label('TOROIDAL\nREACTOR VESSEL\n3.5m Major Radius'))
     drawing.pop()
     
     # Superconducting magnet coils (around the reactor)
     drawing.push()
     drawing.move(-4, 0)
-    drawing.add(elm.Rect((-1, -3), (1, 3)).fill('yellow').label('TF COILS\\nNbTi/Nb₃Sn\\n5.3T Field'))
+    drawing.add(elm.Rect((-1, -3), (1, 3)).fill('yellow').label('TF COILS\nNbTi/Nb₃Sn\n5.3T Field'))
     drawing.pop()
     
     drawing.push()
     drawing.move(4, 0)
-    drawing.add(elm.Rect((-1, -3), (1, 3)).fill('yellow').label('TF COILS\\nNbTi/Nb₃Sn\\n5.3T Field'))
+    drawing.add(elm.Rect((-1, -3), (1, 3)).fill('yellow').label('TF COILS\nNbTi/Nb₃Sn\n5.3T Field'))
     drawing.pop()
     
     # Power conversion system
     drawing.push()
     drawing.move(7, 0)
-    drawing.add(elm.Rect((-1.5, -1.5), (1.5, 1.5)).fill('orange').label('POWER\\nCONVERSION\\n200 MW'))
+    drawing.add(elm.Rect((-1.5, -1.5), (1.5, 1.5)).fill('orange').label('POWER\nCONVERSION\n200 MW'))
     # Connection line from reactor to power system
     drawing.add(elm.Line().left(4))
     drawing.add(elm.Arrow().left(1).label('Electrical'))
@@ -61,7 +61,7 @@ def generate_assembly_layout_schematic():
     # Coolant system
     drawing.push()
     drawing.move(-7, 1.5)
-    drawing.add(elm.Rect((-1.5, -1), (1.5, 1)).fill('lightgreen').label('COOLANT\\nSYSTEM\\nLi-6 Primary'))
+    drawing.add(elm.Rect((-1.5, -1), (1.5, 1)).fill('lightgreen').label('COOLANT\nSYSTEM\nLi-6 Primary'))
     # Coolant loop connections
     drawing.add(elm.Line().right(2))
     drawing.add(elm.Arrow().right(2).label('Coolant In'))
@@ -69,7 +69,7 @@ def generate_assembly_layout_schematic():
     
     drawing.push()
     drawing.move(-7, -1.5)
-    drawing.add(elm.Rect((-1.5, -1), (1.5, 1)).fill('lightgreen').label('HEAT\\nEXCHANGER\\n550°C'))
+    drawing.add(elm.Rect((-1.5, -1), (1.5, 1)).fill('lightgreen').label('HEAT\nEXCHANGER\n550°C'))
     # Return coolant line
     drawing.add(elm.Line().right(2))
     drawing.add(elm.Arrow().right(2).label('Coolant Out'))
@@ -78,7 +78,7 @@ def generate_assembly_layout_schematic():
     # Fuel injection system
     drawing.push()
     drawing.move(0, 4)
-    drawing.add(elm.Rect((-1.5, -1), (1.5, 1)).fill('pink').label('FUEL\\nINJECTION\\nD-T System'))
+    drawing.add(elm.Rect((-1.5, -1), (1.5, 1)).fill('pink').label('FUEL\nINJECTION\nD-T System'))
     # Fuel line to reactor
     drawing.add(elm.Line().down(2))
     drawing.add(elm.Arrow().down(1).label('D-T Fuel'))
@@ -88,7 +88,7 @@ def generate_assembly_layout_schematic():
     for i, (x, y, label) in enumerate([(-2, 3, 'LQG-1'), (2, 3, 'LQG-2'), (-2, -3, 'LQG-3'), (2, -3, 'LQG-4')]):
         drawing.push()
         drawing.move(x, y)
-        drawing.add(elm.Rect((-0.8, -0.5), (0.8, 0.5)).fill('purple').label(f'{label}\\nPolymer\\nField'))
+        drawing.add(elm.Rect((-0.8, -0.5), (0.8, 0.5)).fill('purple').label(f'{label}\nPolymer\nField'))
         # Connection to reactor
         drawing.add(elm.Line().to((0, 0 if y > 0 else 0)))
         drawing.pop()
@@ -96,7 +96,7 @@ def generate_assembly_layout_schematic():
     # Control system
     drawing.push()
     drawing.move(0, -5)
-    drawing.add(elm.Rect((-2, -1), (2, 1)).fill('gray').label('CONTROL SYSTEM\\nDigital Twin Integration\\nReal-time Monitoring'))
+    drawing.add(elm.Rect((-2, -1), (2, 1)).fill('gray').label('CONTROL SYSTEM\nDigital Twin Integration\nReal-time Monitoring'))
     # Control connections to major systems
     drawing.add(elm.Line().up(1))
     drawing.add(elm.Arrow().up(1).label('Control'))
@@ -106,13 +106,13 @@ def generate_assembly_layout_schematic():
     drawing.push()
     drawing.move(0, 0)
     shielding = drawing.add(elm.Rect((-9, -6), (9, 6)).linestyle('--'))
-    shielding.label('RADIATION SHIELDING\\n2m Tungsten + Lead-Boron\\n0.00 mSv/year')
+    shielding.label('RADIATION SHIELDING\n2m Tungsten + Lead-Boron\n0.00 mSv/year')
     drawing.pop()
     
     # Assembly specifications
     drawing.push()
     drawing.move(-8, -8)
-    drawing.add(elm.Label().label('ASSEMBLY SPECIFICATIONS:\\n• Foundation: Reinforced concrete, 15m × 15m\\n• Crane Access: 500-ton overhead crane\\n• Utilities: 50 MW power supply, cooling water\\n• Timeline: 60 months construction\\n• Cost: $485.75M total\\n• Safety: BLACK/RED LABEL classification'))
+    drawing.add(elm.Label().label('ASSEMBLY SPECIFICATIONS:\n• Foundation: Reinforced concrete, 15m × 15m\n• Crane Access: 500-ton overhead crane\n• Utilities: 50 MW power supply, cooling water\n• Timeline: 60 months construction\n• Cost: $485.75M total\n• Safety: BLACK/RED LABEL classification'))
     drawing.pop()
     
     # Save the assembly layout
