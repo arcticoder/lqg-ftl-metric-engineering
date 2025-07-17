@@ -15,6 +15,7 @@ import json
 from datetime import datetime
 from typing import Dict, List, Tuple, Any, Optional
 import warnings
+import math
 
 try:
     import PySpice
@@ -122,6 +123,44 @@ class LQGFusionReactor(LQGCircuitElement):
         self.minor_radius_m = 1.2
         self.chamber_height_m = 6.0
         
+        # Detailed component specifications from parts list
+        self.components = {
+            # Vacuum Chamber Assembly - First component from parts list
+            'VC1': {
+                'name': 'Vacuum Chamber Assembly',
+                'specs': 'Tungsten-lined toroidal chamber, 3.5m major radius',
+                'supplier': 'Materials Research Corporation',
+                'part_number': 'TVC-350-120-W99',
+                'cost': 2850000,
+                'quantity': 1
+            },
+            'VC2': {
+                'name': 'Tungsten Chamber Segments',
+                'specs': '15mm wall thickness, precision-welded',
+                'supplier': 'Plansee Group',
+                'part_number': 'W-SEG-145-T15',
+                'cost': 125000,
+                'quantity': 24
+            },
+            # Magnetic Confinement System
+            'MC1': {
+                'name': 'Toroidal Field Coils',
+                'specs': 'NbTi superconducting, 50 kA, 5.3 T',
+                'supplier': 'Oxford Instruments',
+                'part_number': 'TFC-350-NBTI-50',
+                'cost': 485000,
+                'quantity': 16
+            },
+            'MC2': {
+                'name': 'Poloidal Field Coils',
+                'specs': 'Nb₃Sn superconducting, 25 kA',
+                'supplier': 'Bruker EAS',
+                'part_number': 'PFC-120-NB3SN-25',
+                'cost': 285000,
+                'quantity': 12
+            }
+        }
+        
         # Add electrical ports
         self.add_port("power_output", "electrical", (0, 0))
         self.add_port("control_input", "electrical", (-2, 0))
@@ -211,11 +250,34 @@ class LQGFusionReactor(LQGCircuitElement):
         if not SCHEMDRAW_AVAILABLE:
             return
             
-        # Draw main reactor vessel as large rectangle
-        reactor = drawing.add(elm.Rect((0, 0), (3, 2)).fill('orange').label('LQG\nFusion\nReactor'))
+        # Draw main reactor vessel with VC1 designation
+        reactor = drawing.add(elm.Rect((0, 0), (3, 2)).fill('orange').label('VC1\nVacuum Chamber\nAssembly\n(Tungsten-lined)'))
         
-        # Add power output connections
-        drawing.add(elm.Line().right(2).label('200 MW\nElectrical'))
+        # Add VC2 chamber segments notation
+        drawing.push()
+        drawing.move(3.5, 0)
+        drawing.add(elm.Label().label('VC2 (24x)\nTungsten Segments'))
+        drawing.pop()
+        
+        # Add MC1 toroidal field coils
+        drawing.push()
+        drawing.move(-4, 0)
+        drawing.add(elm.Rect((-1, -1.5), (1, 1.5)).fill('yellow').label('MC1\nToroidal\nField Coils\n(16x NbTi)'))
+        drawing.pop()
+        
+        drawing.push()
+        drawing.move(4, 0)
+        drawing.add(elm.Rect((-1, -1.5), (1, 1.5)).fill('yellow').label('MC1\nToroidal\nField Coils\n(16x NbTi)'))
+        drawing.pop()
+        
+        # Add MC2 poloidal field coils
+        drawing.push()
+        drawing.move(0, 3)
+        drawing.add(elm.Rect((-1.5, -0.5), (1.5, 0.5)).fill('lightgreen').label('MC2 Poloidal Field Coils (12x Nb₃Sn)'))
+        drawing.pop()
+        
+        # Add power output connections with designator
+        drawing.add(elm.Line().right(2).label('200 MW\nElectrical\nOutput'))
         drawing.add(elm.Dot().label('Power Out'))
         
         # Add coolant loop
@@ -255,6 +317,55 @@ class LQGFusionReactor(LQGCircuitElement):
         
         self.schematic_element = reactor
         return reactor
+    
+    def draw_assembly_layout(self, drawing):
+        """Draw the physical assembly layout using schemdraw"""
+        if not SCHEMDRAW_AVAILABLE:
+            return
+            
+        # Central vacuum chamber (VC1)
+        chamber = drawing.add(elm.Circle().at((0, 0)).scale(2).fill('lightgray').label('VC1\nVacuum Chamber\nTungsten-lined\n$2.85M', 'center'))
+        
+        # Surrounding VC2 tungsten segments
+        for i in range(8):  # Show 8 of the 24 segments
+            angle = i * 45  # degrees
+            x = 3 * math.cos(math.radians(angle))
+            y = 3 * math.sin(math.radians(angle))
+            drawing.add(elm.Rect((x-0.3, y-0.3), (x+0.3, y+0.3)).fill('darkgray').label(f'VC2-{i+1}\nTungsten\nSegment'))
+        
+        # MC1 Toroidal field coils (16 total, show 8)
+        for i in range(8):
+            angle = i * 45 + 22.5  # Offset from segments
+            x = 4.5 * math.cos(math.radians(angle))
+            y = 4.5 * math.sin(math.radians(angle))
+            drawing.add(elm.Circle().at((x, y)).scale(0.5).fill('yellow').label(f'MC1-{i+1}\nNbTi Coil'))
+        
+        # MC2 Poloidal field coils (12 total, show 6)
+        for i in range(6):
+            angle = i * 60  # 60 degree spacing
+            x = 6 * math.cos(math.radians(angle))
+            y = 6 * math.sin(math.radians(angle))
+            drawing.add(elm.Rect((x-0.4, y-0.2), (x+0.4, y+0.2)).fill('lightgreen').label(f'MC2-{i+1}\nNb₃Sn'))
+        
+        # Add power conditioning units
+        drawing.add(elm.Rect((8, 2), (10, 4)).fill('lightblue').label('Power\nConditioning\nUnit 1'))
+        drawing.add(elm.Rect((8, -4), (10, -2)).fill('lightblue').label('Power\nConditioning\nUnit 2'))
+        
+        # Add LQG control systems
+        drawing.add(elm.Rect((-10, 2), (-8, 4)).fill('purple').label('LQG Control\nSystem A'))
+        drawing.add(elm.Rect((-10, -4), (-8, -2)).fill('purple').label('LQG Control\nSystem B'))
+        
+        # Add structural framework outline
+        drawing.add(elm.Rect((-12, -6), (12, 6)).color('black').linewidth(2))
+        
+        # Add scale indicator
+        drawing.add(elm.Line().at((-11, -5)).right(2).label('2m scale'))
+        
+        # Add coordinate system
+        drawing.add(elm.Arrow().at((-11, 5)).right(1).color('red').label('X'))
+        drawing.add(elm.Arrow().at((-11, 5)).up(1).color('green').label('Y'))
+        
+        return chamber
     
     def update_simulation_state(self, time: float, state_data: Dict):
         """Update reactor state for real-time simulation"""
@@ -350,13 +461,36 @@ class LQGVesselSimulator:
         os.makedirs('construction/lqr-1', exist_ok=True)
         drawing.save('construction/lqr-1/lqr-1_system_schematic.svg')
         
+        # Generate assembly layout schematic
+        assembly_drawing = schemdraw.Drawing()
+        assembly_drawing.config(lw=2, fontsize=8)
+        
+        # Add title for assembly layout
+        assembly_drawing.add(elm.Label().label('LQG FTL Vessel - LQR-1 Assembly Layout').scale(1.5))
+        assembly_drawing.add(elm.Line().down(0.5))
+        
+        # Draw assembly layout for reactor
+        reactor = self.components.get('reactor')
+        if reactor:
+            reactor.draw_assembly_layout(assembly_drawing)
+        
+        # Add assembly specifications
+        assembly_drawing.push()
+        assembly_drawing.move(0, -8)
+        assembly_drawing.add(elm.Label().label('Assembly Layout:\n• VC1: Tungsten-lined vacuum chamber ($2.85M)\n• VC2: 24x tungsten segments\n• MC1: 16x NbTi toroidal coils\n• MC2: 12x Nb₃Sn poloidal coils'))
+        assembly_drawing.pop()
+        
+        # Save assembly layout
+        assembly_drawing.save('construction/lqr-1/lqr-1_assembly_layout.svg')
+        
         # Calculate generation time
         generation_time = (datetime.now() - start_time).total_seconds()
         self.performance_metrics['schematic_generation_time'] = generation_time
         
         if generation_time <= 5.0:
-            print(f"✅ Schematic generated in {generation_time:.2f}s (≤5s requirement)")
-            print(f"📁 Schematic saved: construction/lqr-1/lqr-1_system_schematic.svg")
+            print(f"✅ Schematics generated in {generation_time:.2f}s (≤5s requirement)")
+            print(f"📁 System schematic: construction/lqr-1/lqr-1_system_schematic.svg")
+            print(f"📁 Assembly layout: construction/lqr-1/lqr-1_assembly_layout.svg")
         else:
             print(f"⚠️ Schematic generation took {generation_time:.2f}s (>5s requirement)")
         
