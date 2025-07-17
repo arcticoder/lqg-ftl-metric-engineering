@@ -207,16 +207,36 @@ class LQGFusionReactor(LQGCircuitElement):
         return plasma_model
     
     def draw_schematic(self, drawing):
-        """Draw fusion reactor in schemdraw"""
+        """Draw fusion reactor in system schematic using schemdraw"""
         if not SCHEMDRAW_AVAILABLE:
-            return None
+            return
             
-        # Draw toroidal reactor symbol
-        reactor = drawing.add(elm.Circle().fill(True).color('orange').label('LQG\nFusion\nReactor'))
+        # Draw main reactor vessel as large rectangle
+        reactor = drawing.add(elm.Rect((0, 0), (3, 2)).fill('orange').label('LQG\\nFusion\\nReactor'))
         
-        # Add power output line
-        drawing.add(elm.Line().right(2).label('200 MW'))
+        # Add power output connections
+        drawing.add(elm.Line().right(2).label('200 MW\\nElectrical'))
         drawing.add(elm.Dot().label('Power Out'))
+        
+        # Add coolant loop
+        drawing.push()  # Save position
+        drawing.add(elm.Line().up(1.5))
+        drawing.add(elm.Arrow().right(3).label('Coolant Flow'))
+        drawing.add(elm.Line().down(1.5))
+        drawing.add(elm.Arrow().left(3))
+        drawing.pop()  # Restore position
+        
+        # Add fuel injection
+        drawing.push()
+        drawing.add(elm.Line().down(2))
+        drawing.add(elm.Dot().label('D-T Fuel'))
+        drawing.pop()
+        
+        # Add LQG polymer field interface
+        drawing.push()
+        drawing.add(elm.Line().up(2))
+        drawing.add(elm.Rect((0, 0), (2, 1)).label('LQG Polymer\\nField Control'))
+        drawing.pop()
         
         # Add control input
         drawing.push()
@@ -309,10 +329,26 @@ class LQGVesselSimulator:
             
         # Create main schematic drawing
         drawing = schemdraw.Drawing()
+        drawing.config(lw=2, fontsize=10)
+        
+        # Add title
+        drawing.add(elm.Label().label('LQG FTL Vessel - LQR-1 Fusion Reactor System').scale(1.5))
+        drawing.add(elm.Line().down(0.5))
         
         # Draw all components
         for component in self.components.values():
             component.draw_schematic(drawing)
+        
+        # Add system specifications
+        drawing.push()
+        drawing.move(0, -6)
+        drawing.add(elm.Label().label('System Specifications:\\n• Power: 500 MW thermal, 200 MW electrical\\n• LQG Enhancement: 1.94x efficiency\\n• Safety: 0.00 mSv/year radiation\\n• Fuel: Deuterium-Tritium fusion'))
+        drawing.pop()
+        
+        # Save to construction directory
+        import os
+        os.makedirs('construction/lqr-1', exist_ok=True)
+        drawing.save('construction/lqr-1/lqr-1_system_schematic.svg')
         
         # Calculate generation time
         generation_time = (datetime.now() - start_time).total_seconds()
@@ -320,6 +356,7 @@ class LQGVesselSimulator:
         
         if generation_time <= 5.0:
             print(f"✅ Schematic generated in {generation_time:.2f}s (≤5s requirement)")
+            print(f"📁 Schematic saved: construction/lqr-1/lqr-1_system_schematic.svg")
         else:
             print(f"⚠️ Schematic generation took {generation_time:.2f}s (>5s requirement)")
         
