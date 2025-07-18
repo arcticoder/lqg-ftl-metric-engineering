@@ -1,0 +1,2226 @@
+{
+  "unified_spec": {
+    "project": {
+      "name": "LQG Fusion Reactor",
+      "version": "1.0",
+      "status": "Construction Ready",
+      "total_cost": 234741800.0,
+      "component_count": 36,
+      "total_quantity": 420
+    },
+    "circuit_dsl": {
+      "reactor_id": "LQR-1",
+      "performance": {
+        "thermal_power_MW": 500.0,
+        "electrical_power_MW": 200.0,
+        "efficiency": 0.533,
+        "lqg_enhancement": 1.94
+      },
+      "geometry": {
+        "major_radius_m": 3.5,
+        "minor_radius_m": 1.2,
+        "chamber_height_m": 6.0,
+        "plasma_volume_m3": 99.48561236298072
+      },
+      "components": {
+        "VC1": {
+          "name": "Vacuum Chamber Assembly",
+          "specs": "Tungsten-lined toroidal chamber, 3.5m major radius, 1.2m minor radius",
+          "supplier": "Materials Research Corporation",
+          "part_number": "TVC-350-120-W99",
+          "cost": 2850000,
+          "quantity": 1,
+          "major_radius_m": 3.5,
+          "minor_radius_m": 1.2,
+          "chamber_height_m": 2.4
+        },
+        "VC2": {
+          "name": "Tungsten Chamber Segments",
+          "specs": "15mm wall thickness, precision-welded",
+          "supplier": "Plansee Group",
+          "part_number": "W-SEG-145-T15",
+          "cost": 125000,
+          "quantity": 24,
+          "wall_thickness_m": 0.015,
+          "segment_height_m": 2.4,
+          "arc_length_m": 0.92
+        },
+        "VC3": {
+          "name": "High-vacuum ports, CF-150 conflat flanges",
+          "specs": "316L stainless steel, bakeable to 450\u00b0C",
+          "supplier": "Leybold",
+          "part_number": "CF150-316L-B",
+          "cost": 850,
+          "quantity": 48,
+          "flange_od_m": 0.166,
+          "flange_thickness_m": 0.006
+        },
+        "MC1": {
+          "name": "Toroidal Field Coils",
+          "specs": "NbTi superconducting, 50 kA, 5.3 T",
+          "supplier": "Oxford Instruments",
+          "part_number": "TFC-350-NBTI-50",
+          "cost": 485000,
+          "quantity": 16,
+          "coil_diameter_m": 0.8,
+          "coil_thickness_m": 0.15,
+          "operating_current_kA": 50,
+          "field_strength_T": 5.3
+        },
+        "MC2": {
+          "name": "Poloidal Field Coils",
+          "specs": "Nb\u2083Sn superconducting, 25 kA",
+          "supplier": "Bruker EAS",
+          "part_number": "PFC-120-NB3SN-25",
+          "cost": 285000,
+          "quantity": 12,
+          "coil_width_m": 1.2,
+          "coil_height_m": 0.4,
+          "operating_current_kA": 25
+        },
+        "PS1": {
+          "name": "Main Power Converter",
+          "specs": "50 MW capacity, thyristor-based",
+          "supplier": "ABB",
+          "part_number": "SACE-THYRO-50MW",
+          "cost": 3200000,
+          "quantity": 1,
+          "converter_width_m": 2.5,
+          "converter_height_m": 3.0,
+          "converter_depth_m": 1.8,
+          "power_capacity_MW": 50
+        },
+        "RS1": {
+          "name": "Tungsten Neutron Shield",
+          "specs": "0.20 m thickness, 850 cm\u207b\u00b9 attenuation",
+          "supplier": "Plansee Group",
+          "part_number": "W-SHIELD-200-NEUT",
+          "cost": 8500000,
+          "quantity": 1,
+          "shield_thickness_m": 0.2,
+          "shield_radius_m": 4.5,
+          "attenuation_factor": 100
+        },
+        "RS2": {
+          "name": "Lithium Hydride Moderator",
+          "specs": "0.50 m thickness, 3500 cm\u207b\u00b9 neutron capture",
+          "supplier": "FMC Lithium",
+          "part_number": "LiH-MOD-500-99",
+          "cost": 2250000,
+          "quantity": 1,
+          "moderator_thickness_m": 0.5,
+          "moderator_radius_m": 5.0
+        }
+      }
+    },
+    "cad_parts": {
+      "VC1": {
+        "ref": "VC1",
+        "quantity": 1,
+        "description": "Tungsten-lined toroidal chamber, 3.5m major radius, 1.2m minor radius",
+        "supplier": "Materials Research Corporation",
+        "part_number": "TVC-350-120-W99",
+        "cost": 2850000.0,
+        "specification": "99.95% tungsten lining, \u226410\u207b\u2079 Torr leak rate",
+        "category": "Vacuum Chamber",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 1
+      },
+      "VC2": {
+        "ref": "VC2",
+        "quantity": 24,
+        "description": "Tungsten chamber segments, precision-welded joints",
+        "supplier": "Plansee Group",
+        "part_number": "W-SEG-145-T15",
+        "cost": 125000.0,
+        "specification": "15mm wall thickness, electron beam welded",
+        "category": "Vacuum Chamber",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 2
+      },
+      "VC3": {
+        "ref": "VC3",
+        "quantity": 48,
+        "description": "High-vacuum ports, CF-150 conflat flanges",
+        "supplier": "Leybold",
+        "part_number": "CF150-316L-B",
+        "cost": 850.0,
+        "specification": "316L stainless steel, bakeable to 450\u00b0C",
+        "category": "Vacuum Chamber",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 2
+      },
+      "VC4": {
+        "ref": "VC4",
+        "quantity": 4,
+        "description": "Primary vacuum pumps, turbo-molecular type",
+        "supplier": "Edwards Vacuum",
+        "part_number": "STP-iXA4506",
+        "cost": 95000.0,
+        "specification": "4500 L/s pumping speed, magnetic levitation",
+        "category": "Vacuum Chamber",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "VC5": {
+        "ref": "VC5",
+        "quantity": 8,
+        "description": "Backing pumps, oil-free scroll type",
+        "supplier": "Edwards Vacuum",
+        "part_number": "XDS35i",
+        "cost": 12500.0,
+        "specification": "35 m\u00b3/h pumping speed, dry operation",
+        "category": "Vacuum Chamber",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "MC1": {
+        "ref": "MC1",
+        "quantity": 16,
+        "description": "Toroidal field coils, superconducting NbTi",
+        "supplier": "Oxford Instruments",
+        "part_number": "TFC-350-NBTI-50",
+        "cost": 485000.0,
+        "specification": "50 kA operating current, 5.3 T field strength",
+        "category": "Magnetic Confinement",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 1
+      },
+      "MC2": {
+        "ref": "MC2",
+        "quantity": 12,
+        "description": "Poloidal field coils, superconducting Nb\u2083Sn",
+        "supplier": "Bruker EAS",
+        "part_number": "PFC-120-NB3SN-25",
+        "cost": 285000.0,
+        "specification": "25 kA operating current, field shaping capability",
+        "category": "Magnetic Confinement",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 1
+      },
+      "MC3": {
+        "ref": "MC3",
+        "quantity": 1,
+        "description": "Cryogenic cooling system, helium refrigerator",
+        "supplier": "Linde Kryotechnik",
+        "part_number": "LR280-He-II",
+        "cost": 1250000.0,
+        "specification": "280 W @ 4.2 K cooling capacity",
+        "category": "Magnetic Confinement",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 2
+      },
+      "MC4": {
+        "ref": "MC4",
+        "quantity": 28,
+        "description": "Current leads, high-temperature superconductor",
+        "supplier": "American Superconductor",
+        "part_number": "HTS-CL-50KA",
+        "cost": 15000.0,
+        "specification": "50 kA capacity, 77 K operation",
+        "category": "Magnetic Confinement",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "MC5": {
+        "ref": "MC5",
+        "quantity": 16,
+        "description": "Quench protection resistors, water-cooled",
+        "supplier": "Vishay Dale",
+        "part_number": "RWR-500K-50",
+        "cost": 8500.0,
+        "specification": "500 kW power rating, 50 m\u03a9 resistance",
+        "category": "Magnetic Confinement",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "PS1": {
+        "ref": "PS1",
+        "quantity": 1,
+        "description": "Main power converter, thyristor-based",
+        "supplier": "ABB",
+        "part_number": "SACE-THYRO-50MW",
+        "cost": 3200000.0,
+        "specification": "50 MW capacity, 12-pulse configuration",
+        "category": "Power Supply",
+        "domain": "electrical",
+        "cad_format": "STEP",
+        "priority": 1
+      },
+      "PS2": {
+        "ref": "PS2",
+        "quantity": 16,
+        "description": "Coil power supplies, individual control",
+        "supplier": "Danfysik",
+        "part_number": "MPS854-50KA",
+        "cost": 125000.0,
+        "specification": "50 kA, \u00b10.01% regulation accuracy",
+        "category": "Power Supply",
+        "domain": "electrical",
+        "cad_format": "STEP",
+        "priority": 2
+      },
+      "PS3": {
+        "ref": "PS3",
+        "quantity": 4,
+        "description": "Energy storage systems, supercapacitor banks",
+        "supplier": "Maxwell Technologies",
+        "part_number": "BMOD0500-C016",
+        "cost": 25000.0,
+        "specification": "500 F capacitance, 16 V rating",
+        "category": "Power Supply",
+        "domain": "electrical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "PS4": {
+        "ref": "PS4",
+        "quantity": 8,
+        "description": "Uninterruptible power supplies, 500 kVA",
+        "supplier": "Schneider Electric",
+        "part_number": "Galaxy-VM-500",
+        "cost": 85000.0,
+        "specification": "500 kVA capacity, online double conversion",
+        "category": "Power Supply",
+        "domain": "electrical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "PFG1": {
+        "ref": "PFG1",
+        "quantity": 16,
+        "description": "Polymer field generators, sinc(\u03c0\u03bc) modulation",
+        "supplier": "Quantum Fields Inc.",
+        "part_number": "QFI-PFG-100-SINC",
+        "cost": 185000.0,
+        "specification": "100 kW field strength, \u03c0 modulation frequency",
+        "category": "Other",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 1
+      },
+      "PFG2": {
+        "ref": "PFG2",
+        "quantity": 16,
+        "description": "Field coupling networks, distributed topology",
+        "supplier": "Advanced Energy",
+        "part_number": "AE-FCN-16PT-DIST",
+        "cost": 45000.0,
+        "specification": "16-point distribution, 94% coupling efficiency",
+        "category": "Other",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 2
+      },
+      "PFG3": {
+        "ref": "PFG3",
+        "quantity": 1,
+        "description": "Central control processor, quantum-enhanced",
+        "supplier": "IBM Quantum",
+        "part_number": "IBM-QCP-127-QUBIT",
+        "cost": 2500000.0,
+        "specification": "127-qubit processor, real-time control",
+        "category": "Other",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "PFG4": {
+        "ref": "PFG4",
+        "quantity": 32,
+        "description": "Field monitoring sensors, backreaction detection",
+        "supplier": "Tektronix",
+        "part_number": "RSA7100A-BR-MON",
+        "cost": 125000.0,
+        "specification": "Real-time spectrum analysis, \u03b2t measurement",
+        "category": "Other",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "NBI1": {
+        "ref": "NBI1",
+        "quantity": 4,
+        "description": "Neutral beam injectors, 20 MW each",
+        "supplier": "ITER Organization",
+        "part_number": "ITER-NBI-20MW-D",
+        "cost": 8500000.0,
+        "specification": "20 MW deuterium beam, 1 MeV energy",
+        "category": "Other",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 1
+      },
+      "NBI2": {
+        "ref": "NBI2",
+        "quantity": 4,
+        "description": "Ion sources, RF-driven negative ion",
+        "supplier": "Max Planck Institute",
+        "part_number": "MPI-IS-RF-NI",
+        "cost": 750000.0,
+        "specification": "200 A/m\u00b2 current density, H\u207b ions",
+        "category": "Other",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "NBI3": {
+        "ref": "NBI3",
+        "quantity": 8,
+        "description": "Beam line components, electrostatic acceleration",
+        "supplier": "Hughes Research",
+        "part_number": "HRL-BL-1MV-ES",
+        "cost": 425000.0,
+        "specification": "1 MV acceleration voltage, 99% neutralization",
+        "category": "Other",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "FPS1": {
+        "ref": "FPS1",
+        "quantity": 1,
+        "description": "Tritium processing plant, complete system",
+        "supplier": "ITER Organization",
+        "part_number": "ITER-TPP-COMPLETE",
+        "cost": 125000000.0,
+        "specification": "10 g/day tritium processing, 99.9% recovery",
+        "category": "Other",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 2
+      },
+      "FPS2": {
+        "ref": "FPS2",
+        "quantity": 8,
+        "description": "Fuel storage vessels, tritium-compatible",
+        "supplier": "Savannah River Site",
+        "part_number": "SRS-TV-10G-T",
+        "cost": 285000.0,
+        "specification": "10 g tritium capacity, triple containment",
+        "category": "Other",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "FPS3": {
+        "ref": "FPS3",
+        "quantity": 4,
+        "description": "Isotope separation units, cryogenic distillation",
+        "supplier": "Los Alamos National Lab",
+        "part_number": "LANL-ISU-CD-T",
+        "cost": 1850000.0,
+        "specification": "99.99% isotopic purity, continuous operation",
+        "category": "Other",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "RS1": {
+        "ref": "RS1",
+        "quantity": 1,
+        "description": "Tungsten neutron shield, 0.20 m thickness",
+        "supplier": "Plansee Group",
+        "part_number": "W-SHIELD-200-NEUT",
+        "cost": 8500000.0,
+        "specification": "850 cm\u207b\u00b9 attenuation, 100\u00d7 enhancement",
+        "category": "Radiation Shielding",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 1
+      },
+      "RS2": {
+        "ref": "RS2",
+        "quantity": 1,
+        "description": "Lithium hydride moderator, 0.50 m thickness",
+        "supplier": "FMC Lithium",
+        "part_number": "LiH-MOD-500-99",
+        "cost": 2250000.0,
+        "specification": "3500 cm\u207b\u00b9 neutron capture, 99% purity",
+        "category": "Radiation Shielding",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "RS3": {
+        "ref": "RS3",
+        "quantity": 1,
+        "description": "Borated polyethylene shield, 1.00 m thickness",
+        "supplier": "Reactor Experiments Inc.",
+        "part_number": "REI-BP-1000-B10",
+        "cost": 185000.0,
+        "specification": "2500 cm\u207b\u00b9 thermal neutron absorption",
+        "category": "Radiation Shielding",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "RS4": {
+        "ref": "RS4",
+        "quantity": 1,
+        "description": "Enhanced concrete barrier, 3.0 m thickness",
+        "supplier": "Nuclear Concrete Corp.",
+        "part_number": "NCC-EC-3000-B",
+        "cost": 125000.0,
+        "specification": "Boron aggregate, structural grade",
+        "category": "Radiation Shielding",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "GS1": {
+        "ref": "GS1",
+        "quantity": 1,
+        "description": "Lead-bismuth gamma shield, 0.15 m thickness",
+        "supplier": "Mayco Industries",
+        "part_number": "MI-PBGAMMA-150",
+        "cost": 485000.0,
+        "specification": "High-Z photoelectric absorption",
+        "category": "Gamma Shielding",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "GS2": {
+        "ref": "GS2",
+        "quantity": 24,
+        "description": "Gamma detection systems, real-time monitoring",
+        "supplier": "Mirion Technologies",
+        "part_number": "MGP-GDS-RT-24",
+        "cost": 25000.0,
+        "specification": "0.01 mSv/h sensitivity, wireless network",
+        "category": "Gamma Shielding",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "ES1": {
+        "ref": "ES1",
+        "quantity": 1,
+        "description": "Emergency shutdown system, plasma disruption",
+        "supplier": "General Atomics",
+        "part_number": "GA-ESD-PD-FAST",
+        "cost": 2850000.0,
+        "specification": "<0.1 s disruption time, automated activation",
+        "category": "Emergency Systems",
+        "domain": "electrical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "ES2": {
+        "ref": "ES2",
+        "quantity": 8,
+        "description": "Emergency ventilation systems, HEPA filtration",
+        "supplier": "Nuclear Filter Technology",
+        "part_number": "NFT-EV-HEPA-8",
+        "cost": 185000.0,
+        "specification": "99.97% particle removal, tritium compatibility",
+        "category": "Emergency Systems",
+        "domain": "electrical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "ES3": {
+        "ref": "ES3",
+        "quantity": 4,
+        "description": "Fire suppression systems, inert gas type",
+        "supplier": "Ansul",
+        "part_number": "ANSUL-IG-100-PLASMA",
+        "cost": 125000.0,
+        "specification": "Argon-based, electrical equipment safe",
+        "category": "Emergency Systems",
+        "domain": "electrical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "CS1": {
+        "ref": "CS1",
+        "quantity": 1,
+        "description": "Distributed control system, real-time operation",
+        "supplier": "Siemens",
+        "part_number": "SIMATIC-PCS7-FUSION",
+        "cost": 1250000.0,
+        "specification": "<1 ms response time, redundant architecture",
+        "category": "Control Systems",
+        "domain": "electrical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "CS2": {
+        "ref": "CS2",
+        "quantity": 64,
+        "description": "Plasma diagnostics, multi-channel systems",
+        "supplier": "Princeton Plasma Physics",
+        "part_number": "PPPL-PD-MC-64",
+        "cost": 85000.0,
+        "specification": "Temperature, density, position measurement",
+        "category": "Control Systems",
+        "domain": "electrical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "CS3": {
+        "ref": "CS3",
+        "quantity": 32,
+        "description": "Magnetic field sensors, Hall effect type",
+        "supplier": "Lake Shore Cryotronics",
+        "part_number": "LSC-MFS-HE-32",
+        "cost": 15000.0,
+        "specification": "\u00b12% field uniformity measurement",
+        "category": "Control Systems",
+        "domain": "electrical",
+        "cad_format": "STEP",
+        "priority": 3
+      }
+    },
+    "integration_mapping": {
+      "VC1": {
+        "circuit_specs": {
+          "name": "Vacuum Chamber Assembly",
+          "specs": "Tungsten-lined toroidal chamber, 3.5m major radius, 1.2m minor radius",
+          "supplier": "Materials Research Corporation",
+          "part_number": "TVC-350-120-W99",
+          "cost": 2850000,
+          "quantity": 1,
+          "major_radius_m": 3.5,
+          "minor_radius_m": 1.2,
+          "chamber_height_m": 2.4
+        },
+        "cad_specs": {
+          "ref": "VC1",
+          "quantity": 1,
+          "description": "Tungsten-lined toroidal chamber, 3.5m major radius, 1.2m minor radius",
+          "supplier": "Materials Research Corporation",
+          "part_number": "TVC-350-120-W99",
+          "cost": 2850000.0,
+          "specification": "99.95% tungsten lining, \u226410\u207b\u2079 Torr leak rate",
+          "category": "Vacuum Chamber",
+          "domain": "mechanical",
+          "cad_format": "STEP",
+          "priority": 1
+        },
+        "integration_type": "direct_match"
+      },
+      "VC2": {
+        "circuit_specs": {
+          "name": "Tungsten Chamber Segments",
+          "specs": "15mm wall thickness, precision-welded",
+          "supplier": "Plansee Group",
+          "part_number": "W-SEG-145-T15",
+          "cost": 125000,
+          "quantity": 24,
+          "wall_thickness_m": 0.015,
+          "segment_height_m": 2.4,
+          "arc_length_m": 0.92
+        },
+        "cad_specs": {
+          "ref": "VC2",
+          "quantity": 24,
+          "description": "Tungsten chamber segments, precision-welded joints",
+          "supplier": "Plansee Group",
+          "part_number": "W-SEG-145-T15",
+          "cost": 125000.0,
+          "specification": "15mm wall thickness, electron beam welded",
+          "category": "Vacuum Chamber",
+          "domain": "mechanical",
+          "cad_format": "STEP",
+          "priority": 2
+        },
+        "integration_type": "direct_match"
+      },
+      "VC3": {
+        "circuit_specs": {
+          "name": "High-vacuum ports, CF-150 conflat flanges",
+          "specs": "316L stainless steel, bakeable to 450\u00b0C",
+          "supplier": "Leybold",
+          "part_number": "CF150-316L-B",
+          "cost": 850,
+          "quantity": 48,
+          "flange_od_m": 0.166,
+          "flange_thickness_m": 0.006
+        },
+        "cad_specs": {
+          "ref": "VC3",
+          "quantity": 48,
+          "description": "High-vacuum ports, CF-150 conflat flanges",
+          "supplier": "Leybold",
+          "part_number": "CF150-316L-B",
+          "cost": 850.0,
+          "specification": "316L stainless steel, bakeable to 450\u00b0C",
+          "category": "Vacuum Chamber",
+          "domain": "mechanical",
+          "cad_format": "STEP",
+          "priority": 2
+        },
+        "integration_type": "direct_match"
+      },
+      "MC1": {
+        "circuit_specs": {
+          "name": "Toroidal Field Coils",
+          "specs": "NbTi superconducting, 50 kA, 5.3 T",
+          "supplier": "Oxford Instruments",
+          "part_number": "TFC-350-NBTI-50",
+          "cost": 485000,
+          "quantity": 16,
+          "coil_diameter_m": 0.8,
+          "coil_thickness_m": 0.15,
+          "operating_current_kA": 50,
+          "field_strength_T": 5.3
+        },
+        "cad_specs": {
+          "ref": "MC1",
+          "quantity": 16,
+          "description": "Toroidal field coils, superconducting NbTi",
+          "supplier": "Oxford Instruments",
+          "part_number": "TFC-350-NBTI-50",
+          "cost": 485000.0,
+          "specification": "50 kA operating current, 5.3 T field strength",
+          "category": "Magnetic Confinement",
+          "domain": "mechanical",
+          "cad_format": "STEP",
+          "priority": 1
+        },
+        "integration_type": "direct_match"
+      },
+      "MC2": {
+        "circuit_specs": {
+          "name": "Poloidal Field Coils",
+          "specs": "Nb\u2083Sn superconducting, 25 kA",
+          "supplier": "Bruker EAS",
+          "part_number": "PFC-120-NB3SN-25",
+          "cost": 285000,
+          "quantity": 12,
+          "coil_width_m": 1.2,
+          "coil_height_m": 0.4,
+          "operating_current_kA": 25
+        },
+        "cad_specs": {
+          "ref": "MC2",
+          "quantity": 12,
+          "description": "Poloidal field coils, superconducting Nb\u2083Sn",
+          "supplier": "Bruker EAS",
+          "part_number": "PFC-120-NB3SN-25",
+          "cost": 285000.0,
+          "specification": "25 kA operating current, field shaping capability",
+          "category": "Magnetic Confinement",
+          "domain": "mechanical",
+          "cad_format": "STEP",
+          "priority": 1
+        },
+        "integration_type": "direct_match"
+      },
+      "PS1": {
+        "circuit_specs": {
+          "name": "Main Power Converter",
+          "specs": "50 MW capacity, thyristor-based",
+          "supplier": "ABB",
+          "part_number": "SACE-THYRO-50MW",
+          "cost": 3200000,
+          "quantity": 1,
+          "converter_width_m": 2.5,
+          "converter_height_m": 3.0,
+          "converter_depth_m": 1.8,
+          "power_capacity_MW": 50
+        },
+        "cad_specs": {
+          "ref": "PS1",
+          "quantity": 1,
+          "description": "Main power converter, thyristor-based",
+          "supplier": "ABB",
+          "part_number": "SACE-THYRO-50MW",
+          "cost": 3200000.0,
+          "specification": "50 MW capacity, 12-pulse configuration",
+          "category": "Power Supply",
+          "domain": "electrical",
+          "cad_format": "STEP",
+          "priority": 1
+        },
+        "integration_type": "direct_match"
+      },
+      "RS1": {
+        "circuit_specs": {
+          "name": "Tungsten Neutron Shield",
+          "specs": "0.20 m thickness, 850 cm\u207b\u00b9 attenuation",
+          "supplier": "Plansee Group",
+          "part_number": "W-SHIELD-200-NEUT",
+          "cost": 8500000,
+          "quantity": 1,
+          "shield_thickness_m": 0.2,
+          "shield_radius_m": 4.5,
+          "attenuation_factor": 100
+        },
+        "cad_specs": {
+          "ref": "RS1",
+          "quantity": 1,
+          "description": "Tungsten neutron shield, 0.20 m thickness",
+          "supplier": "Plansee Group",
+          "part_number": "W-SHIELD-200-NEUT",
+          "cost": 8500000.0,
+          "specification": "850 cm\u207b\u00b9 attenuation, 100\u00d7 enhancement",
+          "category": "Radiation Shielding",
+          "domain": "mechanical",
+          "cad_format": "STEP",
+          "priority": 1
+        },
+        "integration_type": "direct_match"
+      },
+      "RS2": {
+        "circuit_specs": {
+          "name": "Lithium Hydride Moderator",
+          "specs": "0.50 m thickness, 3500 cm\u207b\u00b9 neutron capture",
+          "supplier": "FMC Lithium",
+          "part_number": "LiH-MOD-500-99",
+          "cost": 2250000,
+          "quantity": 1,
+          "moderator_thickness_m": 0.5,
+          "moderator_radius_m": 5.0
+        },
+        "cad_specs": {
+          "ref": "RS2",
+          "quantity": 1,
+          "description": "Lithium hydride moderator, 0.50 m thickness",
+          "supplier": "FMC Lithium",
+          "part_number": "LiH-MOD-500-99",
+          "cost": 2250000.0,
+          "specification": "3500 cm\u207b\u00b9 neutron capture, 99% purity",
+          "category": "Radiation Shielding",
+          "domain": "mechanical",
+          "cad_format": "STEP",
+          "priority": 3
+        },
+        "integration_type": "direct_match"
+      }
+    }
+  },
+  "enhanced_schematic": {
+    "circuit_dsl_generated": true,
+    "schematic_files": [
+      "construction/lqr-1/lqr-1_system_schematic.svg",
+      "construction/lqr-1/lqr-1_assembly_layout.svg"
+    ],
+    "cad_integration": {
+      "total_components": 36,
+      "electrical_components": 10,
+      "mechanical_components": 26,
+      "total_system_cost": 234741800.0
+    },
+    "enhanced_annotations": {
+      "PS1": {
+        "supplier": "ABB",
+        "part_number": "SACE-THYRO-50MW",
+        "cost": 3200000.0,
+        "specification": "50 MW capacity, 12-pulse configuration",
+        "cad_available": true
+      },
+      "PS2": {
+        "supplier": "Danfysik",
+        "part_number": "MPS854-50KA",
+        "cost": 125000.0,
+        "specification": "50 kA, \u00b10.01% regulation accuracy",
+        "cad_available": true
+      },
+      "PS3": {
+        "supplier": "Maxwell Technologies",
+        "part_number": "BMOD0500-C016",
+        "cost": 25000.0,
+        "specification": "500 F capacitance, 16 V rating",
+        "cad_available": true
+      },
+      "PS4": {
+        "supplier": "Schneider Electric",
+        "part_number": "Galaxy-VM-500",
+        "cost": 85000.0,
+        "specification": "500 kVA capacity, online double conversion",
+        "cad_available": true
+      },
+      "ES1": {
+        "supplier": "General Atomics",
+        "part_number": "GA-ESD-PD-FAST",
+        "cost": 2850000.0,
+        "specification": "<0.1 s disruption time, automated activation",
+        "cad_available": true
+      },
+      "ES2": {
+        "supplier": "Nuclear Filter Technology",
+        "part_number": "NFT-EV-HEPA-8",
+        "cost": 185000.0,
+        "specification": "99.97% particle removal, tritium compatibility",
+        "cad_available": true
+      },
+      "ES3": {
+        "supplier": "Ansul",
+        "part_number": "ANSUL-IG-100-PLASMA",
+        "cost": 125000.0,
+        "specification": "Argon-based, electrical equipment safe",
+        "cad_available": true
+      },
+      "CS1": {
+        "supplier": "Siemens",
+        "part_number": "SIMATIC-PCS7-FUSION",
+        "cost": 1250000.0,
+        "specification": "<1 ms response time, redundant architecture",
+        "cad_available": true
+      },
+      "CS2": {
+        "supplier": "Princeton Plasma Physics",
+        "part_number": "PPPL-PD-MC-64",
+        "cost": 85000.0,
+        "specification": "Temperature, density, position measurement",
+        "cad_available": true
+      },
+      "CS3": {
+        "supplier": "Lake Shore Cryotronics",
+        "part_number": "LSC-MFS-HE-32",
+        "cost": 15000.0,
+        "specification": "\u00b12% field uniformity measurement",
+        "cad_available": true
+      }
+    }
+  },
+  "performance_analysis": {
+    "power_metrics": {
+      "thermal_power_MW": 500.0,
+      "electrical_power_MW": 200.0,
+      "efficiency_percent": 53.300000000000004,
+      "lqg_enhancement_factor": 1.94
+    },
+    "component_analysis": {},
+    "system_metrics": {
+      "total_components": 36,
+      "component_categories": {
+        "Vacuum Chamber": {
+          "count": 85,
+          "total_cost": 6370800.0,
+          "components": [
+            "VC1",
+            "VC2",
+            "VC3",
+            "VC4",
+            "VC5"
+          ]
+        },
+        "Magnetic Confinement": {
+          "count": 73,
+          "total_cost": 12986000.0,
+          "components": [
+            "MC1",
+            "MC2",
+            "MC3",
+            "MC4",
+            "MC5"
+          ]
+        },
+        "Power Supply": {
+          "count": 29,
+          "total_cost": 5980000.0,
+          "components": [
+            "PS1",
+            "PS2",
+            "PS3",
+            "PS4"
+          ]
+        },
+        "Other": {
+          "count": 94,
+          "total_cost": 185260000.0,
+          "components": [
+            "PFG1",
+            "PFG2",
+            "PFG3",
+            "PFG4",
+            "NBI1",
+            "NBI2",
+            "NBI3",
+            "FPS1",
+            "FPS2",
+            "FPS3"
+          ]
+        },
+        "Radiation Shielding": {
+          "count": 4,
+          "total_cost": 11060000.0,
+          "components": [
+            "RS1",
+            "RS2",
+            "RS3",
+            "RS4"
+          ]
+        },
+        "Gamma Shielding": {
+          "count": 25,
+          "total_cost": 1085000.0,
+          "components": [
+            "GS1",
+            "GS2"
+          ]
+        },
+        "Emergency Systems": {
+          "count": 13,
+          "total_cost": 4830000.0,
+          "components": [
+            "ES1",
+            "ES2",
+            "ES3"
+          ]
+        },
+        "Control Systems": {
+          "count": 97,
+          "total_cost": 7170000.0,
+          "components": [
+            "CS1",
+            "CS2",
+            "CS3"
+          ]
+        }
+      },
+      "power_distribution": {
+        "total_power_investment": 136000.0,
+        "power_per_MW": 680.0
+      },
+      "safety_metrics": {
+        "shielding_components": 6,
+        "shielding_cost": 12145000.0,
+        "safety_factor": 350000
+      }
+    }
+  },
+  "cost_analysis": {
+    "total_system_cost": 234741800.0,
+    "cost_by_category": {
+      "Vacuum Chamber": 6370800.0,
+      "Magnetic Confinement": 12986000.0,
+      "Power Supply": 5980000.0,
+      "Other": 185260000.0,
+      "Radiation Shielding": 11060000.0,
+      "Gamma Shielding": 1085000.0,
+      "Emergency Systems": 4830000.0,
+      "Control Systems": 7170000.0
+    },
+    "cost_breakdown": {
+      "VC1": {
+        "unit_cost": 2850000.0,
+        "quantity": 1,
+        "total_cost": 2850000.0,
+        "percentage_of_total": 1.2140999174412055
+      },
+      "VC2": {
+        "unit_cost": 125000.0,
+        "quantity": 24,
+        "total_cost": 3000000.0,
+        "percentage_of_total": 1.2779999130960058
+      },
+      "VC3": {
+        "unit_cost": 850.0,
+        "quantity": 48,
+        "total_cost": 40800.0,
+        "percentage_of_total": 0.01738079881810568
+      },
+      "VC4": {
+        "unit_cost": 95000.0,
+        "quantity": 4,
+        "total_cost": 380000.0,
+        "percentage_of_total": 0.16187998899216074
+      },
+      "VC5": {
+        "unit_cost": 12500.0,
+        "quantity": 8,
+        "total_cost": 100000.0,
+        "percentage_of_total": 0.0425999971032002
+      },
+      "MC1": {
+        "unit_cost": 485000.0,
+        "quantity": 16,
+        "total_cost": 7760000.0,
+        "percentage_of_total": 3.3057597752083354
+      },
+      "MC2": {
+        "unit_cost": 285000.0,
+        "quantity": 12,
+        "total_cost": 3420000.0,
+        "percentage_of_total": 1.4569199009294467
+      },
+      "MC3": {
+        "unit_cost": 1250000.0,
+        "quantity": 1,
+        "total_cost": 1250000.0,
+        "percentage_of_total": 0.5324999637900025
+      },
+      "MC4": {
+        "unit_cost": 15000.0,
+        "quantity": 28,
+        "total_cost": 420000.0,
+        "percentage_of_total": 0.17891998783344082
+      },
+      "MC5": {
+        "unit_cost": 8500.0,
+        "quantity": 16,
+        "total_cost": 136000.0,
+        "percentage_of_total": 0.05793599606035227
+      },
+      "PS1": {
+        "unit_cost": 3200000.0,
+        "quantity": 1,
+        "total_cost": 3200000.0,
+        "percentage_of_total": 1.3631999073024064
+      },
+      "PS2": {
+        "unit_cost": 125000.0,
+        "quantity": 16,
+        "total_cost": 2000000.0,
+        "percentage_of_total": 0.8519999420640039
+      },
+      "PS3": {
+        "unit_cost": 25000.0,
+        "quantity": 4,
+        "total_cost": 100000.0,
+        "percentage_of_total": 0.0425999971032002
+      },
+      "PS4": {
+        "unit_cost": 85000.0,
+        "quantity": 8,
+        "total_cost": 680000.0,
+        "percentage_of_total": 0.28967998030176134
+      },
+      "PFG1": {
+        "unit_cost": 185000.0,
+        "quantity": 16,
+        "total_cost": 2960000.0,
+        "percentage_of_total": 1.2609599142547259
+      },
+      "PFG2": {
+        "unit_cost": 45000.0,
+        "quantity": 16,
+        "total_cost": 720000.0,
+        "percentage_of_total": 0.30671997914304144
+      },
+      "PFG3": {
+        "unit_cost": 2500000.0,
+        "quantity": 1,
+        "total_cost": 2500000.0,
+        "percentage_of_total": 1.064999927580005
+      },
+      "PFG4": {
+        "unit_cost": 125000.0,
+        "quantity": 32,
+        "total_cost": 4000000.0,
+        "percentage_of_total": 1.7039998841280077
+      },
+      "NBI1": {
+        "unit_cost": 8500000.0,
+        "quantity": 4,
+        "total_cost": 34000000.0,
+        "percentage_of_total": 14.483999015088067
+      },
+      "NBI2": {
+        "unit_cost": 750000.0,
+        "quantity": 4,
+        "total_cost": 3000000.0,
+        "percentage_of_total": 1.2779999130960058
+      },
+      "NBI3": {
+        "unit_cost": 425000.0,
+        "quantity": 8,
+        "total_cost": 3400000.0,
+        "percentage_of_total": 1.4483999015088067
+      },
+      "FPS1": {
+        "unit_cost": 125000000.0,
+        "quantity": 1,
+        "total_cost": 125000000.0,
+        "percentage_of_total": 53.249996379000244
+      },
+      "FPS2": {
+        "unit_cost": 285000.0,
+        "quantity": 8,
+        "total_cost": 2280000.0,
+        "percentage_of_total": 0.9712799339529645
+      },
+      "FPS3": {
+        "unit_cost": 1850000.0,
+        "quantity": 4,
+        "total_cost": 7400000.0,
+        "percentage_of_total": 3.1523997856368147
+      },
+      "RS1": {
+        "unit_cost": 8500000.0,
+        "quantity": 1,
+        "total_cost": 8500000.0,
+        "percentage_of_total": 3.6209997537720167
+      },
+      "RS2": {
+        "unit_cost": 2250000.0,
+        "quantity": 1,
+        "total_cost": 2250000.0,
+        "percentage_of_total": 0.9584999348220045
+      },
+      "RS3": {
+        "unit_cost": 185000.0,
+        "quantity": 1,
+        "total_cost": 185000.0,
+        "percentage_of_total": 0.07880999464092037
+      },
+      "RS4": {
+        "unit_cost": 125000.0,
+        "quantity": 1,
+        "total_cost": 125000.0,
+        "percentage_of_total": 0.05324999637900024
+      },
+      "GS1": {
+        "unit_cost": 485000.0,
+        "quantity": 1,
+        "total_cost": 485000.0,
+        "percentage_of_total": 0.20660998595052096
+      },
+      "GS2": {
+        "unit_cost": 25000.0,
+        "quantity": 24,
+        "total_cost": 600000.0,
+        "percentage_of_total": 0.2555999826192012
+      },
+      "ES1": {
+        "unit_cost": 2850000.0,
+        "quantity": 1,
+        "total_cost": 2850000.0,
+        "percentage_of_total": 1.2140999174412055
+      },
+      "ES2": {
+        "unit_cost": 185000.0,
+        "quantity": 8,
+        "total_cost": 1480000.0,
+        "percentage_of_total": 0.6304799571273629
+      },
+      "ES3": {
+        "unit_cost": 125000.0,
+        "quantity": 4,
+        "total_cost": 500000.0,
+        "percentage_of_total": 0.21299998551600097
+      },
+      "CS1": {
+        "unit_cost": 1250000.0,
+        "quantity": 1,
+        "total_cost": 1250000.0,
+        "percentage_of_total": 0.5324999637900025
+      },
+      "CS2": {
+        "unit_cost": 85000.0,
+        "quantity": 64,
+        "total_cost": 5440000.0,
+        "percentage_of_total": 2.3174398424140907
+      },
+      "CS3": {
+        "unit_cost": 15000.0,
+        "quantity": 32,
+        "total_cost": 480000.0,
+        "percentage_of_total": 0.20447998609536094
+      }
+    },
+    "optimization_opportunities": {
+      "highest_cost_components": [
+        {
+          "ref": "FPS1",
+          "description": "Tritium processing plant, complete system",
+          "cost": 125000000.0,
+          "optimization_potential": "High"
+        },
+        {
+          "ref": "NBI1",
+          "description": "Neutral beam injectors, 20 MW each",
+          "cost": 34000000.0,
+          "optimization_potential": "High"
+        },
+        {
+          "ref": "RS1",
+          "description": "Tungsten neutron shield, 0.20 m thickness",
+          "cost": 8500000.0,
+          "optimization_potential": "High"
+        },
+        {
+          "ref": "MC1",
+          "description": "Toroidal field coils, superconducting NbTi",
+          "cost": 7760000.0,
+          "optimization_potential": "High"
+        },
+        {
+          "ref": "FPS3",
+          "description": "Isotope separation units, cryogenic distillation",
+          "cost": 7400000.0,
+          "optimization_potential": "High"
+        }
+      ]
+    }
+  },
+  "documentation": {
+    "executive_summary": {
+      "project_name": "LQG Fusion Reactor (LQR-1)",
+      "status": "Construction Ready",
+      "total_cost": 234741800.0,
+      "component_count": 36,
+      "power_output": 200.0,
+      "efficiency": 53.300000000000004
+    },
+    "technical_specifications": {
+      "reactor_id": "LQR-1",
+      "performance": {
+        "thermal_power_MW": 500.0,
+        "electrical_power_MW": 200.0,
+        "efficiency": 0.533,
+        "lqg_enhancement": 1.94
+      },
+      "geometry": {
+        "major_radius_m": 3.5,
+        "minor_radius_m": 1.2,
+        "chamber_height_m": 6.0,
+        "plasma_volume_m3": 99.48561236298072
+      },
+      "components": {
+        "VC1": {
+          "name": "Vacuum Chamber Assembly",
+          "specs": "Tungsten-lined toroidal chamber, 3.5m major radius, 1.2m minor radius",
+          "supplier": "Materials Research Corporation",
+          "part_number": "TVC-350-120-W99",
+          "cost": 2850000,
+          "quantity": 1,
+          "major_radius_m": 3.5,
+          "minor_radius_m": 1.2,
+          "chamber_height_m": 2.4
+        },
+        "VC2": {
+          "name": "Tungsten Chamber Segments",
+          "specs": "15mm wall thickness, precision-welded",
+          "supplier": "Plansee Group",
+          "part_number": "W-SEG-145-T15",
+          "cost": 125000,
+          "quantity": 24,
+          "wall_thickness_m": 0.015,
+          "segment_height_m": 2.4,
+          "arc_length_m": 0.92
+        },
+        "VC3": {
+          "name": "High-vacuum ports, CF-150 conflat flanges",
+          "specs": "316L stainless steel, bakeable to 450\u00b0C",
+          "supplier": "Leybold",
+          "part_number": "CF150-316L-B",
+          "cost": 850,
+          "quantity": 48,
+          "flange_od_m": 0.166,
+          "flange_thickness_m": 0.006
+        },
+        "MC1": {
+          "name": "Toroidal Field Coils",
+          "specs": "NbTi superconducting, 50 kA, 5.3 T",
+          "supplier": "Oxford Instruments",
+          "part_number": "TFC-350-NBTI-50",
+          "cost": 485000,
+          "quantity": 16,
+          "coil_diameter_m": 0.8,
+          "coil_thickness_m": 0.15,
+          "operating_current_kA": 50,
+          "field_strength_T": 5.3
+        },
+        "MC2": {
+          "name": "Poloidal Field Coils",
+          "specs": "Nb\u2083Sn superconducting, 25 kA",
+          "supplier": "Bruker EAS",
+          "part_number": "PFC-120-NB3SN-25",
+          "cost": 285000,
+          "quantity": 12,
+          "coil_width_m": 1.2,
+          "coil_height_m": 0.4,
+          "operating_current_kA": 25
+        },
+        "PS1": {
+          "name": "Main Power Converter",
+          "specs": "50 MW capacity, thyristor-based",
+          "supplier": "ABB",
+          "part_number": "SACE-THYRO-50MW",
+          "cost": 3200000,
+          "quantity": 1,
+          "converter_width_m": 2.5,
+          "converter_height_m": 3.0,
+          "converter_depth_m": 1.8,
+          "power_capacity_MW": 50
+        },
+        "RS1": {
+          "name": "Tungsten Neutron Shield",
+          "specs": "0.20 m thickness, 850 cm\u207b\u00b9 attenuation",
+          "supplier": "Plansee Group",
+          "part_number": "W-SHIELD-200-NEUT",
+          "cost": 8500000,
+          "quantity": 1,
+          "shield_thickness_m": 0.2,
+          "shield_radius_m": 4.5,
+          "attenuation_factor": 100
+        },
+        "RS2": {
+          "name": "Lithium Hydride Moderator",
+          "specs": "0.50 m thickness, 3500 cm\u207b\u00b9 neutron capture",
+          "supplier": "FMC Lithium",
+          "part_number": "LiH-MOD-500-99",
+          "cost": 2250000,
+          "quantity": 1,
+          "moderator_thickness_m": 0.5,
+          "moderator_radius_m": 5.0
+        }
+      }
+    },
+    "component_specifications": {
+      "VC1": {
+        "ref": "VC1",
+        "quantity": 1,
+        "description": "Tungsten-lined toroidal chamber, 3.5m major radius, 1.2m minor radius",
+        "supplier": "Materials Research Corporation",
+        "part_number": "TVC-350-120-W99",
+        "cost": 2850000.0,
+        "specification": "99.95% tungsten lining, \u226410\u207b\u2079 Torr leak rate",
+        "category": "Vacuum Chamber",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 1
+      },
+      "VC2": {
+        "ref": "VC2",
+        "quantity": 24,
+        "description": "Tungsten chamber segments, precision-welded joints",
+        "supplier": "Plansee Group",
+        "part_number": "W-SEG-145-T15",
+        "cost": 125000.0,
+        "specification": "15mm wall thickness, electron beam welded",
+        "category": "Vacuum Chamber",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 2
+      },
+      "VC3": {
+        "ref": "VC3",
+        "quantity": 48,
+        "description": "High-vacuum ports, CF-150 conflat flanges",
+        "supplier": "Leybold",
+        "part_number": "CF150-316L-B",
+        "cost": 850.0,
+        "specification": "316L stainless steel, bakeable to 450\u00b0C",
+        "category": "Vacuum Chamber",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 2
+      },
+      "VC4": {
+        "ref": "VC4",
+        "quantity": 4,
+        "description": "Primary vacuum pumps, turbo-molecular type",
+        "supplier": "Edwards Vacuum",
+        "part_number": "STP-iXA4506",
+        "cost": 95000.0,
+        "specification": "4500 L/s pumping speed, magnetic levitation",
+        "category": "Vacuum Chamber",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "VC5": {
+        "ref": "VC5",
+        "quantity": 8,
+        "description": "Backing pumps, oil-free scroll type",
+        "supplier": "Edwards Vacuum",
+        "part_number": "XDS35i",
+        "cost": 12500.0,
+        "specification": "35 m\u00b3/h pumping speed, dry operation",
+        "category": "Vacuum Chamber",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "MC1": {
+        "ref": "MC1",
+        "quantity": 16,
+        "description": "Toroidal field coils, superconducting NbTi",
+        "supplier": "Oxford Instruments",
+        "part_number": "TFC-350-NBTI-50",
+        "cost": 485000.0,
+        "specification": "50 kA operating current, 5.3 T field strength",
+        "category": "Magnetic Confinement",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 1
+      },
+      "MC2": {
+        "ref": "MC2",
+        "quantity": 12,
+        "description": "Poloidal field coils, superconducting Nb\u2083Sn",
+        "supplier": "Bruker EAS",
+        "part_number": "PFC-120-NB3SN-25",
+        "cost": 285000.0,
+        "specification": "25 kA operating current, field shaping capability",
+        "category": "Magnetic Confinement",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 1
+      },
+      "MC3": {
+        "ref": "MC3",
+        "quantity": 1,
+        "description": "Cryogenic cooling system, helium refrigerator",
+        "supplier": "Linde Kryotechnik",
+        "part_number": "LR280-He-II",
+        "cost": 1250000.0,
+        "specification": "280 W @ 4.2 K cooling capacity",
+        "category": "Magnetic Confinement",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 2
+      },
+      "MC4": {
+        "ref": "MC4",
+        "quantity": 28,
+        "description": "Current leads, high-temperature superconductor",
+        "supplier": "American Superconductor",
+        "part_number": "HTS-CL-50KA",
+        "cost": 15000.0,
+        "specification": "50 kA capacity, 77 K operation",
+        "category": "Magnetic Confinement",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "MC5": {
+        "ref": "MC5",
+        "quantity": 16,
+        "description": "Quench protection resistors, water-cooled",
+        "supplier": "Vishay Dale",
+        "part_number": "RWR-500K-50",
+        "cost": 8500.0,
+        "specification": "500 kW power rating, 50 m\u03a9 resistance",
+        "category": "Magnetic Confinement",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "PS1": {
+        "ref": "PS1",
+        "quantity": 1,
+        "description": "Main power converter, thyristor-based",
+        "supplier": "ABB",
+        "part_number": "SACE-THYRO-50MW",
+        "cost": 3200000.0,
+        "specification": "50 MW capacity, 12-pulse configuration",
+        "category": "Power Supply",
+        "domain": "electrical",
+        "cad_format": "STEP",
+        "priority": 1
+      },
+      "PS2": {
+        "ref": "PS2",
+        "quantity": 16,
+        "description": "Coil power supplies, individual control",
+        "supplier": "Danfysik",
+        "part_number": "MPS854-50KA",
+        "cost": 125000.0,
+        "specification": "50 kA, \u00b10.01% regulation accuracy",
+        "category": "Power Supply",
+        "domain": "electrical",
+        "cad_format": "STEP",
+        "priority": 2
+      },
+      "PS3": {
+        "ref": "PS3",
+        "quantity": 4,
+        "description": "Energy storage systems, supercapacitor banks",
+        "supplier": "Maxwell Technologies",
+        "part_number": "BMOD0500-C016",
+        "cost": 25000.0,
+        "specification": "500 F capacitance, 16 V rating",
+        "category": "Power Supply",
+        "domain": "electrical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "PS4": {
+        "ref": "PS4",
+        "quantity": 8,
+        "description": "Uninterruptible power supplies, 500 kVA",
+        "supplier": "Schneider Electric",
+        "part_number": "Galaxy-VM-500",
+        "cost": 85000.0,
+        "specification": "500 kVA capacity, online double conversion",
+        "category": "Power Supply",
+        "domain": "electrical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "PFG1": {
+        "ref": "PFG1",
+        "quantity": 16,
+        "description": "Polymer field generators, sinc(\u03c0\u03bc) modulation",
+        "supplier": "Quantum Fields Inc.",
+        "part_number": "QFI-PFG-100-SINC",
+        "cost": 185000.0,
+        "specification": "100 kW field strength, \u03c0 modulation frequency",
+        "category": "Other",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 1
+      },
+      "PFG2": {
+        "ref": "PFG2",
+        "quantity": 16,
+        "description": "Field coupling networks, distributed topology",
+        "supplier": "Advanced Energy",
+        "part_number": "AE-FCN-16PT-DIST",
+        "cost": 45000.0,
+        "specification": "16-point distribution, 94% coupling efficiency",
+        "category": "Other",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 2
+      },
+      "PFG3": {
+        "ref": "PFG3",
+        "quantity": 1,
+        "description": "Central control processor, quantum-enhanced",
+        "supplier": "IBM Quantum",
+        "part_number": "IBM-QCP-127-QUBIT",
+        "cost": 2500000.0,
+        "specification": "127-qubit processor, real-time control",
+        "category": "Other",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "PFG4": {
+        "ref": "PFG4",
+        "quantity": 32,
+        "description": "Field monitoring sensors, backreaction detection",
+        "supplier": "Tektronix",
+        "part_number": "RSA7100A-BR-MON",
+        "cost": 125000.0,
+        "specification": "Real-time spectrum analysis, \u03b2t measurement",
+        "category": "Other",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "NBI1": {
+        "ref": "NBI1",
+        "quantity": 4,
+        "description": "Neutral beam injectors, 20 MW each",
+        "supplier": "ITER Organization",
+        "part_number": "ITER-NBI-20MW-D",
+        "cost": 8500000.0,
+        "specification": "20 MW deuterium beam, 1 MeV energy",
+        "category": "Other",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 1
+      },
+      "NBI2": {
+        "ref": "NBI2",
+        "quantity": 4,
+        "description": "Ion sources, RF-driven negative ion",
+        "supplier": "Max Planck Institute",
+        "part_number": "MPI-IS-RF-NI",
+        "cost": 750000.0,
+        "specification": "200 A/m\u00b2 current density, H\u207b ions",
+        "category": "Other",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "NBI3": {
+        "ref": "NBI3",
+        "quantity": 8,
+        "description": "Beam line components, electrostatic acceleration",
+        "supplier": "Hughes Research",
+        "part_number": "HRL-BL-1MV-ES",
+        "cost": 425000.0,
+        "specification": "1 MV acceleration voltage, 99% neutralization",
+        "category": "Other",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "FPS1": {
+        "ref": "FPS1",
+        "quantity": 1,
+        "description": "Tritium processing plant, complete system",
+        "supplier": "ITER Organization",
+        "part_number": "ITER-TPP-COMPLETE",
+        "cost": 125000000.0,
+        "specification": "10 g/day tritium processing, 99.9% recovery",
+        "category": "Other",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 2
+      },
+      "FPS2": {
+        "ref": "FPS2",
+        "quantity": 8,
+        "description": "Fuel storage vessels, tritium-compatible",
+        "supplier": "Savannah River Site",
+        "part_number": "SRS-TV-10G-T",
+        "cost": 285000.0,
+        "specification": "10 g tritium capacity, triple containment",
+        "category": "Other",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "FPS3": {
+        "ref": "FPS3",
+        "quantity": 4,
+        "description": "Isotope separation units, cryogenic distillation",
+        "supplier": "Los Alamos National Lab",
+        "part_number": "LANL-ISU-CD-T",
+        "cost": 1850000.0,
+        "specification": "99.99% isotopic purity, continuous operation",
+        "category": "Other",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "RS1": {
+        "ref": "RS1",
+        "quantity": 1,
+        "description": "Tungsten neutron shield, 0.20 m thickness",
+        "supplier": "Plansee Group",
+        "part_number": "W-SHIELD-200-NEUT",
+        "cost": 8500000.0,
+        "specification": "850 cm\u207b\u00b9 attenuation, 100\u00d7 enhancement",
+        "category": "Radiation Shielding",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 1
+      },
+      "RS2": {
+        "ref": "RS2",
+        "quantity": 1,
+        "description": "Lithium hydride moderator, 0.50 m thickness",
+        "supplier": "FMC Lithium",
+        "part_number": "LiH-MOD-500-99",
+        "cost": 2250000.0,
+        "specification": "3500 cm\u207b\u00b9 neutron capture, 99% purity",
+        "category": "Radiation Shielding",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "RS3": {
+        "ref": "RS3",
+        "quantity": 1,
+        "description": "Borated polyethylene shield, 1.00 m thickness",
+        "supplier": "Reactor Experiments Inc.",
+        "part_number": "REI-BP-1000-B10",
+        "cost": 185000.0,
+        "specification": "2500 cm\u207b\u00b9 thermal neutron absorption",
+        "category": "Radiation Shielding",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "RS4": {
+        "ref": "RS4",
+        "quantity": 1,
+        "description": "Enhanced concrete barrier, 3.0 m thickness",
+        "supplier": "Nuclear Concrete Corp.",
+        "part_number": "NCC-EC-3000-B",
+        "cost": 125000.0,
+        "specification": "Boron aggregate, structural grade",
+        "category": "Radiation Shielding",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "GS1": {
+        "ref": "GS1",
+        "quantity": 1,
+        "description": "Lead-bismuth gamma shield, 0.15 m thickness",
+        "supplier": "Mayco Industries",
+        "part_number": "MI-PBGAMMA-150",
+        "cost": 485000.0,
+        "specification": "High-Z photoelectric absorption",
+        "category": "Gamma Shielding",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "GS2": {
+        "ref": "GS2",
+        "quantity": 24,
+        "description": "Gamma detection systems, real-time monitoring",
+        "supplier": "Mirion Technologies",
+        "part_number": "MGP-GDS-RT-24",
+        "cost": 25000.0,
+        "specification": "0.01 mSv/h sensitivity, wireless network",
+        "category": "Gamma Shielding",
+        "domain": "mechanical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "ES1": {
+        "ref": "ES1",
+        "quantity": 1,
+        "description": "Emergency shutdown system, plasma disruption",
+        "supplier": "General Atomics",
+        "part_number": "GA-ESD-PD-FAST",
+        "cost": 2850000.0,
+        "specification": "<0.1 s disruption time, automated activation",
+        "category": "Emergency Systems",
+        "domain": "electrical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "ES2": {
+        "ref": "ES2",
+        "quantity": 8,
+        "description": "Emergency ventilation systems, HEPA filtration",
+        "supplier": "Nuclear Filter Technology",
+        "part_number": "NFT-EV-HEPA-8",
+        "cost": 185000.0,
+        "specification": "99.97% particle removal, tritium compatibility",
+        "category": "Emergency Systems",
+        "domain": "electrical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "ES3": {
+        "ref": "ES3",
+        "quantity": 4,
+        "description": "Fire suppression systems, inert gas type",
+        "supplier": "Ansul",
+        "part_number": "ANSUL-IG-100-PLASMA",
+        "cost": 125000.0,
+        "specification": "Argon-based, electrical equipment safe",
+        "category": "Emergency Systems",
+        "domain": "electrical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "CS1": {
+        "ref": "CS1",
+        "quantity": 1,
+        "description": "Distributed control system, real-time operation",
+        "supplier": "Siemens",
+        "part_number": "SIMATIC-PCS7-FUSION",
+        "cost": 1250000.0,
+        "specification": "<1 ms response time, redundant architecture",
+        "category": "Control Systems",
+        "domain": "electrical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "CS2": {
+        "ref": "CS2",
+        "quantity": 64,
+        "description": "Plasma diagnostics, multi-channel systems",
+        "supplier": "Princeton Plasma Physics",
+        "part_number": "PPPL-PD-MC-64",
+        "cost": 85000.0,
+        "specification": "Temperature, density, position measurement",
+        "category": "Control Systems",
+        "domain": "electrical",
+        "cad_format": "STEP",
+        "priority": 3
+      },
+      "CS3": {
+        "ref": "CS3",
+        "quantity": 32,
+        "description": "Magnetic field sensors, Hall effect type",
+        "supplier": "Lake Shore Cryotronics",
+        "part_number": "LSC-MFS-HE-32",
+        "cost": 15000.0,
+        "specification": "\u00b12% field uniformity measurement",
+        "category": "Control Systems",
+        "domain": "electrical",
+        "cad_format": "STEP",
+        "priority": 3
+      }
+    },
+    "performance_analysis": {
+      "power_metrics": {
+        "thermal_power_MW": 500.0,
+        "electrical_power_MW": 200.0,
+        "efficiency_percent": 53.300000000000004,
+        "lqg_enhancement_factor": 1.94
+      },
+      "component_analysis": {},
+      "system_metrics": {
+        "total_components": 36,
+        "component_categories": {
+          "Vacuum Chamber": {
+            "count": 85,
+            "total_cost": 6370800.0,
+            "components": [
+              "VC1",
+              "VC2",
+              "VC3",
+              "VC4",
+              "VC5"
+            ]
+          },
+          "Magnetic Confinement": {
+            "count": 73,
+            "total_cost": 12986000.0,
+            "components": [
+              "MC1",
+              "MC2",
+              "MC3",
+              "MC4",
+              "MC5"
+            ]
+          },
+          "Power Supply": {
+            "count": 29,
+            "total_cost": 5980000.0,
+            "components": [
+              "PS1",
+              "PS2",
+              "PS3",
+              "PS4"
+            ]
+          },
+          "Other": {
+            "count": 94,
+            "total_cost": 185260000.0,
+            "components": [
+              "PFG1",
+              "PFG2",
+              "PFG3",
+              "PFG4",
+              "NBI1",
+              "NBI2",
+              "NBI3",
+              "FPS1",
+              "FPS2",
+              "FPS3"
+            ]
+          },
+          "Radiation Shielding": {
+            "count": 4,
+            "total_cost": 11060000.0,
+            "components": [
+              "RS1",
+              "RS2",
+              "RS3",
+              "RS4"
+            ]
+          },
+          "Gamma Shielding": {
+            "count": 25,
+            "total_cost": 1085000.0,
+            "components": [
+              "GS1",
+              "GS2"
+            ]
+          },
+          "Emergency Systems": {
+            "count": 13,
+            "total_cost": 4830000.0,
+            "components": [
+              "ES1",
+              "ES2",
+              "ES3"
+            ]
+          },
+          "Control Systems": {
+            "count": 97,
+            "total_cost": 7170000.0,
+            "components": [
+              "CS1",
+              "CS2",
+              "CS3"
+            ]
+          }
+        },
+        "power_distribution": {
+          "total_power_investment": 136000.0,
+          "power_per_MW": 680.0
+        },
+        "safety_metrics": {
+          "shielding_components": 6,
+          "shielding_cost": 12145000.0,
+          "safety_factor": 350000
+        }
+      }
+    },
+    "cost_analysis": {
+      "total_system_cost": 234741800.0,
+      "cost_by_category": {
+        "Vacuum Chamber": 6370800.0,
+        "Magnetic Confinement": 12986000.0,
+        "Power Supply": 5980000.0,
+        "Other": 185260000.0,
+        "Radiation Shielding": 11060000.0,
+        "Gamma Shielding": 1085000.0,
+        "Emergency Systems": 4830000.0,
+        "Control Systems": 7170000.0
+      },
+      "cost_breakdown": {
+        "VC1": {
+          "unit_cost": 2850000.0,
+          "quantity": 1,
+          "total_cost": 2850000.0,
+          "percentage_of_total": 1.2140999174412055
+        },
+        "VC2": {
+          "unit_cost": 125000.0,
+          "quantity": 24,
+          "total_cost": 3000000.0,
+          "percentage_of_total": 1.2779999130960058
+        },
+        "VC3": {
+          "unit_cost": 850.0,
+          "quantity": 48,
+          "total_cost": 40800.0,
+          "percentage_of_total": 0.01738079881810568
+        },
+        "VC4": {
+          "unit_cost": 95000.0,
+          "quantity": 4,
+          "total_cost": 380000.0,
+          "percentage_of_total": 0.16187998899216074
+        },
+        "VC5": {
+          "unit_cost": 12500.0,
+          "quantity": 8,
+          "total_cost": 100000.0,
+          "percentage_of_total": 0.0425999971032002
+        },
+        "MC1": {
+          "unit_cost": 485000.0,
+          "quantity": 16,
+          "total_cost": 7760000.0,
+          "percentage_of_total": 3.3057597752083354
+        },
+        "MC2": {
+          "unit_cost": 285000.0,
+          "quantity": 12,
+          "total_cost": 3420000.0,
+          "percentage_of_total": 1.4569199009294467
+        },
+        "MC3": {
+          "unit_cost": 1250000.0,
+          "quantity": 1,
+          "total_cost": 1250000.0,
+          "percentage_of_total": 0.5324999637900025
+        },
+        "MC4": {
+          "unit_cost": 15000.0,
+          "quantity": 28,
+          "total_cost": 420000.0,
+          "percentage_of_total": 0.17891998783344082
+        },
+        "MC5": {
+          "unit_cost": 8500.0,
+          "quantity": 16,
+          "total_cost": 136000.0,
+          "percentage_of_total": 0.05793599606035227
+        },
+        "PS1": {
+          "unit_cost": 3200000.0,
+          "quantity": 1,
+          "total_cost": 3200000.0,
+          "percentage_of_total": 1.3631999073024064
+        },
+        "PS2": {
+          "unit_cost": 125000.0,
+          "quantity": 16,
+          "total_cost": 2000000.0,
+          "percentage_of_total": 0.8519999420640039
+        },
+        "PS3": {
+          "unit_cost": 25000.0,
+          "quantity": 4,
+          "total_cost": 100000.0,
+          "percentage_of_total": 0.0425999971032002
+        },
+        "PS4": {
+          "unit_cost": 85000.0,
+          "quantity": 8,
+          "total_cost": 680000.0,
+          "percentage_of_total": 0.28967998030176134
+        },
+        "PFG1": {
+          "unit_cost": 185000.0,
+          "quantity": 16,
+          "total_cost": 2960000.0,
+          "percentage_of_total": 1.2609599142547259
+        },
+        "PFG2": {
+          "unit_cost": 45000.0,
+          "quantity": 16,
+          "total_cost": 720000.0,
+          "percentage_of_total": 0.30671997914304144
+        },
+        "PFG3": {
+          "unit_cost": 2500000.0,
+          "quantity": 1,
+          "total_cost": 2500000.0,
+          "percentage_of_total": 1.064999927580005
+        },
+        "PFG4": {
+          "unit_cost": 125000.0,
+          "quantity": 32,
+          "total_cost": 4000000.0,
+          "percentage_of_total": 1.7039998841280077
+        },
+        "NBI1": {
+          "unit_cost": 8500000.0,
+          "quantity": 4,
+          "total_cost": 34000000.0,
+          "percentage_of_total": 14.483999015088067
+        },
+        "NBI2": {
+          "unit_cost": 750000.0,
+          "quantity": 4,
+          "total_cost": 3000000.0,
+          "percentage_of_total": 1.2779999130960058
+        },
+        "NBI3": {
+          "unit_cost": 425000.0,
+          "quantity": 8,
+          "total_cost": 3400000.0,
+          "percentage_of_total": 1.4483999015088067
+        },
+        "FPS1": {
+          "unit_cost": 125000000.0,
+          "quantity": 1,
+          "total_cost": 125000000.0,
+          "percentage_of_total": 53.249996379000244
+        },
+        "FPS2": {
+          "unit_cost": 285000.0,
+          "quantity": 8,
+          "total_cost": 2280000.0,
+          "percentage_of_total": 0.9712799339529645
+        },
+        "FPS3": {
+          "unit_cost": 1850000.0,
+          "quantity": 4,
+          "total_cost": 7400000.0,
+          "percentage_of_total": 3.1523997856368147
+        },
+        "RS1": {
+          "unit_cost": 8500000.0,
+          "quantity": 1,
+          "total_cost": 8500000.0,
+          "percentage_of_total": 3.6209997537720167
+        },
+        "RS2": {
+          "unit_cost": 2250000.0,
+          "quantity": 1,
+          "total_cost": 2250000.0,
+          "percentage_of_total": 0.9584999348220045
+        },
+        "RS3": {
+          "unit_cost": 185000.0,
+          "quantity": 1,
+          "total_cost": 185000.0,
+          "percentage_of_total": 0.07880999464092037
+        },
+        "RS4": {
+          "unit_cost": 125000.0,
+          "quantity": 1,
+          "total_cost": 125000.0,
+          "percentage_of_total": 0.05324999637900024
+        },
+        "GS1": {
+          "unit_cost": 485000.0,
+          "quantity": 1,
+          "total_cost": 485000.0,
+          "percentage_of_total": 0.20660998595052096
+        },
+        "GS2": {
+          "unit_cost": 25000.0,
+          "quantity": 24,
+          "total_cost": 600000.0,
+          "percentage_of_total": 0.2555999826192012
+        },
+        "ES1": {
+          "unit_cost": 2850000.0,
+          "quantity": 1,
+          "total_cost": 2850000.0,
+          "percentage_of_total": 1.2140999174412055
+        },
+        "ES2": {
+          "unit_cost": 185000.0,
+          "quantity": 8,
+          "total_cost": 1480000.0,
+          "percentage_of_total": 0.6304799571273629
+        },
+        "ES3": {
+          "unit_cost": 125000.0,
+          "quantity": 4,
+          "total_cost": 500000.0,
+          "percentage_of_total": 0.21299998551600097
+        },
+        "CS1": {
+          "unit_cost": 1250000.0,
+          "quantity": 1,
+          "total_cost": 1250000.0,
+          "percentage_of_total": 0.5324999637900025
+        },
+        "CS2": {
+          "unit_cost": 85000.0,
+          "quantity": 64,
+          "total_cost": 5440000.0,
+          "percentage_of_total": 2.3174398424140907
+        },
+        "CS3": {
+          "unit_cost": 15000.0,
+          "quantity": 32,
+          "total_cost": 480000.0,
+          "percentage_of_total": 0.20447998609536094
+        }
+      },
+      "optimization_opportunities": {
+        "highest_cost_components": [
+          {
+            "ref": "FPS1",
+            "description": "Tritium processing plant, complete system",
+            "cost": 125000000.0,
+            "optimization_potential": "High"
+          },
+          {
+            "ref": "NBI1",
+            "description": "Neutral beam injectors, 20 MW each",
+            "cost": 34000000.0,
+            "optimization_potential": "High"
+          },
+          {
+            "ref": "RS1",
+            "description": "Tungsten neutron shield, 0.20 m thickness",
+            "cost": 8500000.0,
+            "optimization_potential": "High"
+          },
+          {
+            "ref": "MC1",
+            "description": "Toroidal field coils, superconducting NbTi",
+            "cost": 7760000.0,
+            "optimization_potential": "High"
+          },
+          {
+            "ref": "FPS3",
+            "description": "Isotope separation units, cryogenic distillation",
+            "cost": 7400000.0,
+            "optimization_potential": "High"
+          }
+        ]
+      }
+    },
+    "construction_readiness": {
+      "cad_models_available": true,
+      "electrical_schematics_complete": true,
+      "mechanical_assemblies_defined": true,
+      "safety_analysis_complete": true,
+      "supplier_information_complete": true
+    }
+  }
+}

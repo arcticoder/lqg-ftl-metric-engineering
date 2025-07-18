@@ -128,11 +128,15 @@ class LQGFusionReactor(LQGCircuitElement):
             # Vacuum Chamber Assembly - First component from parts list
             'VC1': {
                 'name': 'Vacuum Chamber Assembly',
-                'specs': 'Tungsten-lined toroidal chamber, 3.5m major radius',
+                'specs': 'Tungsten-lined toroidal chamber, 3.5m major radius, 1.2m minor radius',
                 'supplier': 'Materials Research Corporation',
                 'part_number': 'TVC-350-120-W99',
                 'cost': 2850000,
-                'quantity': 1
+                'quantity': 1,
+                # Real geometry for drawing
+                'major_radius_m': 3.5,
+                'minor_radius_m': 1.2,
+                'chamber_height_m': 2.4,  # 2× minor radius for full height
             },
             'VC2': {
                 'name': 'Tungsten Chamber Segments',
@@ -140,7 +144,22 @@ class LQGFusionReactor(LQGCircuitElement):
                 'supplier': 'Plansee Group',
                 'part_number': 'W-SEG-145-T15',
                 'cost': 125000,
-                'quantity': 24
+                'quantity': 24,
+                # Real geometry for drawing
+                'wall_thickness_m': 0.015,  # 15mm wall thickness
+                'segment_height_m': 2.4,    # Use 2× minor radius for full height
+                'arc_length_m': 0.92,       # 2π×major_radius / 24 segments
+            },
+            'VC3': {
+                'name': 'High-vacuum ports, CF-150 conflat flanges',
+                'specs': '316L stainless steel, bakeable to 450°C',
+                'supplier': 'Leybold',
+                'part_number': 'CF150-316L-B',
+                'cost': 850,
+                'quantity': 48,
+                # Real geometry for drawing
+                'flange_od_m': 0.166,       # CF-150 OD ≈ 166mm
+                'flange_thickness_m': 0.006, # Typical CF flange thickness
             },
             # Magnetic Confinement System
             'MC1': {
@@ -149,7 +168,12 @@ class LQGFusionReactor(LQGCircuitElement):
                 'supplier': 'Oxford Instruments',
                 'part_number': 'TFC-350-NBTI-50',
                 'cost': 485000,
-                'quantity': 16
+                'quantity': 16,
+                # Real geometry for drawing
+                'coil_diameter_m': 0.8,     # Estimated coil cross-section
+                'coil_thickness_m': 0.15,   # Superconducting coil thickness
+                'operating_current_kA': 50,
+                'field_strength_T': 5.3,
             },
             'MC2': {
                 'name': 'Poloidal Field Coils',
@@ -157,7 +181,49 @@ class LQGFusionReactor(LQGCircuitElement):
                 'supplier': 'Bruker EAS',
                 'part_number': 'PFC-120-NB3SN-25',
                 'cost': 285000,
-                'quantity': 12
+                'quantity': 12,
+                # Real geometry for drawing
+                'coil_width_m': 1.2,        # Poloidal coil width
+                'coil_height_m': 0.4,       # Poloidal coil height
+                'operating_current_kA': 25,
+            },
+            # Power Supply System
+            'PS1': {
+                'name': 'Main Power Converter',
+                'specs': '50 MW capacity, thyristor-based',
+                'supplier': 'ABB',
+                'part_number': 'SACE-THYRO-50MW',
+                'cost': 3200000,
+                'quantity': 1,
+                # Real geometry for drawing
+                'converter_width_m': 2.5,
+                'converter_height_m': 3.0,
+                'converter_depth_m': 1.8,
+                'power_capacity_MW': 50,
+            },
+            # Radiation Shielding System
+            'RS1': {
+                'name': 'Tungsten Neutron Shield',
+                'specs': '0.20 m thickness, 850 cm⁻¹ attenuation',
+                'supplier': 'Plansee Group',
+                'part_number': 'W-SHIELD-200-NEUT',
+                'cost': 8500000,
+                'quantity': 1,
+                # Real geometry for drawing
+                'shield_thickness_m': 0.20,
+                'shield_radius_m': 4.5,     # Surrounding the chamber
+                'attenuation_factor': 100,
+            },
+            'RS2': {
+                'name': 'Lithium Hydride Moderator',
+                'specs': '0.50 m thickness, 3500 cm⁻¹ neutron capture',
+                'supplier': 'FMC Lithium',
+                'part_number': 'LiH-MOD-500-99',
+                'cost': 2250000,
+                'quantity': 1,
+                # Real geometry for drawing
+                'moderator_thickness_m': 0.50,
+                'moderator_radius_m': 5.0,  # Outside tungsten shield
             }
         }
         
@@ -246,65 +312,154 @@ class LQGFusionReactor(LQGCircuitElement):
         return plasma_model
     
     def draw_schematic(self, drawing):
-        """Draw fusion reactor in system schematic using schemdraw"""
+        """Draw fusion reactor in system schematic using schemdraw with real dimensions"""
         if not SCHEMDRAW_AVAILABLE:
             return
             
-        # Draw main reactor vessel with VC1 designation
-        reactor = drawing.add(elm.Rect((0, 0), (3, 2)).fill('orange').label('VC1\nVacuum Chamber\nAssembly\n(Tungsten-lined)'))
+        # Draw VC1 as a rectangle using real dimensions (scaled for visibility)
+        vc1 = self.components['VC1']
+        reactor = drawing.add(
+            elm.Rect(
+                w=vc1['major_radius_m'] * 1.5,  # Scale for schematic visibility
+                h=vc1['minor_radius_m'] * 1.5)
+            .fill('orange')
+            .label(f"VC1 Vacuum Chamber\nØ={vc1['major_radius_m']*2:.1f}m×{vc1['minor_radius_m']*2:.1f}m\n${vc1['cost']/1000000:.2f}M")
+        )
         
-        # Add VC2 chamber segments notation
+        # Draw VC2 tungsten segments with real wall thickness
+        vc2 = self.components['VC2']
+        for i in range(4):  # Show 4 sample segments
+            drawing.push()
+            # Position segments around the reactor
+            x_pos = (i - 1.5) * 2
+            y_pos = 3
+            drawing.move(x_pos, y_pos)
+            drawing.add(
+                elm.Rect(
+                    w=vc2['wall_thickness_m'] * 50,  # Scale up for visibility
+                    h=vc2['segment_height_m'] * 0.5)  # Scale down for schematic
+                .fill('darkgray')
+                .label(f"VC2-{i+1}\n{vc2['wall_thickness_m']*1000:.0f}mm")
+            )
+            drawing.pop()
+        
+        # Draw MC1 toroidal field coils as rectangles with real dimensions
+        mc1 = self.components['MC1']
+        coil_positions = [(-6, 0), (6, 0), (0, 4), (0, -4)]
+        for i, (dx, dy) in enumerate(coil_positions):
+            drawing.push()
+            drawing.move(dx, dy)
+            drawing.add(
+                elm.Rect(
+                    w=mc1['coil_diameter_m'] * 0.8,
+                    h=mc1['coil_diameter_m'] * 0.8)
+                .fill('yellow')
+                .label(f"MC1-{i+1}\nNbTi Coil\n{mc1['operating_current_kA']}kA\n{mc1['field_strength_T']}T")
+            )
+            drawing.pop()
+        
+        # Draw MC2 poloidal field coils as rectangles with real dimensions
+        mc2 = self.components['MC2']
+        poloidal_positions = [(0, 5), (0, -5), (-4, 2)]
+        for i, (dx, dy) in enumerate(poloidal_positions):
+            drawing.push()
+            drawing.move(dx, dy)
+            drawing.add(
+                elm.Rect(
+                    w=mc2['coil_width_m'],
+                    h=mc2['coil_height_m'])
+                .fill('lightgreen')
+                .label(f"MC2-{i+1}\nNb₃Sn\n{mc2['operating_current_kA']}kA")
+            )
+            drawing.pop()
+        
+        # Draw VC3 CF-150 flanges as small rectangles
+        vc3 = self.components['VC3']
+        flange_positions = [(-4, -3), (-2, -3), (0, -3)]
+        for i, (dx, dy) in enumerate(flange_positions):
+            drawing.push()
+            drawing.move(dx, dy)
+            drawing.add(
+                elm.Rect(
+                    w=vc3['flange_od_m'] * 5,  # Scale up for visibility
+                    h=vc3['flange_thickness_m'] * 50)  # Scale up for visibility
+                .fill('silver')
+                .label(f"VC3-{i+1}\nCF150")
+            )
+            drawing.pop()
+        
+        # Draw power supply system with real dimensions
+        ps1 = self.components['PS1']
         drawing.push()
-        drawing.move(3.5, 0)
-        drawing.add(elm.Label().label('VC2 (24x)\nTungsten Segments'))
+        drawing.move(8, 0)
+        drawing.add(
+            elm.Rect(
+                w=ps1['converter_width_m'] * 0.8,  # Scale for schematic
+                h=ps1['converter_height_m'] * 0.6)
+            .fill('lightblue')
+            .label(f"PS1 Power Converter\n{ps1['power_capacity_MW']}MW\n${ps1['cost']/1000000:.1f}M")
+        )
         drawing.pop()
         
-        # Add MC1 toroidal field coils
+        # Draw radiation shielding with real dimensions
+        rs1 = self.components['RS1']
+        rs2 = self.components['RS2']
+        
+        # Tungsten shield
         drawing.push()
-        drawing.move(-4, 0)
-        drawing.add(elm.Rect((-1, -1.5), (1, 1.5)).fill('yellow').label('MC1\nToroidal\nField Coils\n(16x NbTi)'))
+        drawing.move(0, -7)
+        drawing.add(
+            elm.Rect(
+                w=rs1['shield_thickness_m'] * 10,  # Scale for visibility
+                h=1.5)
+            .fill('gray')
+            .label(f"RS1 Tungsten Shield\n{rs1['shield_thickness_m']*1000:.0f}mm\n${rs1['cost']/1000000:.1f}M")
+        )
         drawing.pop()
         
+        # Lithium hydride moderator
         drawing.push()
-        drawing.move(4, 0)
-        drawing.add(elm.Rect((-1, -1.5), (1, 1.5)).fill('yellow').label('MC1\nToroidal\nField Coils\n(16x NbTi)'))
+        drawing.move(0, -9)
+        drawing.add(
+            elm.Rect(
+                w=rs2['moderator_thickness_m'] * 5,  # Scale for visibility
+                h=1.2)
+            .fill('lightcyan')
+            .label(f"RS2 LiH Moderator\n{rs2['moderator_thickness_m']*1000:.0f}mm\n${rs2['cost']/1000000:.1f}M")
+        )
         drawing.pop()
         
-        # Add MC2 poloidal field coils
+        # Add power output connections
         drawing.push()
-        drawing.move(0, 3)
-        drawing.add(elm.Rect((-1.5, -0.5), (1.5, 0.5)).fill('lightgreen').label('MC2 Poloidal Field Coils (12x Nb₃Sn)'))
+        drawing.move(4, -1)
+        drawing.add(elm.Line().right(2))
+        drawing.add(elm.Dot().label(f'Power Out\n{self.electrical_power_MW} MW'))
         drawing.pop()
         
-        # Add power output connections with designator
-        drawing.add(elm.Line().right(2).label('200 MW\nElectrical\nOutput'))
-        drawing.add(elm.Dot().label('Power Out'))
-        
-        # Add coolant loop
-        drawing.push()  # Save position
-        drawing.add(elm.Line().up(1.5))
-        drawing.add(elm.Arrow().right(3).label('Coolant Flow'))
-        drawing.add(elm.Line().down(1.5))
-        drawing.add(elm.Arrow().left(3))
-        drawing.pop()  # Restore position
+        # Add coolant flow
+        drawing.push()
+        drawing.move(-2, 2)
+        drawing.add(elm.Arrow().right(4).label('Coolant Flow'))
+        drawing.pop()
         
         # Add fuel injection
         drawing.push()
-        drawing.add(elm.Line().down(2))
-        drawing.add(elm.Dot().label('D-T Fuel'))
+        drawing.move(0, -3)
+        drawing.add(elm.Line().down(1))
+        drawing.add(elm.Dot().label('D-T Fuel\nInjection'))
         drawing.pop()
         
-        # Add LQG polymer field interface
+        # Add LQG polymer field control
         drawing.push()
-        drawing.add(elm.Line().up(2))
-        drawing.add(elm.Rect((0, 0), (2, 1)).label('LQG Polymer\nField Control'))
+        drawing.move(0, 6)
+        drawing.add(elm.Rect(w=3, h=1).fill('purple').label('LQG Polymer\nField Control'))
         drawing.pop()
         
         # Add control input
         drawing.push()
-        drawing.move(-4, 0)
-        drawing.add(elm.Line().right(2))
-        drawing.add(elm.Dot().label('Control'))
+        drawing.move(-8, 0)
+        drawing.add(elm.Line().right(1))
+        drawing.add(elm.Dot().label('Control\nInput'))
         drawing.pop()
         
         # Add coolant lines
@@ -323,47 +478,93 @@ class LQGFusionReactor(LQGCircuitElement):
         if not SCHEMDRAW_AVAILABLE:
             return
             
-        # Central vacuum chamber (VC1)
-        chamber = drawing.add(elm.Circle().at((0, 0)).scale(2).fill('lightgray').label('VC1\nVacuum Chamber\nTungsten-lined\n$2.85M', 'center'))
+        # Start from a clean position
+        drawing.move(0, 0)
         
-        # Surrounding VC2 tungsten segments
-        for i in range(8):  # Show 8 of the 24 segments
-            angle = i * 45  # degrees
-            x = 3 * math.cos(math.radians(angle))
-            y = 3 * math.sin(math.radians(angle))
-            drawing.add(elm.Rect((x-0.3, y-0.3), (x+0.3, y+0.3)).fill('darkgray').label(f'VC2-{i+1}\nTungsten\nSegment'))
+        # Central vacuum chamber (VC1) - larger and more prominent
+        drawing.add(elm.Circle().scale(1.5).fill('lightgray').label('VC1\\nVacuum Chamber\\nTungsten-lined\\n$2.85M', 'center'))
         
-        # MC1 Toroidal field coils (16 total, show 8)
-        for i in range(8):
-            angle = i * 45 + 22.5  # Offset from segments
-            x = 4.5 * math.cos(math.radians(angle))
-            y = 4.5 * math.sin(math.radians(angle))
-            drawing.add(elm.Circle().at((x, y)).scale(0.5).fill('yellow').label(f'MC1-{i+1}\nNbTi Coil'))
+        # VC2 tungsten segments positioned around the chamber
+        # Upper segments
+        drawing.push()
+        drawing.move(0, 3)
+        drawing.add(elm.Rect(w=1, h=0.5).fill('darkgray').label('VC2-1\\nTungsten'))
+        drawing.pop()
         
-        # MC2 Poloidal field coils (12 total, show 6)
-        for i in range(6):
-            angle = i * 60  # 60 degree spacing
-            x = 6 * math.cos(math.radians(angle))
-            y = 6 * math.sin(math.radians(angle))
-            drawing.add(elm.Rect((x-0.4, y-0.2), (x+0.4, y+0.2)).fill('lightgreen').label(f'MC2-{i+1}\nNb₃Sn'))
+        drawing.push()
+        drawing.move(2, 2)
+        drawing.add(elm.Rect(w=1, h=0.5).fill('darkgray').label('VC2-2\\nTungsten'))
+        drawing.pop()
         
-        # Add power conditioning units
-        drawing.add(elm.Rect((8, 2), (10, 4)).fill('lightblue').label('Power\nConditioning\nUnit 1'))
-        drawing.add(elm.Rect((8, -4), (10, -2)).fill('lightblue').label('Power\nConditioning\nUnit 2'))
+        drawing.push()
+        drawing.move(-2, 2)
+        drawing.add(elm.Rect(w=1, h=0.5).fill('darkgray').label('VC2-3\\nTungsten'))
+        drawing.pop()
+        
+        # MC1 Toroidal field coils (positioned around perimeter)
+        drawing.push()
+        drawing.move(-4, 0)
+        drawing.add(elm.Circle().scale(0.8).fill('yellow').label('MC1-1\\nNbTi Coil'))
+        drawing.pop()
+        
+        drawing.push()
+        drawing.move(4, 0)
+        drawing.add(elm.Circle().scale(0.8).fill('yellow').label('MC1-2\\nNbTi Coil'))
+        drawing.pop()
+        
+        drawing.push()
+        drawing.move(0, 4)
+        drawing.add(elm.Circle().scale(0.8).fill('yellow').label('MC1-3\\nNbTi Coil'))
+        drawing.pop()
+        
+        drawing.push()
+        drawing.move(0, -4)
+        drawing.add(elm.Circle().scale(0.8).fill('yellow').label('MC1-4\\nNbTi Coil'))
+        drawing.pop()
+        
+        # MC2 Poloidal field coils (positioned at wider radius)
+        drawing.push()
+        drawing.move(-6, 1)
+        drawing.add(elm.Rect(w=1.5, h=0.8).fill('lightgreen').label('MC2-1\\nNb₃Sn'))
+        drawing.pop()
+        
+        drawing.push()
+        drawing.move(6, 1)
+        drawing.add(elm.Rect(w=1.5, h=0.8).fill('lightgreen').label('MC2-2\\nNb₃Sn'))
+        drawing.pop()
+        
+        drawing.push()
+        drawing.move(0, 6)
+        drawing.add(elm.Rect(w=1.5, h=0.8).fill('lightgreen').label('MC2-3\\nNb₃Sn'))
+        drawing.pop()
+        
+        # Add power conditioning units at safe distance
+        drawing.push()
+        drawing.move(8, 2)
+        drawing.add(elm.Rect(w=2, h=1.5).fill('lightblue').label('Power\\nConditioning\\nUnit 1'))
+        drawing.pop()
+        
+        drawing.push()
+        drawing.move(8, -2)
+        drawing.add(elm.Rect(w=2, h=1.5).fill('lightblue').label('Power\\nConditioning\\nUnit 2'))
+        drawing.pop()
         
         # Add LQG control systems
-        drawing.add(elm.Rect((-10, 2), (-8, 4)).fill('purple').label('LQG Control\nSystem A'))
-        drawing.add(elm.Rect((-10, -4), (-8, -2)).fill('purple').label('LQG Control\nSystem B'))
+        drawing.push()
+        drawing.move(-8, 2)
+        drawing.add(elm.Rect(w=2, h=1.5).fill('purple').label('LQG Control\\nSystem A'))
+        drawing.pop()
         
-        # Add structural framework outline
-        drawing.add(elm.Rect((-12, -6), (12, 6)).color('black').linewidth(2))
+        drawing.push()
+        drawing.move(-8, -2)
+        drawing.add(elm.Rect(w=2, h=1.5).fill('purple').label('LQG Control\\nSystem B'))
+        drawing.pop()
         
-        # Add scale indicator
-        drawing.add(elm.Line().at((-11, -5)).right(2).label('2m scale'))
-        
-        # Add coordinate system
-        drawing.add(elm.Arrow().at((-11, 5)).right(1).color('red').label('X'))
-        drawing.add(elm.Arrow().at((-11, 5)).up(1).color('green').label('Y'))
+        # Add legend/specifications
+        drawing.push()
+        drawing.move(-10, -8)
+        drawing.add(elm.Label().label('Component Specifications:\\n• VC1: Tungsten-lined vacuum chamber\\n• VC2: 24x tungsten segments\\n• MC1: 16x NbTi toroidal coils\\n• MC2: 12x Nb₃Sn poloidal coils'))
+        drawing.pop()
         
         return chamber
     
@@ -431,54 +632,193 @@ class LQGVesselSimulator:
         self.components[component.element_id] = component
         
     def generate_complete_schematic(self):
-        """Generate complete vessel schematic in ≤5 seconds"""
+        """Generate complete vessel schematic in ≤5 seconds using real component dimensions"""
         start_time = datetime.now()
         
         if not SCHEMDRAW_AVAILABLE:
             print("⚠️ Schemdraw not available - schematic generation disabled")
             return None
             
-        # Create main schematic drawing
-        drawing = schemdraw.Drawing()
-        drawing.config(lw=2, fontsize=10)
+        # Get reactor component for real dimensions
+        reactor = self.components.get('LQR-1')
+        if not reactor:
+            print("⚠️ No reactor component found - using default dimensions")
+            # Create main system schematic with natural positioning
+            drawing = schemdraw.Drawing()
+            drawing.config(lw=1.5, fontsize=10)
+            
+            # Add title
+            drawing.add(elm.Label().label('LQG FTL Vessel - LQR-1 Fusion Reactor System').scale(1.5))
+            drawing.add(elm.Gap().down(1))
+            
+            # Central reactor - let Schemdraw position naturally
+            reactor_rect = drawing.add(elm.Rect(w=6, h=4).fill('orange'))
+            drawing.add(elm.Label().label('VC1 Vacuum Chamber Assembly'))
+            drawing.add(elm.Label().label('(Tungsten-lined)'))
+        else:
+            # Use real dimensions from reactor component
+            drawing = schemdraw.Drawing()
+            drawing.config(lw=1.5, fontsize=10)
+            
+            # Add title
+            drawing.add(elm.Label().label('LQG FTL Vessel - LQR-1 Fusion Reactor System').scale(1.5))
+            drawing.add(elm.Gap().down(1))
+            
+            # Draw reactor using its own method with real dimensions
+            reactor_rect = reactor.draw_schematic(drawing)
         
-        # Add title
-        drawing.add(elm.Label().label('LQG FTL Vessel - LQR-1 Fusion Reactor System').scale(1.5))
-        drawing.add(elm.Line().down(0.5))
+        # Add some space before next components
+        drawing.add(elm.Gap().down(0.5))
         
-        # Draw all components
-        for component in self.components.values():
-            component.draw_schematic(drawing)
+        # Add electrical connections - let Schemdraw route naturally
+        drawing.add(elm.Gap().down(0.5))
+        drawing.add(elm.Line())
+        drawing.add(elm.Label().label('Electrical Connections'))
         
-        # Add system specifications
-        drawing.push()
-        drawing.move(0, -6)
-        drawing.add(elm.Label().label('System Specifications:\n• Power: 500 MW thermal, 200 MW electrical\n• LQG Enhancement: 1.94x efficiency\n• Safety: 0.00 mSv/year radiation\n• Fuel: Deuterium-Tritium fusion'))
-        drawing.pop()
+        # Power output
+        drawing.add(elm.Line())
+        drawing.add(elm.Dot())
+        drawing.add(elm.Label().label('Power Output'))
+        if reactor:
+            drawing.add(elm.Label().label(f'{reactor.electrical_power_MW} MW Electrical'))
+        else:
+            drawing.add(elm.Label().label('200 MW Electrical'))
         
-        # Save to construction directory
+        # Coolant system
+        drawing.add(elm.Gap().down(0.5))
+        drawing.add(elm.Arrow())
+        drawing.add(elm.Label().label('Coolant Flow System'))
+        
+        # Fuel injection
+        drawing.add(elm.Line())
+        drawing.add(elm.Dot())
+        drawing.add(elm.Label().label('D-T Fuel Injection'))
+        
+        # LQG control
+        drawing.add(elm.Gap().down(0.5))
+        drawing.add(elm.Rect(w=4, h=1.5).fill('purple'))
+        drawing.add(elm.Label().label('LQG Polymer Field Control'))
+        
+        # Control input
+        drawing.add(elm.Line())
+        drawing.add(elm.Dot())
+        drawing.add(elm.Label().label('Control Input'))
+        
+        # Add system specifications with real values
+        drawing.add(elm.Gap().down(1))
+        drawing.add(elm.Label().label('System Specifications:'))
+        if reactor:
+            drawing.add(elm.Label().label(f'• Power: {reactor.thermal_power_MW} MW thermal, {reactor.electrical_power_MW} MW electrical'))
+            drawing.add(elm.Label().label(f'• LQG Enhancement: {reactor.lqg_enhancement_factor}x efficiency'))
+            drawing.add(elm.Label().label(f'• Chamber: {reactor.major_radius_m}m × {reactor.minor_radius_m}m toroidal'))
+            drawing.add(elm.Label().label(f'• Safety: {reactor.state["radiation_level_mSv_h"]} mSv/year radiation'))
+        else:
+            drawing.add(elm.Label().label('• Power: 500 MW thermal, 200 MW electrical'))
+            drawing.add(elm.Label().label('• LQG Enhancement: 1.94x efficiency'))
+            drawing.add(elm.Label().label('• Safety: 0.00 mSv/year radiation'))
+        drawing.add(elm.Label().label('• Fuel: Deuterium-Tritium fusion'))
+        
+        # Save system schematic
         import os
         os.makedirs('construction/lqr-1', exist_ok=True)
         drawing.save('construction/lqr-1/lqr-1_system_schematic.svg')
         
-        # Generate assembly layout schematic
+        # Create assembly layout with real dimensions
         assembly_drawing = schemdraw.Drawing()
-        assembly_drawing.config(lw=2, fontsize=8)
+        assembly_drawing.config(lw=1.5, fontsize=9)
         
-        # Add title for assembly layout
+        # Assembly title
         assembly_drawing.add(elm.Label().label('LQG FTL Vessel - LQR-1 Assembly Layout').scale(1.5))
-        assembly_drawing.add(elm.Line().down(0.5))
+        assembly_drawing.add(elm.Gap().down(1))
         
-        # Draw assembly layout for reactor
-        reactor = self.components.get('reactor')
         if reactor:
-            reactor.draw_assembly_layout(assembly_drawing)
+            # Use real component dimensions for assembly layout
+            vc1 = reactor.components['VC1']
+            vc2 = reactor.components['VC2']
+            mc1 = reactor.components['MC1']
+            mc2 = reactor.components['MC2']
+            
+            # Central chamber with real dimensions
+            assembly_drawing.add(
+                elm.Rect(
+                    w=vc1['major_radius_m'] * 0.8,  # Scale for assembly view
+                    h=vc1['minor_radius_m'] * 0.8)
+                .fill('lightgray')
+            )
+            assembly_drawing.add(elm.Label().label('VC1 Vacuum Chamber'))
+            assembly_drawing.add(elm.Label().label(f'Ø{vc1["major_radius_m"]*2:.1f}m×{vc1["minor_radius_m"]*2:.1f}m'))
+            assembly_drawing.add(elm.Label().label(f'${vc1["cost"]/1000000:.2f}M'))
+            
+            # VC2 tungsten segments with real dimensions
+            assembly_drawing.add(elm.Gap().down(0.5))
+            assembly_drawing.add(elm.Label().label('VC2 Tungsten Segments:'))
+            
+            # Add sample VC2 segments with real dimensions
+            for i in range(3):
+                assembly_drawing.add(
+                    elm.Rect(
+                        w=vc2['wall_thickness_m'] * 50,  # Scale up for visibility
+                        h=vc2['segment_height_m'] * 0.3)  # Scale for assembly view
+                    .fill('darkgray')
+                )
+                assembly_drawing.add(elm.Label().label(f'VC2-{i+1} ({vc2["wall_thickness_m"]*1000:.0f}mm)'))
+            
+            # MC1 Toroidal field coils with real dimensions
+            assembly_drawing.add(elm.Gap().down(0.5))
+            assembly_drawing.add(elm.Label().label('MC1 Toroidal Field Coils:'))
+            
+            # Create coil symbols with real dimensions
+            for i in range(2):
+                assembly_drawing.add(
+                    elm.Rect(
+                        w=mc1['coil_diameter_m'] * 0.8,  # Scale for assembly view
+                        h=mc1['coil_diameter_m'] * 0.8)
+                    .fill('yellow')
+                )
+                assembly_drawing.add(elm.Label().label(f'MC1-{i+1} (NbTi, {mc1["operating_current_kA"]}kA)'))
+            
+            # MC2 Poloidal field coils with real dimensions
+            assembly_drawing.add(elm.Gap().down(0.5))
+            assembly_drawing.add(elm.Label().label('MC2 Poloidal Field Coils:'))
+            
+            for i in range(2):
+                assembly_drawing.add(
+                    elm.Rect(
+                        w=mc2['coil_width_m'] * 0.6,  # Scale for assembly view
+                        h=mc2['coil_height_m'] * 0.8)
+                    .fill('lightgreen')
+                )
+                assembly_drawing.add(elm.Label().label(f'MC2-{i+1} (Nb₃Sn, {mc2["operating_current_kA"]}kA)'))
+        else:
+            # Fallback to generic assembly layout
+            assembly_drawing.add(elm.Rect(w=4, h=4).fill('lightgray'))
+            assembly_drawing.add(elm.Label().label('VC1 Vacuum Chamber'))
+            assembly_drawing.add(elm.Label().label('Tungsten-lined'))
+            assembly_drawing.add(elm.Label().label('$2.85M'))
         
-        # Add assembly specifications
-        assembly_drawing.push()
-        assembly_drawing.move(0, -8)
-        assembly_drawing.add(elm.Label().label('Assembly Layout:\n• VC1: Tungsten-lined vacuum chamber ($2.85M)\n• VC2: 24x tungsten segments\n• MC1: 16x NbTi toroidal coils\n• MC2: 12x Nb₃Sn poloidal coils'))
-        assembly_drawing.pop()
+        # Support systems
+        assembly_drawing.add(elm.Gap().down(0.5))
+        assembly_drawing.add(elm.Label().label('Support Systems:'))
+        
+        assembly_drawing.add(elm.Rect(w=3, h=2).fill('lightblue'))
+        assembly_drawing.add(elm.Label().label('Power Conditioning'))
+        
+        assembly_drawing.add(elm.Rect(w=3, h=2).fill('purple'))
+        assembly_drawing.add(elm.Label().label('LQG Control System'))
+        
+        # Assembly specifications with real values
+        assembly_drawing.add(elm.Gap().down(1))
+        assembly_drawing.add(elm.Label().label('Assembly Layout:'))
+        if reactor:
+            assembly_drawing.add(elm.Label().label(f'• VC1: {vc1["major_radius_m"]}m×{vc1["minor_radius_m"]}m tungsten chamber (${vc1["cost"]/1000000:.2f}M)'))
+            assembly_drawing.add(elm.Label().label(f'• VC2: {vc2["quantity"]}x tungsten segments ({vc2["wall_thickness_m"]*1000:.0f}mm)'))
+            assembly_drawing.add(elm.Label().label(f'• MC1: {mc1["quantity"]}x NbTi toroidal coils ({mc1["operating_current_kA"]}kA)'))
+            assembly_drawing.add(elm.Label().label(f'• MC2: {mc2["quantity"]}x Nb₃Sn poloidal coils ({mc2["operating_current_kA"]}kA)'))
+        else:
+            assembly_drawing.add(elm.Label().label('• VC1: Tungsten-lined vacuum chamber ($2.85M)'))
+            assembly_drawing.add(elm.Label().label('• VC2: 24x tungsten segments'))
+            assembly_drawing.add(elm.Label().label('• MC1: 16x NbTi toroidal coils'))
+            assembly_drawing.add(elm.Label().label('• MC2: 12x Nb₃Sn poloidal coils'))
         
         # Save assembly layout
         assembly_drawing.save('construction/lqr-1/lqr-1_assembly_layout.svg')

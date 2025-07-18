@@ -1,0 +1,27 @@
+{
+  "reactor_id": "LQR-1",
+  "timestamp": "2025-07-18T15:14:25",
+  "geometry": {
+    "major_radius_m": 3.5,
+    "minor_radius_m": 1.2,
+    "plasma_volume_m3": 99.48561236298072,
+    "aspect_ratio": 2.916666666666667
+  },
+  "performance": {
+    "thermal_power_MW": 500.0,
+    "electrical_power_MW": 200.0,
+    "efficiency_percent": 53.300000000000004,
+    "lqg_enhancement_factor": 1.94,
+    "power_density_MW_per_m3": 5.0258523632112
+  },
+  "economics": {
+    "total_cost_M": 31.0208,
+    "cost_per_MW": 0.155104,
+    "cost_per_m3_M": 0.311811921977404
+  },
+  "safety": {
+    "tungsten_thickness_cm": 20.0,
+    "lithium_thickness_cm": 50.0,
+    "combined_protection_factor": 350.0
+  }
+}

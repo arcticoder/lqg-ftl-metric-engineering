@@ -1,0 +1,47 @@
+{
+  "reactor_id": "LQR-1",
+  "baseline_metrics": {
+    "power_output_MW": 200.0,
+    "efficiency": 0.533,
+    "plasma_volume": 99.48561236298072,
+    "total_cost": 31020800,
+    "power_density": 5.0258523632112
+  },
+  "optimization_results": [
+    {
+      "parameter": "Magnetic Field Configuration",
+      "original_value": 5.3,
+      "optimized_value": 6.095,
+      "improvement_percent": 23.323760889781475,
+      "cost_impact_M": 3.7499999999999964,
+      "performance_impact_MW": 46.647521779562965
+    },
+    {
+      "parameter": "Plasma Geometry",
+      "original_value": 2.916666666666667,
+      "optimized_value": 3.2,
+      "improvement_percent": -9.562550790413859,
+      "cost_impact_M": 0.4237500000000007,
+      "performance_impact_MW": -19.12510158082772
+    },
+    {
+      "parameter": "Shielding Configuration",
+      "original_value": 0.2,
+      "optimized_value": 0.15,
+      "improvement_percent": 61.73857367280784,
+      "cost_impact_M": -387.5267111939744,
+      "performance_impact_MW": 0
+    },
+    {
+      "parameter": "Power Conversion",
+      "original_value": 0.533,
+      "optimized_value": 0.53125,
+      "improvement_percent": -0.3283302063789906,
+      "cost_impact_M": 15.0,
+      "performance_impact_MW": -0.8750000000000147
+    }
+  ],
+  "total_investment_M": -368.3529611939744,
+  "total_power_gain_MW": 26.64742019873523,
+  "roi_MW_per_M": 0
+}

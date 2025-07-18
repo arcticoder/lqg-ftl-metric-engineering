@@ -1,0 +1,85 @@
+{
+  "circuit_dsl_generated": true,
+  "schematic_files": [
+    "construction/lqr-1/lqr-1_system_schematic.svg",
+    "construction/lqr-1/lqr-1_assembly_layout.svg"
+  ],
+  "cad_integration": {
+    "total_components": 36,
+    "electrical_components": 10,
+    "mechanical_components": 26,
+    "total_system_cost": 234741800.0
+  },
+  "enhanced_annotations": {
+    "PS1": {
+      "supplier": "ABB",
+      "part_number": "SACE-THYRO-50MW",
+      "cost": 3200000.0,
+      "specification": "50 MW capacity, 12-pulse configuration",
+      "cad_available": true
+    },
+    "PS2": {
+      "supplier": "Danfysik",
+      "part_number": "MPS854-50KA",
+      "cost": 125000.0,
+      "specification": "50 kA, \u00b10.01% regulation accuracy",
+      "cad_available": true
+    },
+    "PS3": {
+      "supplier": "Maxwell Technologies",
+      "part_number": "BMOD0500-C016",
+      "cost": 25000.0,
+      "specification": "500 F capacitance, 16 V rating",
+      "cad_available": true
+    },
+    "PS4": {
+      "supplier": "Schneider Electric",
+      "part_number": "Galaxy-VM-500",
+      "cost": 85000.0,
+      "specification": "500 kVA capacity, online double conversion",
+      "cad_available": true
+    },
+    "ES1": {
+      "supplier": "General Atomics",
+      "part_number": "GA-ESD-PD-FAST",
+      "cost": 2850000.0,
+      "specification": "<0.1 s disruption time, automated activation",
+      "cad_available": true
+    },
+    "ES2": {
+      "supplier": "Nuclear Filter Technology",
+      "part_number": "NFT-EV-HEPA-8",
+      "cost": 185000.0,
+      "specification": "99.97% particle removal, tritium compatibility",
+      "cad_available": true
+    },
+    "ES3": {
+      "supplier": "Ansul",
+      "part_number": "ANSUL-IG-100-PLASMA",
+      "cost": 125000.0,
+      "specification": "Argon-based, electrical equipment safe",
+      "cad_available": true
+    },
+    "CS1": {
+      "supplier": "Siemens",
+      "part_number": "SIMATIC-PCS7-FUSION",
+      "cost": 1250000.0,
+      "specification": "<1 ms response time, redundant architecture",
+      "cad_available": true
+    },
+    "CS2": {
+      "supplier": "Princeton Plasma Physics",
+      "part_number": "PPPL-PD-MC-64",
+      "cost": 85000.0,
+      "specification": "Temperature, density, position measurement",
+      "cad_available": true
+    },
+    "CS3": {
+      "supplier": "Lake Shore Cryotronics",
+      "part_number": "LSC-MFS-HE-32",
+      "cost": 15000.0,
+      "specification": "\u00b12% field uniformity measurement",
+      "cad_available": true
+    }
+  }
+}
