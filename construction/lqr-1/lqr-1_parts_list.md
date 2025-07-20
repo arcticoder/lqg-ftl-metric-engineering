@@ -18,7 +18,6 @@
 - Manufacturing: CadQuery parametric CAD → STEP export → precision CNC machining
 - Quality: Neural network validated design with ≤10⁻¹⁰ Torr leak rate guarantee
 - Integration: Full compatibility with existing LQG polymer field generators
-- Cost: $1,850,000 (35% reduction vs traditional design through optimization)  
 
 **VC2** (24) Tungsten chamber segments, precision-welded joints  
 - Supplier: Plansee Group, Part: W-SEG-145-T15  
