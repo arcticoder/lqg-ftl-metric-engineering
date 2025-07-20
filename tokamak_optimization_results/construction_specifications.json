@@ -1,0 +1,38 @@
+{
+  "design_parameters": {
+    "R": 3.0,
+    "a": 1.0,
+    "kappa": 2.7954346990668983,
+    "delta": 0.7879830123761191,
+    "mu": 0.3493058507188649,
+    "B0": 11.918202131664483,
+    "Ip": 19.869470934270083
+  },
+  "performance_targets": {
+    "q_factor": "\u226548.7",
+    "vacuum_integrity": "\u226410\u207b\u2079 Torr",
+    "field_uniformity": "\u00b11%",
+    "enhancement_factor": "95.0%"
+  },
+  "manufacturing_requirements": {
+    "primary_material": "Inconel 625 (high-temperature sections)",
+    "structural_material": "SS316L (support structure)",
+    "wall_thickness": "0.1 m (minimum)",
+    "vacuum_system": "Turbomolecular pumps, ion pumps",
+    "magnet_system": "YBCO superconducting coils",
+    "cooling_system": "Helium refrigeration to 4K"
+  },
+  "lqg_integration_specs": {
+    "polymer_field_nodes": 16,
+    "mu_parameter_range": "[0.2, 0.8] optimal",
+    "sinc_modulation_frequency": "\u03c0\u00d7\u03bc",
+    "enhancement_monitoring": "Real-time containment efficiency",
+    "safety_protocols": "T_\u03bc\u03bd \u2265 0 constraint enforcement"
+  },
+  "quality_control": {
+    "vacuum_leak_rate": "\u226410\u207b\u00b9\u2070 Torr\u00b7L/s",
+    "magnetic_field_ripple": "\u22641% peak-to-peak",
+    "structural_safety_factor": "\u22654.0",
+    "radiation_shielding": "\u22641 mSv/year at site boundary"
+  }
+}
