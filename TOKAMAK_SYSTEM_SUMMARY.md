@@ -14,7 +14,7 @@ This repository contains a complete AI-driven tokamak vacuum chamber design syst
 ### System Components
 #### Core Optimization Engine
 - `tokamak_designer_demo.py`: Main optimization system with genetic algorithms
-- `LQGPhysicsModel`: sinc(πμ) polymer field enhancement
+- `LQGPhysicsModel`: sinc(pi*mu) polymer field enhancement
 - `SimpleGeneticOptimizer`: Multi-objective design optimization
 - `TokamakDesignValidator`: Physics and engineering validation
 
@@ -60,7 +60,7 @@ This repository contains a complete AI-driven tokamak vacuum chamber design syst
 
 ### LQG Physics Integration
 The system integrates Loop Quantum Gravity polymer field theory through:
-- **sinc(πμ) Modulation**: Optimal μ=0.407 parameter
+- **sinc(pi*mu) Modulation**: Optimal μ=0.407 parameter
 - **Energy Positivity**: T_μν ≥ 0 constraint enforcement
 - **Polymer Enhancement**: 95% containment efficiency
 - **Sub-classical Gain**: 242 million times improvement

@@ -28,31 +28,31 @@ def run_complete_system_test():
     start_time = time.time()
     
     # Step 1: Run tokamak optimization
-    print("🔧 STEP 1: Running tokamak optimization system...")
+    print("STEP 1: Running tokamak optimization system...")
     try:
         import tokamak_designer_demo
         optimization_results = tokamak_designer_demo.main()
-        print("✅ Tokamak optimization completed successfully")
+        print("[OK] Tokamak optimization completed successfully")
         print(f"   Best Q-factor: {optimization_results['best_design']['q_factor']:.1f}")
         print(f"   LQG enhancement: {optimization_results['best_design']['lqg_enhancement']:.1%}")
         print()
     except Exception as e:
-        print(f"❌ Error in tokamak optimization: {e}")
+        print(f"[ERROR] Error in tokamak optimization: {e}")
         return False
     
     # Step 2: Generate visualizations
-    print("🎨 STEP 2: Generating design visualizations...")
+    print("[VIS] STEP 2: Generating design visualizations...")
     try:
         import tokamak_visualization
         tokamak_visualization.main()
-        print("✅ Visualization suite completed successfully")
+        print("[OK] Visualization suite completed successfully")
         print()
     except Exception as e:
-        print(f"❌ Error in visualization: {e}")
+        print(f"[ERROR] Error in visualization: {e}")
         return False
     
     # Step 3: Generate electrical schematic
-    print("⚡ STEP 3: Generating electrical schematic...")
+    print("[ELEC] STEP 3: Generating electrical schematic...")
     try:
         # Run the schematic generation script directly
         import subprocess
@@ -60,26 +60,26 @@ def run_complete_system_test():
                               capture_output=True, text=True, cwd=Path.cwd())
         
         if result.returncode == 0:
-            print("✅ Electrical schematic generated successfully")
+            print("[OK] Electrical schematic generated successfully")
             print()
         else:
-            print(f"⚠️ Schematic generation warning: {result.stderr}")
+            print(f"[WARNING] Schematic generation warning: {result.stderr}")
             print("   Continuing with system test...")
             print()
     except Exception as e:
-        print(f"⚠️ Error in schematic generation: {e}")
+        print(f"[WARNING] Error in schematic generation: {e}")
         print("   Continuing with system test...")
         print()
     
     # Step 4: System validation
-    print("🔍 STEP 4: Performing system validation...")
+    print("[CHECK] STEP 4: Performing system validation...")
     validation_results = validate_system_outputs()
     
     if validation_results['valid']:
-        print("✅ System validation passed")
+        print("[OK] System validation passed")
         print(f"   Files validated: {validation_results['files_checked']}")
     else:
-        print("❌ System validation failed")
+        print("[ERROR] System validation failed")
         print(f"   Missing files: {validation_results['missing_files']}")
         return False
     
@@ -88,13 +88,13 @@ def run_complete_system_test():
     # System summary
     print()
     print("="*80)
-    print("🎯 COMPLETE SYSTEM TEST RESULTS")
+    print("[RESULTS] COMPLETE SYSTEM TEST RESULTS")
     print("="*80)
     print(f"Total execution time: {total_time:.2f}s")
     print()
-    print("✅ SYSTEM COMPONENTS VALIDATED:")
+    print("[OK] SYSTEM COMPONENTS VALIDATED:")
     print("  • Tokamak vacuum chamber optimization (genetic algorithm)")
-    print("  • LQG physics integration (sinc(πμ) enhancement)")
+    print("  • LQG physics integration (sinc(pi*mu) enhancement)")
     print("  • Multi-objective design validation")
     print("  • Construction specification generation") 
     print("  • Comprehensive visualization suite")
@@ -110,18 +110,18 @@ def run_complete_system_test():
     print(f"  • Design optimization: {optimization_results['optimization_summary']['optimization_time']:.3f}s convergence")
     print()
     
-    print("📁 OUTPUT FILES GENERATED:")
+    print("[FILES] OUTPUT FILES GENERATED:")
     output_files = get_generated_files()
     for file_type, files in output_files.items():
         print(f"  {file_type}:")
         for file in files:
             if file.exists():
-                print(f"    ✅ {file}")
+                print(f"    [OK] {file}")
             else:
-                print(f"    ❌ {file} (missing)")
+                print(f"    [ERROR] {file} (missing)")
     
     print()
-    print("🚀 SYSTEM READY FOR CONSTRUCTION")
+    print("[READY] SYSTEM READY FOR CONSTRUCTION")
     print("   All specifications and documentation generated successfully")
     print("   Ready for manufacturing and installation phase")
     
@@ -208,7 +208,7 @@ def generate_system_summary():
         f.write("### System Components\n")
         f.write("#### Core Optimization Engine\n")
         f.write("- `tokamak_designer_demo.py`: Main optimization system with genetic algorithms\n")
-        f.write("- `LQGPhysicsModel`: sinc(πμ) polymer field enhancement\n")
+        f.write("- `LQGPhysicsModel`: sinc(pi*mu) polymer field enhancement\n")
         f.write("- `SimpleGeneticOptimizer`: Multi-objective design optimization\n")
         f.write("- `TokamakDesignValidator`: Physics and engineering validation\n\n")
         
@@ -254,7 +254,7 @@ def generate_system_summary():
         
         f.write("### LQG Physics Integration\n")
         f.write("The system integrates Loop Quantum Gravity polymer field theory through:\n")
-        f.write("- **sinc(πμ) Modulation**: Optimal μ=0.407 parameter\n")
+        f.write("- **sinc(pi*mu) Modulation**: Optimal μ=0.407 parameter\n")
         f.write("- **Energy Positivity**: T_μν ≥ 0 constraint enforcement\n")
         f.write("- **Polymer Enhancement**: 95% containment efficiency\n")
         f.write("- **Sub-classical Gain**: 242 million times improvement\n\n")
@@ -273,10 +273,10 @@ def main():
     if success:
         # Generate system summary
         summary_file = generate_system_summary()
-        print(f"\n📋 System summary generated: {summary_file}")
+        print(f"\n[SUMMARY] System summary generated: {summary_file}")
         
         print("\n" + "="*80)
-        print("🎉 TOKAMAK SYSTEM INTEGRATION COMPLETE")
+        print("[COMPLETE] TOKAMAK SYSTEM INTEGRATION COMPLETE")
         print("="*80)
         print("Revolutionary tokamak vacuum chamber design system successfully validated.")
         print("All components operational and construction-ready specifications generated.")
@@ -285,7 +285,7 @@ def main():
         return 0
     else:
         print("\n" + "="*80)
-        print("❌ SYSTEM INTEGRATION FAILED")
+        print("[ERROR] SYSTEM INTEGRATION FAILED")
         print("="*80)
         print("Please check error messages above and resolve issues.")
         
