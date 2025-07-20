@@ -109,7 +109,7 @@ class TokamakVisualizer:
             plt.savefig(save_path, dpi=300, bbox_inches='tight')
             print(f"Cross-section saved to: {save_path}")
         
-        plt.show()
+        # plt.show()  # Commented out to prevent opening PNG viewer during automation
     
     def _add_lqg_visualization(self, ax, R, a, kappa):
         """Add LQG polymer field enhancement visualization"""
@@ -210,7 +210,7 @@ class TokamakVisualizer:
             plt.savefig(save_path, dpi=300, bbox_inches='tight')
             print(f"Convergence plot saved to: {save_path}")
         
-        plt.show()
+        # plt.show()  # Commented out to prevent opening PNG viewer during automation
     
     def plot_parameter_sensitivity(self, save_path: Optional[str] = None) -> None:
         """Plot parameter sensitivity analysis"""
@@ -310,7 +310,7 @@ class TokamakVisualizer:
             plt.savefig(save_path, dpi=300, bbox_inches='tight')
             print(f"Sensitivity analysis saved to: {save_path}")
         
-        plt.show()
+        # plt.show()  # Commented out to prevent opening PNG viewer during automation
     
     def generate_design_report(self, output_dir: Path) -> None:
         """Generate comprehensive design report"""
