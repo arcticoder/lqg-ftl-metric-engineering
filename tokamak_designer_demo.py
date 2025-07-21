@@ -488,8 +488,8 @@ def main():
         'all_designs': optimal_designs,
         'validation': validation,
         'lqg_physics': {
-            'sub_classical_enhancement': lqg_physics.sub_classical_enhancement,
-            'alpha_lqg': lqg_physics.alpha_lqg
+            'sub_classical_enhancement': float(lqg_physics.sub_classical_enhancement),
+            'alpha_lqg': float(lqg_physics.alpha_lqg)
         }
     }
     
