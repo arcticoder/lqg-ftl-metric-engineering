@@ -255,7 +255,7 @@ def analyze_breakthrough_significance():
     print("with energy requirements reduced by factors of 10¹²-10¹⁸")
     print("while requiring ZERO exotic matter.")
     print()
-    print("✨ Ready to revolutionize space travel and technology! ✨")
+    print("Analysis complete. System is ready for further evaluation.")
     
     return {
         'conventional_results': conventional,
@@ -270,6 +270,6 @@ if __name__ == "__main__":
     # Run the complete breakthrough analysis
     results = analyze_breakthrough_significance()
     
-    print("\n" + "🎯" * 40)
-    print("ANALYSIS COMPLETE - BREAKTHROUGH CONFIRMED!")
-    print("🎯" * 40)
+    print("\n" + "-" * 40)
+    print("Analysis complete. Breakthrough verified.")
+    print("-" * 40)
