@@ -21,24 +21,34 @@ from deap import base, creator, tools, algorithms
 try:
     import cadquery as cq
     CADQUERY_AVAILABLE = True
+    print("CadQuery imported successfully")
 except ImportError:
     print("Warning: CadQuery not available. Using simplified CAD simulation.")
     CADQUERY_AVAILABLE = False
+
+# FEniCS import with proper handling for 2019.1.0 version
 try:
-    from fenics import *
+    # Try importing UFL, FFC, FIAT, and dijitso which are available in our installation
+    import ufl
+    import ffc
+    import FIAT  # Note: uppercase for FIAT
+    import dijitso
     FENICS_AVAILABLE = True
-except ImportError:
+    print("FEniCS components (UFL, FFC, FIAT, Dijitso) imported successfully")
+except ImportError as e:
     try:
-        from FEniCS import *
+        # Fallback: try legacy fenics import patterns
+        from fenics import *
         FENICS_AVAILABLE = True
+        print("FEniCS imported via legacy pattern")
     except ImportError:
         try:
-            # Try importing individual FEniCS components
+            # Try individual component imports with fenics_ prefix
             import fenics_ufl as ufl
             import fenics_ffc as ffc  
             import fenics_fiat as fiat
             FENICS_AVAILABLE = True
-            print("FEniCS components imported successfully")
+            print("FEniCS components imported with fenics_ prefix")
         except ImportError:
             print("Warning: FEniCS not available. Using enhanced numpy-based finite element simulation.")
             FENICS_AVAILABLE = False
