@@ -92,3 +92,15 @@ MORRIS_THORNE_DEFAULTS = {
     'mass_parameter': 1e30,  # kg (solar mass scale)
     'exotic_matter_concentration': 1e-10  # kg/m³
 }
+
+if __name__ == "__main__":
+    """
+    Example usage of validated constants
+    """
+    print("LQG FTL Metric Engineering Constants")
+    print("=" * 40)
+    print(f"Exact Backreaction Factor: {EXACT_BACKREACTION_FACTOR}")
+    print(f"LQG Alpha Parameter: {LQG_ALPHA_PARAMETER}")
+    print(f"Polymer Enhancement Factor (μ=0.1): {polymer_enhancement_factor(0.1):.6f}")
+    print(f"LQG Volume Quantum (j=1): {lqg_volume_quantum(1):.2e} m³")
+    print(f"Van den Broeck Energy Reduction: {VAN_DEN_BROECK_REDUCTION_MIN:.0e} - {VAN_DEN_BROECK_REDUCTION_MAX:.0e}")

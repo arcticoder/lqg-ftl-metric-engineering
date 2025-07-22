@@ -18,8 +18,18 @@ import numpy as np
 import torch
 import torch.nn as nn
 from deap import base, creator, tools, algorithms
-import cadquery as cq
-from FEniCS import *
+try:
+    import cadquery as cq
+    CADQUERY_AVAILABLE = True
+except ImportError:
+    print("Warning: CadQuery not available. Using simplified CAD simulation.")
+    CADQUERY_AVAILABLE = False
+try:
+    from FEniCS import *
+    FENICS_AVAILABLE = True
+except ImportError:
+    print("Warning: FEniCS not available. Using simplified physics simulation.")
+    FENICS_AVAILABLE = False
 import json
 import matplotlib.pyplot as plt
 from dataclasses import dataclass
@@ -246,9 +256,18 @@ class GeneticTokamakOptimizer:
 class CADExportPipeline:
     """CAD model generation and export"""
     
-    def generate_tokamak_cad(self, params: TokamakParameters) -> cq.Workplane:
+    def generate_tokamak_cad(self, params: TokamakParameters):
         """Generate parametric tokamak CAD model"""
         print(f"Generating CAD model for R={params.R:.2f}m, a={params.a:.2f}m")
+        
+        if not CADQUERY_AVAILABLE:
+            print("CadQuery not available - returning simplified model data")
+            return {
+                'major_radius': params.R,
+                'minor_radius': params.a,
+                'wall_thickness': 0.1,
+                'port_diameter': 0.5
+            }
         
         # Create toroidal chamber
         torus = (cq.Workplane("XY")
@@ -273,8 +292,14 @@ class CADExportPipeline:
         complete_assembly = chamber.union(support)
         return complete_assembly
     
-    def export_step(self, cad_model: cq.Workplane, filepath: str):
+    def export_step(self, cad_model, filepath: str):
         """Export CAD model to STEP format"""
+        if not CADQUERY_AVAILABLE:
+            print(f"CadQuery not available - saving simplified model data to: {filepath}")
+            with open(filepath.replace('.step', '.json'), 'w') as f:
+                json.dump(cad_model, f, indent=2)
+            return
+        
         cad_model.val().exportStep(filepath)
         print(f"CAD model exported to: {filepath}")
 

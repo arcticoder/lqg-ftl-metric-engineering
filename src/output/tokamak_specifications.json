@@ -1,0 +1,37 @@
+{
+  "design_parameters": {
+    "R": 4.066901656828619,
+    "a": 1.315896562483333,
+    "kappa": 2.3458455690341014,
+    "delta": 0.2716880723445305,
+    "mu": 0.5420743019993671,
+    "B0": 11.685783175725318,
+    "Ip": 18.34072819640158
+  },
+  "performance_metrics": {
+    "parameters": {
+      "R": 4.066901656828619,
+      "a": 1.315896562483333,
+      "kappa": 2.3458455690341014,
+      "delta": 0.2716880723445305,
+      "mu": 0.5420743019993671,
+      "B0": 11.685783175725318,
+      "Ip": 18.34072819640158
+    },
+    "cost": 257533831.6217041,
+    "max_stress": 0.040318503975868225,
+    "performance": 3.3987791919708252,
+    "lqg_enhancement": 0.98
+  },
+  "manufacturing_specs": {
+    "material": "Inconel 625 (high-temp), SS316L (structure)",
+    "vacuum_requirement": "\u226410\u207b\u2079 Torr",
+    "magnetic_field_uniformity": "\u00b11%",
+    "safety_factor": 4.0
+  },
+  "lqg_integration": {
+    "polymer_field_nodes": 16,
+    "sinc_modulation_factor": 0.582084843283601,
+    "enhancement_efficiency": 0.98
+  }
+}
