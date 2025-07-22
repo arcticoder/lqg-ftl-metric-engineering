@@ -269,28 +269,56 @@ class CADExportPipeline:
                 'port_diameter': 0.5
             }
         
-        # Create toroidal chamber
-        torus = (cq.Workplane("XY")
-                .circle(params.R)
-                .revolve(360, (0, 0, 1))
-                .shell(-0.1))  # 10cm wall thickness
-        
-        # Add ports and access
-        port_diameter = 0.5
-        ports = (cq.Workplane("XY")
-                .pushPoints([(params.R, 0), (-params.R, 0), (0, params.R), (0, -params.R)])
-                .circle(port_diameter/2)
-                .cutThruAll())
-        
-        chamber = torus.cut(ports)
-        
-        # Add support structure
-        support = (cq.Workplane("XY")
-                  .rect(params.R*2.2, 0.2)
-                  .extrude(params.a*0.5))
-        
-        complete_assembly = chamber.union(support)
-        return complete_assembly
+        try:
+            # Create simplified toroidal chamber using sweep
+            # First create the minor circle profile
+            minor_circle = (cq.Workplane("XZ")
+                           .center(params.R, 0)
+                           .circle(params.a)
+                           .revolve(360, (0, 0, 1)))
+            
+            # Create outer shell by expanding the minor radius
+            wall_thickness = 0.1
+            outer_torus = (cq.Workplane("XZ")
+                          .center(params.R, 0)
+                          .circle(params.a + wall_thickness)
+                          .revolve(360, (0, 0, 1)))
+            
+            # Subtract inner from outer to create hollow chamber
+            chamber = outer_torus.cut(minor_circle)
+            
+            # Add simplified ports as cylindrical holes
+            port_diameter = 0.5
+            ports_wp = cq.Workplane("XY").workplane(offset=0)
+            
+            # Create port holes at cardinal directions
+            for angle in [0, 90, 180, 270]:
+                x = params.R * np.cos(np.radians(angle))
+                y = params.R * np.sin(np.radians(angle))
+                port_hole = (cq.Workplane("XY")
+                           .center(x, y)
+                           .circle(port_diameter/2)
+                           .extrude(params.a * 2))
+                chamber = chamber.cut(port_hole)
+            
+            # Add simple rectangular support base
+            support = (cq.Workplane("XY")
+                      .rect(params.R*2.2, 0.2)
+                      .extrude(0.1))
+            
+            complete_assembly = chamber.union(support)
+            return complete_assembly
+            
+        except Exception as e:
+            print(f"CAD generation failed: {e}")
+            print("Returning simplified model data instead")
+            return {
+                'major_radius': params.R,
+                'minor_radius': params.a,
+                'wall_thickness': 0.1,
+                'port_diameter': 0.5,
+                'cad_error': str(e)
+            }
     
     def export_step(self, cad_model, filepath: str):
         """Export CAD model to STEP format"""

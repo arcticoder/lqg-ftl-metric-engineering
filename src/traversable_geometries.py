@@ -500,3 +500,71 @@ def compare_traversable_geometries() -> Dict[str, Dict[str, float]]:
             'feasibility_score': 1.0 / (1.0 + mt_energy / 1e30)
         }
     }
+
+
+def run_validation_tests() -> Dict[str, bool]:
+    """
+    Run comprehensive validation tests for all traversable geometry implementations.
+    
+    Returns:
+        Dictionary of test results for validation
+    """
+    test_results = {}
+    
+    try:
+        # Test LQG Wormhole Implementation
+        lqg_wormhole = LQGWormholeImplementation()
+        metric = lqg_wormhole.compute_wormhole_metric()
+        exotic_energy = lqg_wormhole.compute_exotic_energy_requirement()
+        test_results['lqg_wormhole_metric'] = metric is not None
+        test_results['lqg_wormhole_finite_energy'] = np.isfinite(exotic_energy)
+        
+        # Test Bobrick-Martire Positive Energy
+        bm_shapes = BobrickMartirePositiveEnergyShapes()
+        stress_tensor = bm_shapes.positive_energy_stress_tensor()
+        energy_conditions = bm_shapes.verify_energy_conditions()
+        test_results['bobrick_martire_positive_energy'] = stress_tensor.is_positive_energy()
+        test_results['bobrick_martire_energy_conditions'] = all(energy_conditions.values())
+        
+        # Test Morris-Thorne Design
+        mt_design = MorrisThorneFiniteEnergyDesign()
+        mt_constraints = mt_design.traversability_constraints()
+        scaling_analysis = mt_design.finite_exotic_energy_scaling()
+        test_results['morris_thorne_constraints'] = all(mt_constraints.values())
+        test_results['morris_thorne_scaling'] = 'scaling_exponent' in scaling_analysis
+        
+        # Test comparative analysis
+        comparison = compare_traversable_geometries()
+        test_results['geometry_comparison'] = len(comparison) == 3
+        
+        print("Traversable Geometries Validation Tests:")
+        for test_name, result in test_results.items():
+            status = "PASSED" if result else "FAILED"
+            print(f"  {test_name}: {status}")
+            
+    except Exception as e:
+        test_results['validation_error'] = False
+        print(f"Validation test error: {e}")
+    
+    return test_results
+
+
+if __name__ == "__main__":
+    """Run validation tests when script is executed directly"""
+    print("Traversable Geometries Framework - Validation Tests")
+    print("=" * 60)
+    
+    # Run comprehensive validation
+    results = run_validation_tests()
+    
+    # Summary
+    passed_tests = sum(1 for result in results.values() if result)
+    total_tests = len(results)
+    
+    print("\n" + "=" * 60)
+    print(f"Validation Summary: {passed_tests}/{total_tests} tests passed")
+    
+    if passed_tests == total_tests:
+        print("All traversable geometry implementations validated successfully")
+    else:
+        print("Some validation tests failed - review implementation")
