@@ -389,68 +389,233 @@ class CADExportPipeline:
     """CAD model generation and export"""
     
     def generate_tokamak_cad(self, params: TokamakParameters):
-        """Generate parametric tokamak CAD model"""
-        print(f"Generating CAD model for R={params.R:.2f}m, a={params.a:.2f}m")
+        """Generate parametric tokamak CAD model with improved D-shaped geometry"""
+        print(f"Generating IMPROVED CAD model: R={params.R:.2f}m, a={params.a:.2f}m, κ={params.kappa:.2f}, δ={params.delta:.2f}")
         
         if not CADQUERY_AVAILABLE:
-            print("CadQuery not available - returning simplified model data")
+            print("CadQuery not available - returning improved geometric data")
+            plasma_coords, wall_coords = self._create_vacuum_chamber_profile(params)
             return {
+                'plasma_boundary': plasma_coords,
+                'wall_boundary': wall_coords,
                 'major_radius': params.R,
                 'minor_radius': params.a,
-                'wall_thickness': 0.1,
-                'port_diameter': 0.5
+                'elongation': params.kappa,
+                'triangularity': params.delta,
+                'wall_thickness': 0.15,
+                'geometry_type': 'improved_d_shaped'
             }
         
         try:
-            # Create simplified toroidal chamber using sweep
-            # First create the minor circle profile
-            minor_circle = (cq.Workplane("XZ")
-                           .center(params.R, 0)
-                           .circle(params.a)
-                           .revolve(360, (0, 0, 1)))
+            # Create proper tokamak D-shaped cross-section geometry
+            plasma_coords, wall_coords = self._create_vacuum_chamber_profile(params, points=50)
             
-            # Create outer shell by expanding the minor radius
-            wall_thickness = 0.1
-            outer_torus = (cq.Workplane("XZ")
-                          .center(params.R, 0)
-                          .circle(params.a + wall_thickness)
-                          .revolve(360, (0, 0, 1)))
+            # Create plasma cavity profile using proper tokamak parameterization
+            plasma_profile = cq.Workplane("XZ").moveTo(*plasma_coords[0])
+            for r, z in plasma_coords[1:]:
+                plasma_profile = plasma_profile.lineTo(r, z)
+            plasma_profile = plasma_profile.close()
             
-            # Subtract inner from outer to create hollow chamber
-            chamber = outer_torus.cut(minor_circle)
+            # Create wall profile  
+            wall_profile = cq.Workplane("XZ").moveTo(*wall_coords[0])
+            for r, z in wall_coords[1:]:
+                wall_profile = wall_profile.lineTo(r, z)
+            wall_profile = wall_profile.close()
             
-            # Add simplified ports as cylindrical holes
-            port_diameter = 0.5
-            ports_wp = cq.Workplane("XY").workplane(offset=0)
+            # Revolve to create 3D torus with D-shaped cross-section
+            plasma_cavity = plasma_profile.revolve(360, (0, 0, 1))
+            wall_solid = wall_profile.revolve(360, (0, 0, 1))
             
-            # Create port holes at cardinal directions
-            for angle in [0, 90, 180, 270]:
-                x = params.R * np.cos(np.radians(angle))
-                y = params.R * np.sin(np.radians(angle))
-                port_hole = (cq.Workplane("XY")
-                           .center(x, y)
-                           .circle(port_diameter/2)
-                           .extrude(params.a * 2))
-                chamber = chamber.cut(port_hole)
+            # Create hollow chamber
+            chamber = wall_solid.cut(plasma_cavity)
             
-            # Add simple rectangular support base
-            support = (cq.Workplane("XY")
-                      .rect(params.R*2.2, 0.2)
-                      .extrude(0.1))
+            # Add realistic tokamak ports
+            chamber = self._add_tokamak_ports(chamber, params)
             
-            complete_assembly = chamber.union(support)
-            return complete_assembly
+            # Add support structure
+            chamber = self._add_support_structure(chamber, params)
+            
+            print("✓ Improved 3D CAD model created with proper tokamak D-shaped geometry")
+            return chamber
             
         except Exception as e:
             print(f"CAD generation failed: {e}")
-            print("Returning simplified model data instead")
+            print("Returning improved geometric data instead")
+            plasma_coords, wall_coords = self._create_vacuum_chamber_profile(params)
             return {
+                'plasma_boundary': plasma_coords,
+                'wall_boundary': wall_coords,
                 'major_radius': params.R,
                 'minor_radius': params.a,
-                'wall_thickness': 0.1,
-                'port_diameter': 0.5,
-                'cad_error': str(e)
+                'elongation': params.kappa,
+                'triangularity': params.delta,
+                'wall_thickness': 0.15,
+                'cad_error': str(e),
+                'geometry_type': 'improved_d_shaped'
             }
+    
+    def _create_tokamak_cross_section(self, params: TokamakParameters, points=100):
+        """Create proper tokamak D-shaped cross-section with elongation and triangularity"""
+        # Theta parameter from 0 to 2π
+        theta = np.linspace(0, 2*np.pi, points)
+        
+        # Standard tokamak parameterization with elongation and triangularity
+        # r(θ) = R + a*cos(θ + δ*sin(θ))  
+        # z(θ) = a*κ*sin(θ)
+        
+        # Apply triangularity shift to theta
+        theta_shifted = theta + params.delta * np.sin(theta)
+        
+        # Calculate r and z coordinates
+        r_coords = params.R + params.a * np.cos(theta_shifted)
+        z_coords = params.a * params.kappa * np.sin(theta)
+        
+        return list(zip(r_coords, z_coords))
+    
+    def _create_vacuum_chamber_profile(self, params: TokamakParameters, wall_thickness=0.15, points=100):
+        """Create vacuum chamber wall profile (plasma boundary + wall thickness)"""
+        # Get plasma boundary
+        plasma_coords = self._create_tokamak_cross_section(params, points)
+        
+        # Create outer wall by expanding normal to plasma boundary
+        wall_coords = []
+        
+        for i in range(len(plasma_coords)):
+            r, z = plasma_coords[i]
+            
+            # Calculate normal vector at this point
+            r_prev, z_prev = plasma_coords[i-1]
+            r_next, z_next = plasma_coords[(i+1) % len(plasma_coords)]
+            
+            # Tangent vector
+            dr_dt = (r_next - r_prev) / 2
+            dz_dt = (z_next - z_prev) / 2
+            
+            # Normal vector (perpendicular to tangent, pointing outward)
+            normal_r = dz_dt
+            normal_z = -dr_dt
+            
+            # Normalize
+            norm_length = np.sqrt(normal_r**2 + normal_z**2)
+            if norm_length > 0:
+                normal_r /= norm_length
+                normal_z /= norm_length
+            
+            # Create outer wall point
+            wall_r = r + wall_thickness * normal_r
+            wall_z = z + wall_thickness * normal_z
+            
+            wall_coords.append((wall_r, wall_z))
+        
+        return plasma_coords, wall_coords
+    
+    def _add_tokamak_ports(self, chamber, params: TokamakParameters):
+        """Add realistic tokamak ports based on physics requirements"""
+        
+        # Neutral beam injection ports (tangential injection)
+        nbi_diameter = 0.8
+        nbi_angles = [30, 150]  # degrees, tangential for momentum input
+        
+        for angle in nbi_angles:
+            x = params.R * np.cos(np.radians(angle))
+            y = params.R * np.sin(np.radians(angle))
+            
+            nbi_port = (cq.Workplane("XY")
+                       .center(x, y)
+                       .circle(nbi_diameter/2)
+                       .extrude(params.a * 1.5))
+            chamber = chamber.cut(nbi_port)
+        
+        # ECRH/ICRH heating ports
+        heating_diameter = 0.4
+        heating_angles = [60, 120, 240, 300]  # degrees
+        
+        for angle in heating_angles:
+            x = params.R * np.cos(np.radians(angle))
+            y = params.R * np.sin(np.radians(angle))
+            
+            heating_port = (cq.Workplane("XY")
+                           .center(x, y)
+                           .circle(heating_diameter/2)
+                           .extrude(params.a))
+            chamber = chamber.cut(heating_port)
+        
+        # Diagnostic ports at multiple levels
+        diag_diameter = 0.2
+        diag_angles = [0, 45, 90, 135, 180, 225, 270, 315]  # degrees
+        
+        for angle in diag_angles:
+            x = params.R * np.cos(np.radians(angle))
+            y = params.R * np.sin(np.radians(angle))
+            
+            # Multiple Z levels for comprehensive diagnostics
+            for z_offset in [-params.a*params.kappa*0.3, 0, params.a*params.kappa*0.3]:
+                diag_port = (cq.Workplane("XY", origin=(0, 0, z_offset))
+                            .center(x, y)  
+                            .circle(diag_diameter/2)
+                            .extrude(0.3))
+                chamber = chamber.cut(diag_port)
+        
+        # Vacuum pumping ports (bottom-mounted for particle exhaust)
+        pump_diameter = 0.6
+        pump_angles = [30, 90, 150, 210, 270, 330]  # degrees
+        
+        for angle in pump_angles:
+            x = params.R * np.cos(np.radians(angle))
+            y = params.R * np.sin(np.radians(angle))
+            
+            pump_port = (cq.Workplane("XY", origin=(0, 0, -params.a*params.kappa*0.8))
+                        .center(x, y)
+                        .circle(pump_diameter/2) 
+                        .extrude(0.4))
+            chamber = chamber.cut(pump_port)
+        
+        return chamber
+    
+    def _add_support_structure(self, chamber, params: TokamakParameters):
+        """Add realistic tokamak support structure"""
+        
+        # Toroidal field coil supports
+        n_tf_coils = 18  # Typical for large tokamak
+        support_width = 0.4
+        support_height = params.a * params.kappa * 2.5
+        coil_radius = params.R + params.a + 0.6
+        
+        for i in range(n_tf_coils):
+            angle = 2 * np.pi * i / n_tf_coils
+            x = coil_radius * np.cos(angle)
+            y = coil_radius * np.sin(angle)
+            
+            # TF coil casing (simplified representation)
+            tf_support = (cq.Workplane("XY", origin=(x, y, -support_height/2))
+                         .rect(support_width, support_width)
+                         .extrude(support_height))
+            
+            chamber = chamber.union(tf_support)
+        
+        # Central solenoid support
+        cs_radius = 0.8
+        cs_height = params.a * params.kappa * 2.2
+        
+        central_solenoid = (cq.Workplane("XY", origin=(0, 0, -cs_height/2))
+                           .circle(cs_radius)
+                           .extrude(cs_height))
+        
+        chamber = chamber.union(central_solenoid)
+        
+        # Base platform with central hole
+        platform_outer = params.R + params.a + 1.2
+        platform_inner = 1.0  # Central access hole
+        platform_thickness = 0.3
+        
+        platform = (cq.Workplane("XY", origin=(0, 0, -params.a*params.kappa - platform_thickness))
+                   .circle(platform_outer)
+                   .circle(platform_inner)  # Creates hole
+                   .extrude(platform_thickness))
+        
+        chamber = chamber.union(platform)
+        
+        return chamber
     
     def export_step(self, cad_model, filepath: str):
         """Export CAD model to STEP format"""
@@ -606,6 +771,10 @@ class TokamakVacuumChamberDesigner:
         print(f"LQG Enhancement: {best_solution['lqg_enhancement']:.1%}")
         
         return results
+    
+    def generate_tokamak_cad(self, params: TokamakParameters):
+        """Generate parametric tokamak CAD model with improved D-shaped geometry"""
+        return self.cad_exporter.generate_tokamak_cad(params)
     
     def generate_construction_ready_output(self, design: Dict, output_dir: str = "output"):
         """Generate construction-ready CAD and documentation"""
