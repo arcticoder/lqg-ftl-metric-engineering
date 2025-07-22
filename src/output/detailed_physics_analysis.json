@@ -1,0 +1,137 @@
+[
+  {
+    "config": {
+      "R": 6.2,
+      "a": 2.0,
+      "kappa": 1.7,
+      "delta": 0.4,
+      "mu": 0.3,
+      "B0": 5.3,
+      "Ip": 15.0
+    },
+    "analysis": {
+      "plasma_physics": {
+        "q_factor": 1.5,
+        "beta_normalized": 0.031599683502481934,
+        "confinement_time": 14.00288149968653,
+        "plasma_volume": 832.2050430998547
+      },
+      "magnetic_field": {
+        "B_poloidal": 1.5,
+        "B_toroidal": 5.3,
+        "B_total": 5.65002124078782,
+        "magnetic_energy": 6217871223.079551,
+        "field_uniformity": 0.9369819798594352
+      },
+      "structural_mechanics": {
+        "max_stress": 273198346.14674544,
+        "magnetic_pressure": 12701654.678589728,
+        "thermal_stress": 34000000.0,
+        "safety_factor": 1.0981032800208035,
+        "displacement": 1.3659917307337272e-06
+      },
+      "lqg_enhancement": {
+        "containment_efficiency": 0.98,
+        "polymer_parameter": 0.3,
+        "sinc_modulation": 0.8583936913341398
+      },
+      "performance_summary": {
+        "q_factor": 1.5,
+        "beta_normalized": 0.031599683502481934,
+        "confinement_time": 14.00288149968653,
+        "safety_factor": 1.0981032800208035,
+        "field_uniformity": 0.9369819798594352
+      }
+    }
+  },
+  {
+    "config": {
+      "R": 7.5,
+      "a": 2.2,
+      "kappa": 2.1,
+      "delta": 0.6,
+      "mu": 0.5,
+      "B0": 8.2,
+      "Ip": 18.5
+    },
+    "analysis": {
+      "plasma_physics": {
+        "q_factor": 1.5,
+        "beta_normalized": 0.033127296471081216,
+        "confinement_time": 29.190992149326163,
+        "plasma_volume": 1504.7198869900838
+      },
+      "magnetic_field": {
+        "B_poloidal": 1.6818181818181817,
+        "B_toroidal": 8.2,
+        "B_total": 8.637141117524187,
+        "magnetic_energy": 21268484110.689857,
+        "field_uniformity": 0.9298287180713206
+      },
+      "structural_mechanics": {
+        "max_stress": 643277836.6666095,
+        "magnetic_pressure": 29682479.123599857,
+        "thermal_stress": 34000000.0,
+        "safety_factor": 0.46636147384552357,
+        "displacement": 3.2163891833330475e-06
+      },
+      "lqg_enhancement": {
+        "containment_efficiency": 0.98,
+        "polymer_parameter": 0.5,
+        "sinc_modulation": 0.6366197723675814
+      },
+      "performance_summary": {
+        "q_factor": 1.5,
+        "beta_normalized": 0.033127296471081216,
+        "confinement_time": 29.190992149326163,
+        "safety_factor": 0.46636147384552357,
+        "field_uniformity": 0.9298287180713206
+      }
+    }
+  },
+  {
+    "config": {
+      "R": 5.8,
+      "a": 1.8,
+      "kappa": 1.9,
+      "delta": 0.3,
+      "mu": 0.7,
+      "B0": 6.8,
+      "Ip": 12.3
+    },
+    "analysis": {
+      "plasma_physics": {
+        "q_factor": 1.5,
+        "beta_normalized": 0.03159968350248193,
+        "confinement_time": 12.128295352448879,
+        "plasma_volume": 704.7845024400306
+      },
+      "magnetic_field": {
+        "B_poloidal": 1.3666666666666667,
+        "B_toroidal": 6.8,
+        "B_total": 7.114591028615149,
+        "magnetic_energy": 7470725270.612758,
+        "field_uniformity": 0.92904952991791
+      },
+      "structural_mechanics": {
+        "max_stress": 376098223.31955224,
+        "magnetic_pressure": 20140025.73130079,
+        "thermal_stress": 34000000.0,
+        "safety_factor": 0.7976639648869192,
+        "displacement": 1.880491116597761e-06
+      },
+      "lqg_enhancement": {
+        "containment_efficiency": 0.98,
+        "polymer_parameter": 0.7,
+        "sinc_modulation": 0.3678830105717742
+      },
+      "performance_summary": {
+        "q_factor": 1.5,
+        "beta_normalized": 0.03159968350248193,
+        "confinement_time": 12.128295352448879,
+        "safety_factor": 0.7976639648869192,
+        "field_uniformity": 0.92904952991791
+      }
+    }
+  }
+]
