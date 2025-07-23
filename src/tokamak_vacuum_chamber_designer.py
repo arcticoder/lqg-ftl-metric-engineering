@@ -424,16 +424,20 @@ class CADExportPipeline:
             # Create high-resolution tokamak D-shaped cross-section geometry
             plasma_coords, wall_coords = self._create_vacuum_chamber_profile(params, points=360)
             
-            # Create smooth plasma cavity profile using splines for true B-rep curves
-            print("Creating smooth plasma boundary spline...")
+            # Debug: Print first few coordinates to verify D-shape
+            print(f"DEBUG: First 5 plasma coordinates: {plasma_coords[:5]}")
+            print(f"DEBUG: Coordinate range - R: {min(c[0] for c in plasma_coords):.2f} to {max(c[0] for c in plasma_coords):.2f}")
+            print(f"DEBUG: Coordinate range - Z: {min(c[1] for c in plasma_coords):.2f} to {max(c[1] for c in plasma_coords):.2f}")
+            
+            # Ensure we're working on XZ workplane for proper toroidal sweep
+            print("Creating smooth plasma boundary spline on XZ workplane...")
             plasma_profile = cq.Workplane("XZ").spline(plasma_coords).close()
             
-            # Create smooth wall profile using splines
-            print("Creating smooth wall boundary spline...")
+            print("Creating smooth wall boundary spline on XZ workplane...")
             wall_profile = cq.Workplane("XZ").spline(wall_coords).close()
             
-            # Revolve to create 3D torus with proper axis specification
-            print("Revolving profiles to create 3D torus...")
+            # Revolve around Z-axis to create 3D torus (NOT extrude!)
+            print("Revolving profiles around Z-axis to create 3D torus...")
             plasma_cavity = plasma_profile.revolve(360, axisStart=(0, 0, 0), axisEnd=(0, 0, 1))
             wall_solid = wall_profile.revolve(360, axisStart=(0, 0, 0), axisEnd=(0, 0, 1))
             
