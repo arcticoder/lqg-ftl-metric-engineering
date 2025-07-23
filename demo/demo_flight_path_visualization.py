@@ -14,8 +14,8 @@ import os
 import numpy as np
 from pathlib import Path
 
-# Add navigation module to path
-sys.path.append(str(Path(__file__).parent / "navigation"))
+# Add parent directory to path to access navigation module
+sys.path.append(str(Path(__file__).parent.parent))
 
 from navigation.flight_path_format import FlightPathFormat, create_sample_earth_proxima_trajectory
 from navigation.trajectory_optimizer import TrajectoryOptimizer, SpacetimeMetric, create_solar_system_bodies

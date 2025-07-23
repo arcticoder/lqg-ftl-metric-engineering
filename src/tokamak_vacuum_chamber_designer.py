@@ -21,9 +21,23 @@ from deap import base, creator, tools, algorithms
 try:
     import cadquery as cq
     CADQUERY_AVAILABLE = True
-    print("CadQuery imported successfully")
-except ImportError:
-    print("Warning: CadQuery not available. Using simplified CAD simulation.")
+    print(f"CadQuery imported successfully (version {cq.__version__})")
+    
+    # Verify key functionality is available
+    try:
+        test_workplane = cq.Workplane("XY")
+        print("✓ CadQuery Workplane functionality verified")
+    except Exception as e:
+        print(f"Warning: CadQuery functionality issue: {e}")
+        CADQUERY_AVAILABLE = False
+        
+except ImportError as e:
+    print(f"Warning: CadQuery not available - {e}")
+    print("Using simplified CAD simulation mode")
+    CADQUERY_AVAILABLE = False
+except Exception as e:
+    print(f"Error importing CadQuery: {e}")
+    print("Using simplified CAD simulation mode")
     CADQUERY_AVAILABLE = False
 
 # FEniCS import with proper handling for 2019.1.0 version
@@ -633,7 +647,7 @@ class CADExportPipeline:
         return chamber
     
     def export_step(self, cad_model, filepath: str):
-        """Export CAD model to STEP format with proper error handling"""
+        """Export CAD model to STEP format with enhanced error handling"""
         if not CADQUERY_AVAILABLE:
             print(f"CadQuery not available - saving geometric data to: {filepath}")
             with open(filepath.replace('.step', '.json'), 'w') as f:
@@ -645,10 +659,21 @@ class CADExportPipeline:
         
         try:
             # Verify we have a valid CadQuery object
-            if hasattr(cad_model, 'val'):
+            if hasattr(cad_model, 'val') and callable(getattr(cad_model, 'val')):
                 print(f"Exporting high-quality STEP file to: {filepath}")
-                cad_model.val().exportStep(filepath)
-                print(f"✓ STEP export successful: {filepath}")
+                result = cad_model.val()
+                if hasattr(result, 'exportStep'):
+                    result.exportStep(filepath)
+                    print(f"✓ STEP export successful: {filepath}")
+                    # Verify the file was created and has reasonable size
+                    import os
+                    if os.path.exists(filepath):
+                        file_size = os.path.getsize(filepath)
+                        print(f"STEP file created: {filepath} ({file_size:,} bytes)")
+                    else:
+                        print(f"Warning: STEP file was not created at {filepath}")
+                else:
+                    raise AttributeError("CadQuery object doesn't have exportStep method")
             else:
                 print(f"Invalid CAD model - saving fallback data to: {filepath}")
                 with open(filepath.replace('.step', '.json'), 'w') as f:
