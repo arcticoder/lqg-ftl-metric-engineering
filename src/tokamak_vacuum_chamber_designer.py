@@ -389,12 +389,12 @@ class CADExportPipeline:
     """CAD model generation and export"""
     
     def generate_tokamak_cad(self, params: TokamakParameters):
-        """Generate parametric tokamak CAD model with improved D-shaped geometry"""
-        print(f"Generating IMPROVED CAD model: R={params.R:.2f}m, a={params.a:.2f}m, κ={params.kappa:.2f}, δ={params.delta:.2f}")
+        """Generate parametric tokamak CAD model with smooth B-rep geometry"""
+        print(f"Generating HIGH-QUALITY CAD model: R={params.R:.2f}m, a={params.a:.2f}m, κ={params.kappa:.2f}, δ={params.delta:.2f}")
         
         if not CADQUERY_AVAILABLE:
             print("CadQuery not available - returning improved geometric data")
-            plasma_coords, wall_coords = self._create_vacuum_chamber_profile(params)
+            plasma_coords, wall_coords = self._create_vacuum_chamber_profile(params, points=360)
             return {
                 'plasma_boundary': plasma_coords,
                 'wall_boundary': wall_coords,
@@ -403,39 +403,43 @@ class CADExportPipeline:
                 'elongation': params.kappa,
                 'triangularity': params.delta,
                 'wall_thickness': 0.15,
-                'geometry_type': 'improved_d_shaped'
+                'geometry_type': 'smooth_b_rep_d_shaped'
             }
         
         try:
-            # Create proper tokamak D-shaped cross-section geometry
-            plasma_coords, wall_coords = self._create_vacuum_chamber_profile(params, points=50)
+            # Create high-resolution tokamak D-shaped cross-section geometry
+            plasma_coords, wall_coords = self._create_vacuum_chamber_profile(params, points=360)
             
-            # Create plasma cavity profile using proper tokamak parameterization
-            plasma_profile = cq.Workplane("XZ").moveTo(*plasma_coords[0])
-            for r, z in plasma_coords[1:]:
-                plasma_profile = plasma_profile.lineTo(r, z)
-            plasma_profile = plasma_profile.close()
+            # Create smooth plasma cavity profile using splines for true B-rep curves
+            print("Creating smooth plasma boundary spline...")
+            plasma_profile = cq.Workplane("XZ").spline(plasma_coords).close()
             
-            # Create wall profile  
-            wall_profile = cq.Workplane("XZ").moveTo(*wall_coords[0])
-            for r, z in wall_coords[1:]:
-                wall_profile = wall_profile.lineTo(r, z)
-            wall_profile = wall_profile.close()
+            # Create smooth wall profile using splines
+            print("Creating smooth wall boundary spline...")
+            wall_profile = cq.Workplane("XZ").spline(wall_coords).close()
             
-            # Revolve to create 3D torus with D-shaped cross-section
-            plasma_cavity = plasma_profile.revolve(360, (0, 0, 1))
-            wall_solid = wall_profile.revolve(360, (0, 0, 1))
+            # Revolve to create 3D torus with proper axis specification
+            print("Revolving profiles to create 3D torus...")
+            plasma_cavity = plasma_profile.revolve(360, axisStart=(0, 0, 0), axisEnd=(0, 0, 1))
+            wall_solid = wall_profile.revolve(360, axisStart=(0, 0, 0), axisEnd=(0, 0, 1))
             
-            # Create hollow chamber
+            # Create hollow chamber with proper boolean cleanup
+            print("Creating vacuum chamber cavity...")
             chamber = wall_solid.cut(plasma_cavity)
             
             # Add realistic tokamak ports
+            print("Adding tokamak ports...")
             chamber = self._add_tokamak_ports(chamber, params)
             
-            # Add support structure
+            # Add support structure with proper positioning
+            print("Adding support structure...")
             chamber = self._add_support_structure(chamber, params)
             
-            print("✓ Improved 3D CAD model created with proper tokamak D-shaped geometry")
+            # Clean up boolean operations for smooth STEP export
+            print("Cleaning up geometry for STEP export...")
+            chamber = chamber.clean()
+            
+            print("✓ High-quality 3D CAD model created with smooth B-rep geometry")
             return chamber
             
         except Exception as e:
@@ -451,7 +455,7 @@ class CADExportPipeline:
                 'triangularity': params.delta,
                 'wall_thickness': 0.15,
                 'cad_error': str(e),
-                'geometry_type': 'improved_d_shaped'
+                'geometry_type': 'smooth_b_rep_d_shaped'
             }
     
     def _create_tokamak_cross_section(self, params: TokamakParameters, points=100):
@@ -510,7 +514,7 @@ class CADExportPipeline:
         return plasma_coords, wall_coords
     
     def _add_tokamak_ports(self, chamber, params: TokamakParameters):
-        """Add realistic tokamak ports based on physics requirements"""
+        """Add realistic tokamak ports with proper boolean operations"""
         
         # Neutral beam injection ports (tangential injection)
         nbi_diameter = 0.8
@@ -550,7 +554,8 @@ class CADExportPipeline:
             
             # Multiple Z levels for comprehensive diagnostics
             for z_offset in [-params.a*params.kappa*0.3, 0, params.a*params.kappa*0.3]:
-                diag_port = (cq.Workplane("XY", origin=(0, 0, z_offset))
+                diag_port = (cq.Workplane("XY")
+                            .workplane(offset=z_offset)
                             .center(x, y)  
                             .circle(diag_diameter/2)
                             .extrude(0.3))
@@ -564,7 +569,8 @@ class CADExportPipeline:
             x = params.R * np.cos(np.radians(angle))
             y = params.R * np.sin(np.radians(angle))
             
-            pump_port = (cq.Workplane("XY", origin=(0, 0, -params.a*params.kappa*0.8))
+            pump_port = (cq.Workplane("XY")
+                        .workplane(offset=-params.a*params.kappa*0.8)
                         .center(x, y)
                         .circle(pump_diameter/2) 
                         .extrude(0.4))
@@ -573,60 +579,85 @@ class CADExportPipeline:
         return chamber
     
     def _add_support_structure(self, chamber, params: TokamakParameters):
-        """Add realistic tokamak support structure"""
+        """Add realistic tokamak support structure with proper positioning"""
         
-        # Toroidal field coil supports
+        # Toroidal field coil supports - properly positioned at each location
         n_tf_coils = 18  # Typical for large tokamak
         support_width = 0.4
         support_height = params.a * params.kappa * 2.5
         coil_radius = params.R + params.a + 0.6
+        
+        print(f"Creating {n_tf_coils} TF coil supports at radius {coil_radius:.2f}m")
         
         for i in range(n_tf_coils):
             angle = 2 * np.pi * i / n_tf_coils
             x = coil_radius * np.cos(angle)
             y = coil_radius * np.sin(angle)
             
-            # TF coil casing (simplified representation)
-            tf_support = (cq.Workplane("XY", origin=(x, y, -support_height/2))
+            # TF coil casing with proper positioning using CadQuery 1.x/2.x compatible syntax
+            tf_support = (cq.Workplane("XY")
+                         .workplane(offset=-support_height/2)  # Move down in Z
+                         .center(x, y)                         # Shift to proper X,Y location
                          .rect(support_width, support_width)
                          .extrude(support_height))
             
             chamber = chamber.union(tf_support)
+            print(f"  TF coil {i+1}: positioned at ({x:.2f}, {y:.2f})")
         
         # Central solenoid support
         cs_radius = 0.8
         cs_height = params.a * params.kappa * 2.2
         
-        central_solenoid = (cq.Workplane("XY", origin=(0, 0, -cs_height/2))
+        central_solenoid = (cq.Workplane("XY")
+                           .workplane(offset=-cs_height/2)
                            .circle(cs_radius)
                            .extrude(cs_height))
         
         chamber = chamber.union(central_solenoid)
+        print(f"Central solenoid: radius {cs_radius:.2f}m, height {cs_height:.2f}m")
         
         # Base platform with central hole
         platform_outer = params.R + params.a + 1.2
         platform_inner = 1.0  # Central access hole
         platform_thickness = 0.3
         
-        platform = (cq.Workplane("XY", origin=(0, 0, -params.a*params.kappa - platform_thickness))
+        platform = (cq.Workplane("XY")
+                   .workplane(offset=-params.a*params.kappa - platform_thickness)
                    .circle(platform_outer)
                    .circle(platform_inner)  # Creates hole
                    .extrude(platform_thickness))
         
         chamber = chamber.union(platform)
+        print(f"Support platform: outer radius {platform_outer:.2f}m")
         
         return chamber
     
     def export_step(self, cad_model, filepath: str):
-        """Export CAD model to STEP format"""
+        """Export CAD model to STEP format with proper error handling"""
         if not CADQUERY_AVAILABLE:
-            print(f"CadQuery not available - saving simplified model data to: {filepath}")
+            print(f"CadQuery not available - saving geometric data to: {filepath}")
             with open(filepath.replace('.step', '.json'), 'w') as f:
-                json.dump(cad_model, f, indent=2)
+                if isinstance(cad_model, dict):
+                    json.dump(cad_model, f, indent=2)
+                else:
+                    json.dump({'error': 'Invalid CAD model type'}, f, indent=2)
             return
         
-        cad_model.val().exportStep(filepath)
-        print(f"CAD model exported to: {filepath}")
+        try:
+            # Verify we have a valid CadQuery object
+            if hasattr(cad_model, 'val'):
+                print(f"Exporting high-quality STEP file to: {filepath}")
+                cad_model.val().exportStep(filepath)
+                print(f"✓ STEP export successful: {filepath}")
+            else:
+                print(f"Invalid CAD model - saving fallback data to: {filepath}")
+                with open(filepath.replace('.step', '.json'), 'w') as f:
+                    json.dump(cad_model if isinstance(cad_model, dict) else {'error': 'Invalid model'}, f, indent=2)
+        except Exception as e:
+            print(f"STEP export failed: {e}")
+            print(f"Saving fallback data to: {filepath.replace('.step', '.json')}")
+            with open(filepath.replace('.step', '.json'), 'w') as f:
+                json.dump({'export_error': str(e), 'cad_data': str(cad_model)}, f, indent=2)
 
 class TokamakVacuumChamberDesigner:
     """Main tokamak design system coordinator"""
