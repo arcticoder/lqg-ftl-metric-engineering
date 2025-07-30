@@ -34,6 +34,12 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
-.github/instructions/copilot-instructions.md
 
-.github/
+# setuptools / pip build artifacts
+*.egg-info/
+build/
+dist/
+
+# Python cache files
+__pycache__/
+*.py[cod]

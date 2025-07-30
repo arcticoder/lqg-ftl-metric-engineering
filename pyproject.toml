@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lqg_ftl_metric_engineering"
+version = "0.1.0"
+description = "Loop Quantum Gravity FTL Metric Engineering & Energy Optimization Framework"
+authors = [
+  { name = "Arcticoder" }
+]
+readme = "README.md"
+license = { text = "Unlicense" }
+dependencies = [
+  "numpy>=1.24",
+  "scipy>=1.8",
+  "matplotlib>=3.6"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["lqg_ftl_metric_engineering*"]

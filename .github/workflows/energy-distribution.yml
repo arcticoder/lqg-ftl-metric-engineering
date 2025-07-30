@@ -1,0 +1,25 @@
+name: "V&V – Energy Distribution"
+
+on:
+  push:
+    paths:
+      # only run when the analyzer or its test changes
+      - 'src/energy_component_analyzer.py'
+      - 'tests/test_analyze_energy_distribution.py'
+  workflow_dispatch: {}
+
+jobs:
+  energy_distribution:
+    name: "Verify analyze_energy_distribution()"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+      - name: Install dependencies
+        run: |
+          pip install -e .
+          pip install pytest numpy
+      - name: Run energy distribution test
+        run: pytest tests/test_analyze_energy_distribution.py -vv -s
