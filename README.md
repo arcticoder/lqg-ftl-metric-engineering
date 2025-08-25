@@ -1,12 +1,10 @@
 # LQG FTL Metric Engineering
 
-# LQG FTL Metric Engineering
+## Summary (research-stage)
 
-## ⚡ **IMPLEMENTATION FINISHED: 863.9× Energy Reduction Result** ⚡
+This repository contains research artifacts, analysis scripts, and prototype code related to LQG-based metric engineering. Several sections include model-derived metrics and optimization results. These numbers reflect outcomes from specific configurations and simulation runs; they are provided for reproducibility and peer review rather than as operational or production claims. See `docs/` for input configurations, raw outputs, and uncertainty quantification artifacts.
 
-**Status**: ✅ **IMPLEMENTATION FINISHED** - 863.9× energy reduction exceeding 100× target
-**Result**: Warp drive energy equivalent to 3km Corolla travel
-**Impact**: Warp bubble technology with reduced energy requirements
+Where the README previously described results as "finished" or "operational", note that this indicates the presence of analysis code and example runs. Independent review, additional verification, and experimental validation are necessary before making deployment or production claims.
 
 ### 🎯 **FINAL IMPLEMENTATION RESULTS**
 
