@@ -240,7 +240,7 @@ python navigation/trajectory_optimizer.py
 ### 🔧 Quick Start
 
 ```bash
-# Execute the breakthrough achievement engine (863.9× reduction)
+# Execute the reported improvement (see methods and evidence) achievement engine (863.9× reduction)
 cd energy_optimization
 python breakthrough_achievement_engine.py
 
@@ -287,7 +287,7 @@ The energy optimization process generates results and documentation:
 - [energy](https://github.com/arcticoder/energy): Central meta-repo for all energy and FTL research. This FTL framework is a flagship technology of the energy ecosystem.
 - [enhanced-simulation-hardware-abstraction-framework](https://github.com/arcticoder/enhanced-simulation-hardware-abstraction-framework): FTL-capable hull design framework with naval architecture integration achieving 48c superluminal operations, providing structural engineering for FTL spacecraft.
 - [unified-lqg](https://github.com/arcticoder/unified-lqg): Core LQG framework providing quantum geometry foundation and polymer corrections for zero-exotic-energy FTL.
-- [warp-field-coils](https://github.com/arcticoder/warp-field-coils): Primary integration for production-ready FTL warp field generation and control systems.
+- [warp-field-coils](https://github.com/arcticoder/warp-field-coils): Primary integration for not production-ready / research-stage FTL warp field generation and control systems.
 - [polymerized-lqg-matter-transporter](https://github.com/arcticoder/polymerized-lqg-matter-transporter): Provides matter transport capabilities for FTL spacecraft with 24.2 billion× enhancement.
 - [artificial-gravity-field-generator](https://github.com/arcticoder/artificial-gravity-field-generator): Critical safety system for FTL operations providing artificial gravity and inertial compensation.
 
@@ -372,11 +372,11 @@ The Ship Hull Geometry OBJ Framework has achieved operational status with 24.2 b
 - **Integration Synergies**: 4.3% additional benefits from coordinated optimization
 - **Stability Maintained**: 0.693 factor preserved throughout optimization process
 
-### 🎯 **Zero Exotic Energy Framework** (PRODUCTION READY)
+### 🎯 **Zero Exotic Energy Framework** (not production-ready / research-stage)
 - **Exotic Energy**: Exactly 0.00e+00 J (eliminated)
 - **Sub-Classical Enhancement**: 24.2 billion times improvement over classical physics
 - **Water Lifting Demo**: 40.5 microjoules vs 9.81 kJ classical (242 million× improvement)
-- **Production Ready**: 0.043% conservation accuracy with UQ resolution
+- **not production-ready / research-stage**: 0.043% conservation accuracy with UQ resolution
 
 ### 🎯 **Ship Hull Geometry OBJ Framework** (COMPLETE)
 - **4-Phase Implementation**: Hull Physics → OBJ Generation → Deck Plans → WebGL Visualization
@@ -554,8 +554,8 @@ print(f"Improvement: {classical/subclassical:.0e}× better")
 from validate_uq_resolution import run_comprehensive_uq_validation
 
 success = run_comprehensive_uq_validation()
-print(f"Production ready: {success}")
-# Output: Production ready: True
+print(f"not production-ready / research-stage: {success}")
+# Output: not production-ready / research-stage: True
 ```
 
 ## Contributing
@@ -641,7 +641,14 @@ LQG polymer enhancement for magnetic confinement stability achieving 94% efficie
 - **Assembly Layout**: `unified-lqg/construction/lqr-1/lqr-1_assembly_layout.svg`
 - **Integration Testing**: `unified-lqg/lqg_reactor_integration_test.py`
 
-#### **Status**: ✅ **PRODUCTION READY** - Primary power source for FTL vessel  
+#### **Status**: ✅ **not production-ready / research-stage** - Primary power source for FTL vessel  
 **Dependencies**: LQG Polymer Field Generator (✅ Complete), Magnetic Confinement Systems (✅ Complete)  
 **Integration Points**: `lqg-polymer-field-generator`, vessel power distribution, life support - ALL OPERATIONAL  
 **Risk Level**: ✅ ZERO RISK - Advanced plasma physics with comprehensive safety systems validated
+
+
+## Scope, Validation & Limitations
+
+- Scope: The materials and numeric outputs in this repository are research-stage examples and depend on implementation choices, parameter settings, and numerical tolerances.
+- Validation: Reproducibility artifacts (scripts, raw outputs, seeds, and environment details) are provided in `docs/` or `examples/` where available; reproduce analyses with parameter sweeps and independent environments to assess robustness.
+- Limitations: Results are sensitive to modeling choices and discretization. Independent verification, sensitivity analyses, and peer review are recommended before using these results for engineering or policy decisions.
